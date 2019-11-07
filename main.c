@@ -6,24 +6,21 @@
 #define false FALSE
 #define BIRD_COUNT 3
 
+#define Intro 0
+#define Menu 1
+#define Game 0
+
+
 const int DEACTIVATED_POSITION = -100;
+
+
+u8 currentGameState = Menu;
 
 struct Rectangle
 {
 	f16 x, y;
 	f16 height, width;
 };
-
-const u32 m_tile[] =
-	{
-		0x0000000,
-		0x0000000,
-		0x0000000,
-		0x11244211,
-		0x11244211,
-		0x0000000,
-		0x0000000,
-		0x0000000};
 
 struct Vector
 {
@@ -52,6 +49,7 @@ Sprite *exploEnemy;
 Sprite *hitBoxSprite;
 
 u8 gameTimeMod = 1;
+f16 bg_scroll_speed = 0;
 
 //EXPLOSION
 u8 frameTicker;
@@ -74,9 +72,7 @@ struct Rectangle bird_Rect[BIRD_COUNT];
 struct Vector bird_Velocity = {1, 2};
 bool isBirdEnabled = false;
 
-/*Track the game state*/
-shot_fired = false;
-game_on = false;
+bool game_on = false;
 
 /*Score variables*/
 s32 score = 0;
@@ -131,7 +127,6 @@ void endGame()
 {
 	showText(msg_reset);
 	game_on = false;
-	shot_fired = false;
 }
 
 void resetShot()
@@ -141,17 +136,11 @@ void resetShot()
 
 void fireShot()
 {
-	if (shot_fired)
-		return;
-
 	shot_Rect.x = player_Rect.x + 12;
 	shot_Rect.y = player_Rect.y;
 
-	shot_fired = true;
-
 	/*Clear the text from the screen*/
-	updateScoreDisplay();
-	VDP_clearTextArea(0, 10, 40, 10);
+	updateScoreDisplay();	
 }
 
 bool collision(struct Rectangle obj, struct Rectangle obj2)
@@ -178,6 +167,17 @@ void moveShot()
 	SPR_setPosition(ball, shot_Rect.x, shot_Rect.y);
 }
 
+void initBird()
+{
+	for (u8 i = 0; i < BIRD_COUNT; i++)
+	{
+		bird_Rect[i].x = GenRandomNum(250);
+		bird_Rect[i].y = GenRandomNum(200) * -1;
+		bird_Rect[i].width = 32;
+		bird_Rect[i].height = 32;
+	};
+}
+
 /*The callback function that handles Joypad input*/
 void myJoyHandler(u16 joy, u16 changed, u16 state)
 {
@@ -185,11 +185,18 @@ void myJoyHandler(u16 joy, u16 changed, u16 state)
 	{
 		if (state & BUTTON_START)
 		{
+			if (currentGameState == Menu)
+			{
+				currentGameState = Game;
+				ConstructGameState();
+			}
+			
 			if (!game_on)
 			{
 				game_on = true;
 				gameTime = 0;
-				initBird();
+				
+				VDP_clearTextArea(0, 10, 40, 10);
 			}
 		}
 
@@ -197,7 +204,6 @@ void myJoyHandler(u16 joy, u16 changed, u16 state)
 		{
 			if (game_on && shot_Rect.y <= 1)
 			{
-				shot_fired = false;
 				fireShot();
 			}
 		}
@@ -230,28 +236,15 @@ void myJoyHandler(u16 joy, u16 changed, u16 state)
 	}
 }
 
-void initBird()
-{
-	for (u8 i = 0; i < BIRD_COUNT; i++)
-	{
-		bird_Rect[i].x = GenRandomNum(250);
-		bird_Rect[i].y = GenRandomNum(200) * -1;
-		bird_Rect[i].width = 32;
-		bird_Rect[i].height = 32;
-	};
-}
-
 void renderExposion(struct Rectangle pos)
 {
 	isRendered = true;
 	SPR_setPosition(exploEnemy, pos.x, pos.y);
 	score += 10;
-	//SPR_setFrame(exploEnemy,1);
 }
 
 void ExploFrameReset()
 {
-
 	if (isRendered)
 	{
 		frameTicker++;
@@ -264,56 +257,20 @@ void ExploFrameReset()
 	}
 }
 
-int main()
+void DrawBackground()
 {
-	//Initiate enemies initial positions
-	initBird();
-
-	f16 bg_scroll_speed = 0;
-	
-	SYS_disableInts();
-
-	/*Set up the controller*/
-	JOY_init();
-	JOY_setEventHandler(&myJoyHandler);
-
-	/*Load and draw the background*/
-	//VDP_loadBMPTileData(tile.image, 1, 1, 1, 1);
-	VDP_loadTileData((const u32 *)m_tile, 1, 1, 0);
-	//VDP_setPalette(PAL1, tile.palette->data);
-	VDP_setPalette(PAL2, paddle.palette->data);
-	
-	VDP_setPalette(PAL1, tile.palette->data);
-
-
-	//Draw the background
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 0, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 16, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 16, 0, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 16, 16, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 0, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 16, 0, CPU);
+}
 
-	
-	//VDP_fillTileMapRect(PLAN_A, TILE_ATTR_FULL(PAL1, 0, FALSE, FALSE, 1), 0, 0, 40, 32);
-
-	const u16 STAR_COUNT = 15;
-	// for (u16 i = 0; i < STAR_COUNT; i++)
-	// {
-	// 	VDP_setTileMapXY(PLAN_A, 1, GenRandomNum(250), GenRandomNum(250));
-	// }
-	
-	SYS_enableInts();
-
-	/*Draw the texts*/
-	VDP_setTextPlan(PLAN_B); /*Set the text plane to Plane B so texts are drawn above the tiles*/
-	VDP_drawText(label_score, 1, 1);
-	updateScoreDisplay();
-	showText(msg_start);
-	VDP_drawText("PESTER!", 16, 10);
-
-	/*Add the sprites for the player and ball*/
-	SPR_init(0, 0, 0);
+void ConstructGameState()
+{
+	DrawBackground();
+	initBird();
 	hitBox_Rect.x = player_Rect.x + 12;
 	hitBox_Rect.y = player_Rect.y + 16;
 	hitBoxSprite = SPR_addSprite(&hitBox, hitBox_Rect.x, hitBox_Rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
@@ -327,60 +284,88 @@ int main()
 
 	ball = SPR_addSprite(&imgball, shot_Rect.x, shot_Rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
 	player = SPR_addSprite(&paddle, player_Rect.x, player_Rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+}
+
+DestrcutGameState()
+{
+	SPR_reset();
+	currentGameState = Menu;	
+}
+
+void updateBidPosition()
+{
+	for (u8 i = 0; i < BIRD_COUNT; i++)
+	{
+		if (bird_Rect[i].y > 0)
+		{
+			if (bird_Rect[i].x > player_Rect.x)
+				bird_Rect[i].x -= bird_Velocity.x;
+			else
+				bird_Rect[i].x += bird_Velocity.x;
+		}
+		if (collision(bird_Rect[i], shot_Rect))
+		{
+			renderExposion(bird_Rect[i]);
+			bird_Rect[i].x = GenRandomNum(250);
+			bird_Rect[i].y = GenRandomNum(200) * -1;
+			resetShot();
+		}
+		else if (collision(bird_Rect[i], hitBox_Rect))
+		{
+			endGame();
+		}
+		else
+		{
+			bird_Rect[i].y += bird_Velocity.y;
+		}
+		if (bird_Rect[i].y > 250)
+			bird_Rect[i].y = GenRandomNum(100) * -1;
+		SPR_setPosition(birdEnemy[i], bird_Rect[i].x, bird_Rect[i].y);
+	};
+}
+
+void updateEnemyPositions()
+{
+	if (isBirdEnabled)
+		updateBidPosition();
+}
+
+void Game_Script()
+{
+	if (gameTime > 10)
+		isBirdEnabled = true;
+}
+
+int main()
+{
+	SYS_disableInts();
+
+	JOY_init();
+	JOY_setEventHandler(&myJoyHandler);
+
+	VDP_setPalette(PAL2, paddle.palette->data);
+	VDP_setPalette(PAL1, tile.palette->data);
+
+	SYS_enableInts();
+
+	/*Draw the texts*/
+	VDP_setTextPlan(PLAN_B); /*Set the text plane to Plane B so texts are drawn above the tiles*/
+	VDP_drawText(label_score, 1, 1);
+	updateScoreDisplay();
+	showText(msg_start);
+	VDP_drawText("PESTER!", 16, 10);
+
+	/*Add the sprites for the player and ball*/
+	SPR_init(0, 0, 0);
 
 	SPR_update();
 
-	void updateBidPosition()
-	{
-		for (u8 i = 0; i < BIRD_COUNT; i++)
-		{
-
-			if (bird_Rect[i].y > 0)
-			{
-				if (bird_Rect[i].x > player_Rect.x)
-					bird_Rect[i].x -= bird_Velocity.x;
-				else
-					bird_Rect[i].x += bird_Velocity.x;
-			}
-			if (collision(bird_Rect[i], shot_Rect))
-			{
-				renderExposion(bird_Rect[i]);
-				bird_Rect[i].x = GenRandomNum(250);
-				bird_Rect[i].y = GenRandomNum(200) * -1;
-				resetShot();
-			}
-			else if (collision(bird_Rect[i], hitBox_Rect))
-			{
-				endGame();
-			}
-			else
-			{
-				bird_Rect[i].y += bird_Velocity.y;
-			}
-			if (bird_Rect[i].y > 250)
-				bird_Rect[i].y = GenRandomNum(100) * -1;
-			SPR_setPosition(birdEnemy[i], bird_Rect[i].x, bird_Rect[i].y);
-		};
-	}
-
-	void updateEnemyPositions()
-	{
-		if (isBirdEnabled)
-			updateBidPosition();
-	}
-
-	void Game_Script()
-	{
-		if (gameTime > 10)
-			isBirdEnabled = true;
-	}
-
+	
 	/**************
 	 * GAME LOOP! *
 	 **************/
 	while (1)
 	{
-
 		playTime++;
 		if (game_on)
 		{
@@ -393,11 +378,8 @@ int main()
 		if (bg_scroll_speed <= -250)
 			bg_scroll_speed = 0;
 
-		 
 		if (bg_scroll_speed <= -250)
 			bg_scroll_speed = 0;
-
-	
 
 		if (shot_Rect.y > -10)
 		{
@@ -408,7 +390,7 @@ int main()
 			shot_Velocity.y = 0;
 		}
 		VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);
-		
+
 		if (game_on)
 		{
 			ExploFrameReset();
