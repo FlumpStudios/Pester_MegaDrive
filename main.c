@@ -2,27 +2,37 @@
 #include <string.h>
 #include "resources.h"
 
+/* ---------------------------------------- */
+/* 			Constants and defs				*/
+/* ---------------------------------------- */
 #define true TRUE
 #define false FALSE
-#define BIRD_COUNT 3
+#define MAX_BIRD_COUNT 3
 
 #define Intro 0
 #define Menu 1
 #define Game 0
 
-
 const int DEACTIVATED_POSITION = -100;
 
+// Static text
+char label_score[6] = "SCORE";
+char msg_start[22] = "Press START to Begin!";
+char msg_reset[37] = "Game over! Press START to Play Again.";
+/*<--------------------------------------------------->*/
 
-u8 currentGameState = Menu;
 
+
+
+/*<--------------------------------------------------->*/
+/*	 					Structs 					   */
+/*<--------------------------------------------------->*/
 struct Rectangle
 {
-	f16 x, y;
-	f16 height, width;
+	f16 x, y, height, width;
 };
 
-struct Vector
+struct Vector2
 {
 	f16 x, y;
 };
@@ -31,84 +41,95 @@ struct Edges
 {
 	s16 left, right, top, bottom;
 };
+/*<--------------------------------------------------->*/
 
-s32 playTime = 0;
-s32 gameTime = 0;
 
-f16 GenRandomNum(int upper)
+/*<--------------------------------------------------->*/
+/* 					 Declarations 		    		   */
+/*<--------------------------------------------------->*/
+u8 current_game_state = Menu;
+s32 play_time, game_time = 0;
+
+Sprite *player;
+Sprite *playerShot;
+Sprite *bird_enemy[MAX_BIRD_COUNT];
+Sprite *explo_enemy;
+Sprite *hit_box_sprite;
+
+u8 game_time_mod = 1;
+f16 bg_scroll_speed = 0;
+
+u8 frame_ticker;
+bool is_rendered = false;
+
+// Player setup
+struct Rectangle player_rect = {144, 160, 32, 32};
+struct Rectangle hitbox_rect = {144, 160, 2, 2};
+
+struct Vector2 player_velocity = {0, 0};
+int player_speed = 3;
+struct Edges edges = {0, 320, 0, 240};
+
+struct Rectangle shot_rect = {160, -14, 8, 8};
+struct Vector2 shot_velocity = {0, 0};
+u8 shotSpeed = 6;
+
+// Enemy setup
+struct Rectangle bird_Rect[MAX_BIRD_COUNT];
+struct Vector2 bird_velocity = {1, 2};
+bool is_bird_enabled = false;
+bool game_is_playing = false;
+
+// Score variables
+int score = 0;
+char str_score[3] = "0";
+/*<--------------------------------------------------->*/
+
+
+
+/*<--------------------------------------------------->*/
+/* 					Helper functions 			       */
+/*<--------------------------------------------------->*/
+f16 generateRandomNum(int upper)
 {
-	setRandomSeed(playTime);
+	setRandomSeed(play_time);
 	return random() % upper;
 }
 
-/*The sprites we'll need*/
-Sprite *player;
-Sprite *ball;
-Sprite *birdEnemy[BIRD_COUNT];
-Sprite *exploEnemy;
-Sprite *hitBoxSprite;
-
-u8 gameTimeMod = 1;
-f16 bg_scroll_speed = 0;
-
-//EXPLOSION
-u8 frameTicker;
-bool isRendered = false;
-
-//Player setup
-struct Rectangle player_Rect = {144, 160, 32, 32};
-struct Rectangle hitBox_Rect = {144, 160, 2, 2};
-
-struct Vector player_Velocity = {0, 0};
-int playerSpeed = 3;
-struct Edges edges = {0, 320, 0, 240};
-
-struct Rectangle shot_Rect = {160, -14, 8, 8};
-struct Vector shot_Velocity = {0, 0};
-u8 shotSpeed = 6;
-
-//Enemy setup
-struct Rectangle bird_Rect[BIRD_COUNT];
-struct Vector bird_Velocity = {1, 2};
-bool isBirdEnabled = false;
-
-bool game_on = false;
-
-/*Score variables*/
-s32 score = 0;
-char label_score[6] = "SCORE\0";
-char str_score[3] = "0";
-
-/*Messages to be displayed*/
-char msg_start[22] = "Press START to Begin!\0";
-char msg_reset[37] = "Game over! Press START to Play Again.";
-
-/*A small helper function to get the sign of an int*/
-int sign(int x)
+void updatePlayerPosition()
 {
-	return (x > 0) - (x < 0);
-}
+	// Set positions
+	player_rect.x += player_velocity.x;
+	player_rect.y += player_velocity.y;
 
-void positionPlayer()
-{
-	player_Rect.x += player_Velocity.x;
-	player_Rect.y += player_Velocity.y;
+	// Boundary checks
+	if (player_rect.x < edges.left)
+	{
+		player_rect.x = edges.left;
+	}
 
-	if (player_Rect.x < edges.left)
-		player_Rect.x = edges.left;
-	if (player_Rect.x + player_Rect.width > edges.right)
-		player_Rect.x = edges.right - player_Rect.width;
+	if (player_rect.x + player_rect.width > edges.right)
+	{
+		player_rect.x = edges.right - player_rect.width;
+	}
 
-	if (player_Rect.y < edges.top)
-		player_Rect.y = edges.top;
-	if (player_Rect.y + 50 > edges.bottom)
-		player_Rect.y = edges.bottom - 50;
+	if (player_rect.y < edges.top)
+	{
+		player_rect.y = edges.top;
+	}
+	
+	if (player_rect.y + 50 > edges.bottom)
+	{
+		player_rect.y = edges.bottom - 50;
+	}
 
-	hitBox_Rect.x = player_Rect.x + 12;
-	hitBox_Rect.y = player_Rect.y + 16;
+	// Position the hitbox
+	hitbox_rect.x = player_rect.x + 12;
+	hitbox_rect.y = player_rect.y + 16;
 
-	SPR_setPosition(player, player_Rect.x, player_Rect.y);
-	SPR_setPosition(hitBoxSprite, hitBox_Rect.x, hitBox_Rect.y);
+	// Set sprite position in SGDK
+	SPR_setPosition(player, player_rect.x, player_rect.y);
+	SPR_setPosition(hit_box_sprite, hitbox_rect.x, hitbox_rect.y);
 }
 
 void showText(char s[])
@@ -126,30 +147,30 @@ void updateScoreDisplay()
 void endGame()
 {
 	showText(msg_reset);
-	game_on = false;
+	game_is_playing = false;
 }
 
 void resetShot()
 {
-	shot_Rect.y = DEACTIVATED_POSITION;
+	shot_rect.y = DEACTIVATED_POSITION;
 }
 
 void fireShot()
 {
-	shot_Rect.x = player_Rect.x + 12;
-	shot_Rect.y = player_Rect.y;
+	shot_rect.x = player_rect.x + 12;
+	shot_rect.y = player_rect.y;
 
-	/*Clear the text from the screen*/
+	// Clear the text from the screen
 	updateScoreDisplay();	
 }
 
-bool collision(struct Rectangle obj, struct Rectangle obj2)
+bool checkCollision(const struct Rectangle* obj, const struct Rectangle* obj2)
 {
-	//Check x intersects
-	if (obj.x < obj2.x + obj2.width && obj.x + obj.width > obj2.x)
+	// Check x intersects
+	if (obj->x < obj2->x + obj2->width && obj->x + obj->width > obj2->x)
 	{
-		//Check y intersects
-		if (obj.y < obj2.y + obj2.height && obj.y + obj.height >= obj2.y)
+		// Check y intersects
+		if (obj->y < obj2->y + obj2->height && obj->y + obj->height >= obj2->y)
 		{
 			return true;
 		}
@@ -157,52 +178,66 @@ bool collision(struct Rectangle obj, struct Rectangle obj2)
 	return false;
 }
 
-/*Move the ball and handle collisions*/
 void moveShot()
 {
-	shot_Rect.x += shot_Velocity.x;
-	shot_Rect.y += shot_Velocity.y;
+	shot_rect.x += shot_velocity.x;
+	shot_rect.y += shot_velocity.y;
 
-	/*Let the Sprite engine position the ball*/
-	SPR_setPosition(ball, shot_Rect.x, shot_Rect.y);
+	SPR_setPosition(playerShot, shot_rect.x, shot_rect.y);
 }
 
 void initBird()
 {
-	for (u8 i = 0; i < BIRD_COUNT; i++)
+	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		bird_Rect[i].x = GenRandomNum(250);
-		bird_Rect[i].y = GenRandomNum(200) * -1;
+		bird_Rect[i].x = generateRandomNum(250);
+		bird_Rect[i].y = generateRandomNum(200) * -1;
 		bird_Rect[i].width = 32;
 		bird_Rect[i].height = 32;
 	};
 }
 
-/*The callback function that handles Joypad input*/
-void myJoyHandler(u16 joy, u16 changed, u16 state)
+void resetPlayerPosition()
+{
+	player_rect.x = 144;
+	player_rect.y = 160;
+
+	hitbox_rect.x = 144;
+	hitbox_rect.x = 160;
+}
+
+void restartGame()
+{
+	game_is_playing = true;
+	initBird();
+	resetPlayerPosition();
+	
+	game_time = 0;
+	VDP_clearTextArea(0, 10, 40, 10);
+}
+
+// The callback function that handles Joypad input
+void handleInput(u16 joy, u16 changed, u16 state)
 {
 	if (joy == JOY_1)
 	{
 		if (state & BUTTON_START)
 		{
-			if (currentGameState == Menu)
+			if (current_game_state == Menu)
 			{
-				currentGameState = Game;
-				ConstructGameState();
+				current_game_state = Game;
+				createGameState();				
 			}
 			
-			if (!game_on)
+			if (!game_is_playing)
 			{
-				game_on = true;
-				gameTime = 0;
-				
-				VDP_clearTextArea(0, 10, 40, 10);
+				restartGame();
 			}
 		}
 
 		if (state & BUTTON_B)
 		{
-			if (game_on && shot_Rect.y <= 1)
+			if (game_is_playing && shot_rect.y <= 1)
 			{
 				fireShot();
 			}
@@ -210,54 +245,59 @@ void myJoyHandler(u16 joy, u16 changed, u16 state)
 
 		if (state & BUTTON_RIGHT)
 		{
-			player_Velocity.x = playerSpeed;
+			player_velocity.x = player_speed;
 			SPR_setAnim(player, 2);
 		}
-
 		else if (state & BUTTON_LEFT)
 		{
-			player_Velocity.x = -playerSpeed;
+			player_velocity.x = -player_speed;
 			SPR_setAnim(player, 1);
 		}
 		else if ((changed & BUTTON_RIGHT) | (changed & BUTTON_LEFT))
 		{
-			player_Velocity.x = 0;
+			player_velocity.x = 0;
 			SPR_setAnim(player, 0);
 		}
 
 		if (state & BUTTON_UP)
-			player_Velocity.y = -playerSpeed;
+		{
+			player_velocity.y = -player_speed;
+		}
 
 		else if (state & BUTTON_DOWN)
-			player_Velocity.y = playerSpeed;
+		{
+			player_velocity.y = player_speed;
+		}
 
 		else if ((changed & BUTTON_UP) | (changed & BUTTON_DOWN))
-			player_Velocity.y = 0;
+		{
+			player_velocity.y = 0;
+		}
 	}
 }
 
 void renderExposion(struct Rectangle pos)
 {
-	isRendered = true;
-	SPR_setPosition(exploEnemy, pos.x, pos.y);
+	is_rendered = true;
+	SPR_setPosition(explo_enemy, pos.x, pos.y);
 	score += 10;
 }
 
-void ExploFrameReset()
+void exploFrameReset()
 {
-	if (isRendered)
+	if (is_rendered)
 	{
-		frameTicker++;
-		if (frameTicker > 6)
+		frame_ticker++;
+		if (frame_ticker > 6)
 		{
-			SPR_setPosition(exploEnemy, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
-			frameTicker = 0;
-			isRendered = false;
+			SPR_setPosition(explo_enemy, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
+			frame_ticker = 0;
+			is_rendered = false;
 		}
 	}
 }
 
-void DrawBackground()
+void renderBackground()
 {
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 0, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 16, 0, CPU);
@@ -267,110 +307,124 @@ void DrawBackground()
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 16, 0, CPU);
 }
 
-void ConstructGameState()
+void createGameState()
 {
-	DrawBackground();
+	renderBackground();
 	initBird();
-	hitBox_Rect.x = player_Rect.x + 12;
-	hitBox_Rect.y = player_Rect.y + 16;
-	hitBoxSprite = SPR_addSprite(&hitBox, hitBox_Rect.x, hitBox_Rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+	hitbox_rect.x = player_rect.x + 12;
+	hitbox_rect.y = player_rect.y + 16;
+	hit_box_sprite = SPR_addSprite(&hitBox, hitbox_rect.x, hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
-	for (u8 i = 0; i < BIRD_COUNT; i++)
+	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		birdEnemy[i] = SPR_addSprite(&bird, bird_Rect[i].x, bird_Rect[i].y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+		bird_enemy[i] = SPR_addSprite(&bird, bird_Rect[i].x, bird_Rect[i].y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 	}
 
-	exploEnemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+	explo_enemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
-	ball = SPR_addSprite(&imgball, shot_Rect.x, shot_Rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
-	player = SPR_addSprite(&paddle, player_Rect.x, player_Rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+	playerShot = SPR_addSprite(&imgball, shot_rect.x, shot_rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+	player = SPR_addSprite(&paddle, player_rect.x, player_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 }
 
-DestrcutGameState()
+void resetGameState()
 {
 	SPR_reset();
-	currentGameState = Menu;	
+	current_game_state = Menu;	
 }
 
-void updateBidPosition()
+void updateBirdPosition()
 {
-	for (u8 i = 0; i < BIRD_COUNT; i++)
+	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
 		if (bird_Rect[i].y > 0)
 		{
-			if (bird_Rect[i].x > player_Rect.x)
-				bird_Rect[i].x -= bird_Velocity.x;
+			if (bird_Rect[i].x > player_rect.x)
+			{
+				bird_Rect[i].x -= bird_velocity.x;
+			}
 			else
-				bird_Rect[i].x += bird_Velocity.x;
-		}
-		if (collision(bird_Rect[i], shot_Rect))
+			{
+				bird_Rect[i].x += bird_velocity.x;
+			}
+		}	
+		if (checkCollision(&bird_Rect[i], &shot_rect))
 		{
 			renderExposion(bird_Rect[i]);
-			bird_Rect[i].x = GenRandomNum(250);
-			bird_Rect[i].y = GenRandomNum(200) * -1;
+			bird_Rect[i].x = generateRandomNum(250);
+			bird_Rect[i].y = generateRandomNum(200) * -1;
 			resetShot();
 		}
-		else if (collision(bird_Rect[i], hitBox_Rect))
+		else if (checkCollision(&bird_Rect[i], &hitbox_rect))
 		{
 			endGame();
 		}
 		else
 		{
-			bird_Rect[i].y += bird_Velocity.y;
+			bird_Rect[i].y += bird_velocity.y;
 		}
 		if (bird_Rect[i].y > 250)
-			bird_Rect[i].y = GenRandomNum(100) * -1;
-		SPR_setPosition(birdEnemy[i], bird_Rect[i].x, bird_Rect[i].y);
+		{
+			bird_Rect[i].y = generateRandomNum(100) * -1;
+		}
+
+		SPR_setPosition(bird_enemy[i], bird_Rect[i].x, bird_Rect[i].y);
 	};
 }
 
 void updateEnemyPositions()
 {
-	if (isBirdEnabled)
-		updateBidPosition();
+	if (is_bird_enabled)
+	{
+		updateBirdPosition();
+	}
 }
 
-void Game_Script()
+void game_Script()
 {
-	if (gameTime > 10)
-		isBirdEnabled = true;
+	if (game_time > 10)
+	{
+		is_bird_enabled = true;
+	}
 }
+/*<--------------------------------------------------->*/
 
+
+/* ---------------------------------------- */
+/* 				Program entry 			    */
+/* ---------------------------------------- */
 int main()
 {
+	/* ----------------------------------------*/
+	/* 				Initiate game 			   */
+	/* ----------------------------------------*/
 	SYS_disableInts();
-
 	JOY_init();
-	JOY_setEventHandler(&myJoyHandler);
-
+	JOY_setEventHandler(&handleInput);
 	VDP_setPalette(PAL2, paddle.palette->data);
-	VDP_setPalette(PAL1, tile.palette->data);
+	VDP_setPalette(PAL1, tile.palette->data);	SYS_enableInts();
+	
+	// Set the text plane to Plane B so texts are drawn above the tiles
+	VDP_setTextPlan(PLAN_B);
 
-	SYS_enableInts();
-
-	/*Draw the texts*/
-	VDP_setTextPlan(PLAN_B); /*Set the text plane to Plane B so texts are drawn above the tiles*/
 	VDP_drawText(label_score, 1, 1);
 	updateScoreDisplay();
 	showText(msg_start);
 	VDP_drawText("PESTER!", 16, 10);
-
-	/*Add the sprites for the player and ball*/
 	SPR_init(0, 0, 0);
-
 	SPR_update();
-
+	/*<--------------------------------------------------->*/
 	
-	/**************
-	 * GAME LOOP! *
-	 **************/
+
+	/* ----------------------------------------*/
+	/* 				GAME LOOP!!! 			   */
+	/* ----------------------------------------*/
 	while (1)
 	{
-		playTime++;
-		if (game_on)
+		play_time++;
+		if (game_is_playing)
 		{
-			gameTime += gameTimeMod;
-			Game_Script();
+			game_time += game_time_mod;
+			game_Script();
 		}
 
 		bg_scroll_speed -= 2;
@@ -381,21 +435,21 @@ int main()
 		if (bg_scroll_speed <= -250)
 			bg_scroll_speed = 0;
 
-		if (shot_Rect.y > -10)
+		if (shot_rect.y > -10)
 		{
-			shot_Velocity.y = -shotSpeed;
+			shot_velocity.y = -shotSpeed;
 		}
 		else
 		{
-			shot_Velocity.y = 0;
+			shot_velocity.y = 0;
 		}
 		VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);
 
-		if (game_on)
+		if (game_is_playing)
 		{
-			ExploFrameReset();
+			exploFrameReset();
 			moveShot();
-			positionPlayer();
+			updatePlayerPosition();
 			updateEnemyPositions();
 		}
 
@@ -405,3 +459,5 @@ int main()
 	}
 	return (0);
 }
+/*<--------------------------------------------------->*/
+
