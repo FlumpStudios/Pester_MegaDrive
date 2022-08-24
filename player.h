@@ -20,8 +20,24 @@ typedef struct
     u8 shotSpeed;
 } Player_t;
 
-
-Player_t* GetInitialisedPlayer();
-void ResetPlayer();
-void DestructPlayer();
+void initialisedPlayer();
+Player_t *getPlayer();
+void updatePlayerPosition();
+void resetPlayer();
+void destructPlayer();
+void resetShot();
+void moveShot();
+void fireShot();
+bool isShotOutOfBounds();
+void moveLeft();
+void moveRight();
+void moveUp();
+void moveDown();
+void haltX();
+void haltY();
+void enableShotMovement();
+void disableShotMovement();
+struct Rectangle getPlayerRect();
+struct Rectangle getShotRect();
+struct Rectangle getHitboxRect();
 #endif

@@ -10,6 +10,9 @@
 #define MENU 1
 #define GAME 2
 
+#define DEACTIVATED_POSITION -100
+
+
 struct Rectangle
 {
 	s16 x, y, height, width;
