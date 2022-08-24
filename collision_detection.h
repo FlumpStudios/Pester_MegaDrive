@@ -2,5 +2,5 @@
 #define COLLISION_DETECTION_H
 #include "common.h"
 
-bool checkRectangleCollision(const struct Rectangle* obj, const struct Rectangle* obj2); 
+bool checkRectangleCollision(struct Rectangle obj, struct Rectangle obj2); 
 #endif

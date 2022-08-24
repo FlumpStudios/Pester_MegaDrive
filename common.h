@@ -1,11 +1,14 @@
 #ifndef COMMON_H
 #define COMMON_H
+
 #include <genesis.h>
-#include "resources.h"
-#include <string.h>
 
 #define true TRUE
 #define false FALSE
+
+#define INTRO 0
+#define MENU 1
+#define GAME 2
 
 struct Rectangle
 {
@@ -23,5 +26,4 @@ struct Edges
 };
 
 u16 generateRandomNum(int upper, s32 seed);
-
 #endif

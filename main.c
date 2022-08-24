@@ -1,14 +1,15 @@
-#include "common.h"
 #include "collision_detection.h"
+#include "player.h"
+#include "common.h"
+#include <genesis.h>
+#include "resources.h"
+#include <string.h>
 
 /* ---------------------------------------- */
 /* 			Constants and defs				*/
 /* ---------------------------------------- */
 #define MAX_BIRD_COUNT 3
 
-#define INTRO 0
-#define MENU 1
-#define GAME 2
 
 const int DEACTIVATED_POSITION = -100;
 
@@ -22,14 +23,13 @@ char msg_reset[37] = "Game over! Press START to Play Again.";
 /*<--------------------------------------------------->*/
 /* 					 Declarations 		    		   */
 /*<--------------------------------------------------->*/
+Player_t* playerOne = NULL;
+
 u8 current_game_state = MENU;
 s32 play_time, game_time = 0;
 
-Sprite *player;
-Sprite *playerShot;
 Sprite *bird_enemy[MAX_BIRD_COUNT];
 Sprite *explo_enemy;
-Sprite *hit_box_sprite;
 
 u8 game_time_mod = 1;
 f16 bg_scroll_speed = 0;
@@ -37,17 +37,7 @@ f16 bg_scroll_speed = 0;
 u8 frame_ticker;
 bool is_rendered = false;
 
-// Player setup
-struct Rectangle player_rect = {144, 160, 32, 32};
-struct Rectangle hitbox_rect = {144, 160, 2, 2};
-
-struct Vector2 player_velocity = {0, 0};
-int player_speed = 3;
 struct Edges edges = {0, 320, 0, 240};
-
-struct Rectangle shot_rect = {160, -14, 8, 8};
-struct Vector2 shot_velocity = {0, 0};
-u8 shotSpeed = 6;
 
 // Enemy setup
 struct Rectangle bird_Rect[MAX_BIRD_COUNT];
@@ -68,37 +58,37 @@ char str_score[3] = "0";
 void updatePlayerPosition()
 {
 	// Set positions
-	player_rect.x += player_velocity.x;
-	player_rect.y += player_velocity.y;
+	playerOne->player_rect.x += playerOne->velocity.x;
+	playerOne->player_rect.y += playerOne->velocity.y;
 
 	// Boundary checks
-	if (player_rect.x < edges.left)
+	if (playerOne->player_rect.x < edges.left)
 	{
-		player_rect.x = edges.left;
+		playerOne->player_rect.x = edges.left;
 	}
 
-	if (player_rect.x + player_rect.width > edges.right)
+	if (playerOne->player_rect.x + playerOne->player_rect.width > edges.right)
 	{
-		player_rect.x = edges.right - player_rect.width;
+		playerOne->player_rect.x = edges.right - playerOne->player_rect.width;
 	}
 
-	if (player_rect.y < edges.top)
+	if (playerOne->player_rect.y < edges.top)
 	{
-		player_rect.y = edges.top;
+		playerOne->player_rect.y = edges.top;
 	}
 	
-	if (player_rect.y + 50 > edges.bottom)
+	if (playerOne->player_rect.y + 50 > edges.bottom)
 	{
-		player_rect.y = edges.bottom - 50;
+		playerOne->player_rect.y = edges.bottom - 50;
 	}
 
 	// Position the hitbox
-	hitbox_rect.x = player_rect.x + 12;
-	hitbox_rect.y = player_rect.y + 16;
+	playerOne->hitbox_rect.x = playerOne->player_rect.x + 12;
+	playerOne->hitbox_rect.y = playerOne->player_rect.y + 16;
 
 	// Set sprite position in SGDK
-	SPR_setPosition(player, player_rect.x, player_rect.y);
-	SPR_setPosition(hit_box_sprite, hitbox_rect.x, hitbox_rect.y);
+	SPR_setPosition(playerOne->player_spr, playerOne->player_rect.x, playerOne->player_rect.y);
+	SPR_setPosition(playerOne->hit_box_spr, playerOne->hitbox_rect.x, playerOne->hitbox_rect.y);
 }
 
 void showText(char s[])
@@ -121,13 +111,13 @@ void endGame()
 
 void resetShot()
 {
-	shot_rect.y = DEACTIVATED_POSITION;
+	playerOne->shot_rect.y = DEACTIVATED_POSITION;
 }
 
 void fireShot()
 {
-	shot_rect.x = player_rect.x + 12;
-	shot_rect.y = player_rect.y;
+	playerOne->shot_rect.x = playerOne->player_rect.x + 12;
+	playerOne->shot_rect.y = playerOne->player_rect.y;
 
 	// Clear the text from the screen
 	updateScoreDisplay();	
@@ -135,10 +125,10 @@ void fireShot()
 
 void moveShot()
 {
-	shot_rect.x += shot_velocity.x;
-	shot_rect.y += shot_velocity.y;
+	playerOne->shot_rect.x += playerOne->shot_velocity.x;
+	playerOne->shot_rect.y += playerOne->shot_velocity.y;
 
-	SPR_setPosition(playerShot, shot_rect.x, shot_rect.y);
+	SPR_setPosition(playerOne->shot_spr, playerOne->shot_rect.x, playerOne->shot_rect.y);
 }
 
 void initBird()
@@ -152,20 +142,12 @@ void initBird()
 	};
 }
 
-void resetPlayerPosition()
-{
-	player_rect.x = 144;
-	player_rect.y = 160;
-
-	hitbox_rect.x = 144;
-	hitbox_rect.x = 160;
-}
-
 void restartGame()
 {
 	game_is_playing = true;
+
+	ResetPlayer();	
 	initBird();
-	resetPlayerPosition();
 	
 	game_time = 0;
 	VDP_clearTextArea(0, 10, 40, 10);
@@ -192,7 +174,7 @@ void handleInput(u16 joy, u16 changed, u16 state)
 
 		if (state & BUTTON_B)
 		{
-			if (game_is_playing && shot_rect.y <= 1)
+			if (game_is_playing && playerOne->shot_rect.y <= 1)
 			{
 				fireShot();
 			}
@@ -200,33 +182,33 @@ void handleInput(u16 joy, u16 changed, u16 state)
 
 		if (state & BUTTON_RIGHT)
 		{
-			player_velocity.x = player_speed;
-			SPR_setAnim(player, 2);
+			playerOne->velocity.x = playerOne->speed;
+			SPR_setAnim(playerOne->player_spr, 2);
 		}
 		else if (state & BUTTON_LEFT)
 		{
-			player_velocity.x = -player_speed;
-			SPR_setAnim(player, 1);
+			playerOne->velocity.x = -playerOne->speed;
+			SPR_setAnim(playerOne->player_spr, 1);
 		}
 		else if ((changed & BUTTON_RIGHT) | (changed & BUTTON_LEFT))
 		{
-			player_velocity.x = 0;
-			SPR_setAnim(player, 0);
+			playerOne->velocity.x = 0;
+			SPR_setAnim(playerOne->player_spr, 0);
 		}
 
 		if (state & BUTTON_UP)
 		{
-			player_velocity.y = -player_speed;
+			playerOne->velocity.y = -playerOne->speed;
 		}
 
 		else if (state & BUTTON_DOWN)
 		{
-			player_velocity.y = player_speed;
+			playerOne->velocity.y = playerOne->speed;
 		}
 
 		else if ((changed & BUTTON_UP) | (changed & BUTTON_DOWN))
 		{
-			player_velocity.y = 0;
+			playerOne->velocity.y = 0;
 		}
 	}
 }
@@ -264,21 +246,19 @@ void renderBackground()
 
 void createGameState()
 {
-	renderBackground();
-	initBird();
-	hitbox_rect.x = player_rect.x + 12;
-	hitbox_rect.y = player_rect.y + 16;
-	hit_box_sprite = SPR_addSprite(&hitBox, hitbox_rect.x, hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+	renderBackground();	
+	initBird();	
+	playerOne = GetInitialisedPlayer();
+
+	playerOne->hitbox_rect.x = playerOne->player_rect.x + 12;
+	playerOne->hitbox_rect.y = playerOne->player_rect.y + 16;
 
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
 		bird_enemy[i] = SPR_addSprite(&bird, bird_Rect[i].x, bird_Rect[i].y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 	}
 
-	explo_enemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-	playerShot = SPR_addSprite(&imgball, shot_rect.x, shot_rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
-	player = SPR_addSprite(&paddle, player_rect.x, player_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+	explo_enemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));	
 }
 
 void resetGameState()
@@ -293,7 +273,7 @@ void updateBirdPosition()
 	{
 		if (bird_Rect[i].y > 0)
 		{
-			if (bird_Rect[i].x > player_rect.x)
+			if (bird_Rect[i].x > playerOne->player_rect.x)
 			{
 				bird_Rect[i].x -= bird_velocity.x;
 			}
@@ -302,14 +282,14 @@ void updateBirdPosition()
 				bird_Rect[i].x += bird_velocity.x;
 			}
 		}	
-		if (checkRectangleCollision(&bird_Rect[i], &shot_rect))
+		if (checkRectangleCollision(bird_Rect[i], playerOne->shot_rect))
 		{
 			renderExposion(bird_Rect[i]);
 			bird_Rect[i].x = generateRandomNum(250, game_time);
 			bird_Rect[i].y = generateRandomNum(200, game_time) * -1;
 			resetShot();
 		}
-		else if (checkRectangleCollision(&bird_Rect[i], &hitbox_rect))
+		else if (checkRectangleCollision(bird_Rect[i], playerOne->hitbox_rect))
 		{
 			endGame();
 		}
@@ -367,6 +347,9 @@ int main()
 	VDP_drawText("PESTER!", 16, 10);
 	SPR_init(0, 0, 0);
 	SPR_update();
+	
+	
+		
 	/*<--------------------------------------------------->*/
 	
 
@@ -390,14 +373,16 @@ int main()
 		if (bg_scroll_speed <= -250)
 			bg_scroll_speed = 0;
 
-		if (shot_rect.y > -10)
+		if (playerOne->shot_rect.y > -10)
 		{
-			shot_velocity.y = -shotSpeed;
+			playerOne->shot_velocity.y = -playerOne->shotSpeed;
 		}
 		else
 		{
-			shot_velocity.y = 0;
+			playerOne->shot_velocity.y = 0;
 		}
+
+		
 		VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);
 
 		if (game_is_playing)
