@@ -1,17 +1,14 @@
-#include <genesis.h>
-#include <string.h>
-#include "resources.h"
+#include "common.h"
+#include "collision_detection.h"
 
 /* ---------------------------------------- */
 /* 			Constants and defs				*/
 /* ---------------------------------------- */
-#define true TRUE
-#define false FALSE
 #define MAX_BIRD_COUNT 3
 
-#define Intro 0
-#define Menu 1
-#define Game 0
+#define INTRO 0
+#define MENU 1
+#define GAME 2
 
 const int DEACTIVATED_POSITION = -100;
 
@@ -22,32 +19,10 @@ char msg_reset[37] = "Game over! Press START to Play Again.";
 /*<--------------------------------------------------->*/
 
 
-
-
-/*<--------------------------------------------------->*/
-/*	 					Structs 					   */
-/*<--------------------------------------------------->*/
-struct Rectangle
-{
-	f16 x, y, height, width;
-};
-
-struct Vector2
-{
-	f16 x, y;
-};
-
-struct Edges
-{
-	s16 left, right, top, bottom;
-};
-/*<--------------------------------------------------->*/
-
-
 /*<--------------------------------------------------->*/
 /* 					 Declarations 		    		   */
 /*<--------------------------------------------------->*/
-u8 current_game_state = Menu;
+u8 current_game_state = MENU;
 s32 play_time, game_time = 0;
 
 Sprite *player;
@@ -90,12 +65,6 @@ char str_score[3] = "0";
 /*<--------------------------------------------------->*/
 /* 					Helper functions 			       */
 /*<--------------------------------------------------->*/
-f16 generateRandomNum(int upper)
-{
-	setRandomSeed(play_time);
-	return random() % upper;
-}
-
 void updatePlayerPosition()
 {
 	// Set positions
@@ -164,20 +133,6 @@ void fireShot()
 	updateScoreDisplay();	
 }
 
-bool checkCollision(const struct Rectangle* obj, const struct Rectangle* obj2)
-{
-	// Check x intersects
-	if (obj->x < obj2->x + obj2->width && obj->x + obj->width > obj2->x)
-	{
-		// Check y intersects
-		if (obj->y < obj2->y + obj2->height && obj->y + obj->height >= obj2->y)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 void moveShot()
 {
 	shot_rect.x += shot_velocity.x;
@@ -190,8 +145,8 @@ void initBird()
 {
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		bird_Rect[i].x = generateRandomNum(250);
-		bird_Rect[i].y = generateRandomNum(200) * -1;
+		bird_Rect[i].x = generateRandomNum(250, play_time);
+		bird_Rect[i].y = generateRandomNum(200, play_time) * -1;
 		bird_Rect[i].width = 32;
 		bird_Rect[i].height = 32;
 	};
@@ -223,9 +178,9 @@ void handleInput(u16 joy, u16 changed, u16 state)
 	{
 		if (state & BUTTON_START)
 		{
-			if (current_game_state == Menu)
+			if (current_game_state == MENU)
 			{
-				current_game_state = Game;
+				current_game_state = GAME;
 				createGameState();				
 			}
 			
@@ -329,7 +284,7 @@ void createGameState()
 void resetGameState()
 {
 	SPR_reset();
-	current_game_state = Menu;	
+	current_game_state = MENU;	
 }
 
 void updateBirdPosition()
@@ -347,14 +302,14 @@ void updateBirdPosition()
 				bird_Rect[i].x += bird_velocity.x;
 			}
 		}	
-		if (checkCollision(&bird_Rect[i], &shot_rect))
+		if (checkRectangleCollision(&bird_Rect[i], &shot_rect))
 		{
 			renderExposion(bird_Rect[i]);
-			bird_Rect[i].x = generateRandomNum(250);
-			bird_Rect[i].y = generateRandomNum(200) * -1;
+			bird_Rect[i].x = generateRandomNum(250, game_time);
+			bird_Rect[i].y = generateRandomNum(200, game_time) * -1;
 			resetShot();
 		}
-		else if (checkCollision(&bird_Rect[i], &hitbox_rect))
+		else if (checkRectangleCollision(&bird_Rect[i], &hitbox_rect))
 		{
 			endGame();
 		}
@@ -364,7 +319,7 @@ void updateBirdPosition()
 		}
 		if (bird_Rect[i].y > 250)
 		{
-			bird_Rect[i].y = generateRandomNum(100) * -1;
+			bird_Rect[i].y = generateRandomNum(100, game_time) * -1;
 		}
 
 		SPR_setPosition(bird_enemy[i], bird_Rect[i].x, bird_Rect[i].y);

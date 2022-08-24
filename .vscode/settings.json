@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "types.h": "c",
-        "sprite_eng.h": "c"
+        "sprite_eng.h": "c",
+        "collision_detection.h": "c",
+        "genesis.h": "c"
     }
 }
