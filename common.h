@@ -12,21 +12,20 @@
 
 #define DEACTIVATED_POSITION -100
 
-
-struct Rectangle
+typedef struct 
 {
 	s16 x, y, height, width;
-};
+} Rectangle_t;
 
-struct Vector2
+typedef struct Vector2_t
 {
 	f16 x, y;
-};
+} Vector2_t;
 
-struct Edges
+typedef struct 
 {
 	s16 left, right, top, bottom;
-};
+} Edges_t;
 
 u16 generateRandomNum(int upper, s32 seed);
 #endif

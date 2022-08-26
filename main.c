@@ -4,6 +4,7 @@
 #include <genesis.h>
 #include "resources.h"
 #include <string.h>
+#include "gamestate.h"
 
 /* ---------------------------------------- */
 /* 			Constants and defs				*/
@@ -19,29 +20,21 @@ char msg_reset[37] = "Game over! Press START to Play Again.";
 /*<--------------------------------------------------->*/
 /* 					 Declarations 		    		   */
 /*<--------------------------------------------------->*/
-Player_t *playerOne = NULL;
+f16 bg_scroll_speed = 0;
 
-u8 current_game_state = MENU;
-s32 play_time, game_time = 0;
+u8 exposion_frame_ticker;
+bool is_explosion_rendered = false;
 
+// Score variables
+char str_score[3] = "0";
+
+// Enemy setup
 Sprite *bird_enemy[MAX_BIRD_COUNT];
 Sprite *explo_enemy;
 
-u8 game_time_mod = 1;
-f16 bg_scroll_speed = 0;
-
-u8 frame_ticker;
-bool is_rendered = false;
-
-// Enemy setup
-struct Rectangle bird_Rect[MAX_BIRD_COUNT];
-struct Vector2 bird_velocity = {1, 2};
+Rectangle_t bird_Rect[MAX_BIRD_COUNT];
+Vector2_t bird_velocity = {1, 2};
 bool is_bird_enabled = false;
-bool game_is_playing = false;
-
-// Score variables
-int score = 0;
-char str_score[3] = "0";
 /*<--------------------------------------------------->*/
 
 /*<--------------------------------------------------->*/
@@ -52,38 +45,38 @@ void showText(char s[])
 	VDP_drawText(s, 20 - strlen(s) / 2, 15);
 }
 
-void updateScoreDisplay()
+void updateScoreDisplay(void)
 {
-	sprintf(str_score, "%d", score);
+	sprintf(str_score, "%d", getScore());
 	VDP_clearText(1, 2, 3);
 	VDP_drawText(str_score, 1, 2);
 }
 
-void endGame()
+void endGame(void)
 {
 	showText(msg_reset);
-	game_is_playing = false;
+	setGamePlaying(false);
 }
 
-void initBird()
+void initBird(void)
 {
+	u32 play_time = getPlayTime();
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		bird_Rect[i].x = generateRandomNum(250, play_time);
-		bird_Rect[i].y = generateRandomNum(200, play_time) * -1;
+		bird_Rect[i].x = generateRandomNum(250, play_time + i);
+		bird_Rect[i].y = generateRandomNum(200, play_time + i) * -1;
 		bird_Rect[i].width = 32;
 		bird_Rect[i].height = 32;
 	};
 }
 
-void restartGame()
+void restartGame(void)
 {
-	game_is_playing = true;
-
+	setGamePlaying(true);
 	resetPlayer();
+	
 	initBird();
-
-	game_time = 0;
+	resetGameTime();
 	VDP_clearTextArea(0, 10, 40, 10);
 }
 
@@ -94,13 +87,13 @@ void handleInput(u16 joy, u16 changed, u16 state)
 	{
 		if (state & BUTTON_START)
 		{
-			if (current_game_state == MENU)
+			if (getGameState() == MENU)
 			{
-				current_game_state = GAME;
+				setGameState(GAME);
 				createGameState();
 			}
 
-			if (!game_is_playing)
+			if (!isGamePlaying())
 			{
 				restartGame();
 			}
@@ -108,7 +101,7 @@ void handleInput(u16 joy, u16 changed, u16 state)
 
 		if (state & BUTTON_B)
 		{
-			if (game_is_playing && isShotOutOfBounds())
+			if (isGamePlaying() && isShotOutOfBounds())
 			{
 				fireShot();
 			}
@@ -144,29 +137,29 @@ void handleInput(u16 joy, u16 changed, u16 state)
 	}
 }
 
-void renderExposion(struct Rectangle pos)
+void renderExposion(Rectangle_t pos)
 {
-	is_rendered = true;
+	is_explosion_rendered = true;
 	SPR_setPosition(explo_enemy, pos.x, pos.y);
-	score += 10;
+	increaseScore(10);
 	updateScoreDisplay();
 }
 
-void exploFrameReset()
+void exploFrameReset(void)
 {
-	if (is_rendered)
+	if (is_explosion_rendered)
 	{
-		frame_ticker++;
-		if (frame_ticker > 6)
+		exposion_frame_ticker++;
+		if (exposion_frame_ticker > 6)
 		{
 			SPR_setPosition(explo_enemy, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
-			frame_ticker = 0;
-			is_rendered = false;
+			exposion_frame_ticker = 0;
+			is_explosion_rendered = false;
 		}
 	}
 }
 
-void renderBackground()
+void renderBackground(void)
 {
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 0, 0, CPU);
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 16, 0, CPU);
@@ -176,7 +169,7 @@ void renderBackground()
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 16, 0, CPU);
 }
 
-void createGameState()
+void createGameState(void)
 {
 	renderBackground();
 	initBird();
@@ -190,14 +183,15 @@ void createGameState()
 	explo_enemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 }
 
-void resetGameState()
+void resetSprites(void)
 {
 	SPR_reset();
-	current_game_state = MENU;
 }
 
-void updateBirdPosition()
+void updateBirdPosition(void)
 {
+	u32 game_time = getGameTime();
+		
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
 		if (bird_Rect[i].y > 0)
@@ -214,8 +208,8 @@ void updateBirdPosition()
 		if (checkRectangleCollision(bird_Rect[i], getShotRect()))
 		{
 			renderExposion(bird_Rect[i]);
-			bird_Rect[i].x = generateRandomNum(250, game_time);
-			bird_Rect[i].y = generateRandomNum(200, game_time) * -1;
+			bird_Rect[i].x = generateRandomNum(250, game_time + 1);
+			bird_Rect[i].y = generateRandomNum(200, game_time + 1) * -1;
 			resetShot();
 		}
 		else if (checkRectangleCollision(bird_Rect[i], getHitboxRect()))
@@ -228,14 +222,14 @@ void updateBirdPosition()
 		}
 		if (bird_Rect[i].y > 250)
 		{
-			bird_Rect[i].y = generateRandomNum(100, game_time) * -1;
+			bird_Rect[i].y = generateRandomNum(100, game_time + i) * -1;
 		}
 
 		SPR_setPosition(bird_enemy[i], bird_Rect[i].x, bird_Rect[i].y);
 	};
 }
 
-void updateEnemyPositions()
+void updateEnemyPositions(void)
 {
 	if (is_bird_enabled)
 	{
@@ -243,8 +237,9 @@ void updateEnemyPositions()
 	}
 }
 
-void game_Script()
+void gameScript(void)
 {
+	u32 game_time = getGameTime();
 	if (game_time > 10)
 	{
 		is_bird_enabled = true;
@@ -275,8 +270,7 @@ int main()
 	showText(msg_start);
 	VDP_drawText("PESTER!", 16, 10);
 	SPR_init(0, 0, 0);
-	SPR_update();
-
+	initiateGameState();
 	/*<--------------------------------------------------->*/
 
 	/* ----------------------------------------*/
@@ -284,13 +278,13 @@ int main()
 	/* ----------------------------------------*/
 	while (1)
 	{
-		play_time++;
-		if (game_is_playing)
+		tickPlayTime();
+		if (isGamePlaying())
 		{
-			game_time += game_time_mod;
-			game_Script();
+			tickGameTime();
+			gameScript();
 		}
-
+ 
 		bg_scroll_speed -= 2;
 
 		if (bg_scroll_speed <= -250)
@@ -310,7 +304,7 @@ int main()
 
 		VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);
 
-		if (game_is_playing)
+		if (isGamePlaying())
 		{
 			exploFrameReset();
 			moveShot();

@@ -6,38 +6,23 @@
 #include <memory.h>
 #include "resources.h"
 
-typedef struct
-{
-    Sprite *player_spr;
-    Sprite *shot_spr;
-    Sprite *hit_box_spr;
-    struct Rectangle player_rect;
-    struct Rectangle hitbox_rect;
-    struct Vector2 velocity;
-    struct Rectangle shot_rect;
-    struct Vector2 shot_velocity;
-    u8 speed;
-    u8 shotSpeed;
-} Player_t;
-
-void initialisedPlayer();
-Player_t *getPlayer();
-void updatePlayerPosition();
-void resetPlayer();
-void destructPlayer();
-void resetShot();
-void moveShot();
-void fireShot();
-bool isShotOutOfBounds();
-void moveLeft();
-void moveRight();
-void moveUp();
-void moveDown();
-void haltX();
-void haltY();
-void enableShotMovement();
-void disableShotMovement();
-struct Rectangle getPlayerRect();
-struct Rectangle getShotRect();
-struct Rectangle getHitboxRect();
+void initialisedPlayer(void);
+void updatePlayerPosition(void);
+void resetPlayer(void);
+void destructPlayer(void);
+void resetShot(void);
+void moveShot(void);
+void fireShot(void);
+void moveLeft(void);
+void moveRight(void);
+void moveUp(void);
+void moveDown(void);
+void haltX(void);
+void haltY(void);
+void enableShotMovement(void);
+void disableShotMovement(void);
+bool isShotOutOfBounds(void);
+Rectangle_t getPlayerRect(void);
+Rectangle_t getShotRect(void);
+Rectangle_t getHitboxRect(void);
 #endif
