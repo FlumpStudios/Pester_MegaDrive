@@ -50,11 +50,13 @@ void initialisedPlayer(void)
     {
         player = (Player_t *)MEM_alloc(sizeof(Player_t));
 
-        resetPlayer();
-
-        player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-        player->player_spr = SPR_addSprite(&paddle, player->player_rect.x, player->player_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-        player->shot_spr = SPR_addSprite(&imgball, player->shot_rect.x, player->shot_rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        if (player != NULL)
+        {
+            resetPlayer();
+            player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+            player->player_spr = SPR_addSprite(&paddle, player->player_rect.x, player->player_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+            player->shot_spr = SPR_addSprite(&imgball, player->shot_rect.x, player->shot_rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        }
     }
 }
 
@@ -119,6 +121,10 @@ bool isShotOutOfBounds(void)
 
 void destructPlayer(void)
 {
+    SPR_releaseSprite(player->shot_spr);    
+    SPR_releaseSprite(player->player_spr);        
+    SPR_releaseSprite(player->hit_box_spr);
+        
     MEM_free(player);
 }
 

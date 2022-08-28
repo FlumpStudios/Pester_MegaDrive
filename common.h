@@ -2,6 +2,8 @@
 #define COMMON_H
 
 #include <genesis.h>
+#include "resources.h"
+
 
 #define true TRUE
 #define false FALSE

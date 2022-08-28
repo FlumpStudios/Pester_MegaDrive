@@ -1,10 +1,9 @@
 #include "collision_detection.h"
 #include "player.h"
 #include "common.h"
-#include <genesis.h>
-#include "resources.h"
 #include <string.h>
 #include "gamestate.h"
+#include "enemies.h"
 
 /* ---------------------------------------- */
 /* 			Constants and defs				*/
@@ -14,26 +13,23 @@
 // Static text
 char label_score[6] = "SCORE";
 char msg_start[22] = "Press START to Begin!";
-char msg_reset[37] = "Game over! Press START to Play Again.";
+char msg_reset[40] = "Game over! Press START to Play Again.";
 /*<--------------------------------------------------->*/
 
 /*<--------------------------------------------------->*/
 /* 					 Declarations 		    		   */
 /*<--------------------------------------------------->*/
 f16 bg_scroll_speed = 0;
-
 u8 exposion_frame_ticker;
 bool is_explosion_rendered = false;
 
 // Score variables
 char str_score[3] = "0";
-
-// Enemy setup
-Sprite *bird_enemy[MAX_BIRD_COUNT];
 Sprite *explo_enemy;
 
-Rectangle_t bird_Rect[MAX_BIRD_COUNT];
-Vector2_t bird_velocity = {1, 2};
+// Enemy setup
+ENY_bird_t* birdEnemies[MAX_BIRD_COUNT];
+
 bool is_bird_enabled = false;
 /*<--------------------------------------------------->*/
 
@@ -58,24 +54,19 @@ void endGame(void)
 	setGamePlaying(false);
 }
 
-void initBird(void)
-{
-	u32 play_time = getPlayTime();
-	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
-	{
-		bird_Rect[i].x = generateRandomNum(250, play_time + i);
-		bird_Rect[i].y = generateRandomNum(200, play_time + i) * -1;
-		bird_Rect[i].width = 32;
-		bird_Rect[i].height = 32;
-	};
-}
-
 void restartGame(void)
 {
 	setGamePlaying(true);
 	resetPlayer();
-	
-	initBird();
+
+	// Reset enemies
+	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
+	{
+		ResetBird(birdEnemies[i], true);
+	};
+
+	resetScore();
+	updateScoreDisplay();
 	resetGameTime();
 	VDP_clearTextArea(0, 10, 40, 10);
 }
@@ -172,12 +163,12 @@ void renderBackground(void)
 void createGameState(void)
 {
 	renderBackground();
-	initBird();
 	initialisedPlayer();
 
+	// Initiate bird enemies
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		bird_enemy[i] = SPR_addSprite(&bird, bird_Rect[i].x, bird_Rect[i].y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+		birdEnemies[i] = createBird(true);
 	}
 
 	explo_enemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
@@ -185,47 +176,44 @@ void createGameState(void)
 
 void resetSprites(void)
 {
-	SPR_reset();
+	SPR_reset();	
 }
 
 void updateBirdPosition(void)
-{
-	u32 game_time = getGameTime();
-		
+{	
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		if (bird_Rect[i].y > 0)
+		if (birdEnemies[i]->base.rect.y > 0)
 		{
-			if (bird_Rect[i].x > getPlayerRect().x)
+			if (birdEnemies[i]->base.rect.x > getPlayerRect().x)
 			{
-				bird_Rect[i].x -= bird_velocity.x;
+				birdEnemies[i]->base.rect.x -= birdEnemies[i]->base.velocity.y;
 			}
 			else
 			{
-				bird_Rect[i].x += bird_velocity.x;
+				birdEnemies[i]->base.rect.x += birdEnemies[i]->base.velocity.x;
 			}
 		}
-		if (checkRectangleCollision(bird_Rect[i], getShotRect()))
+		if (checkRectangleCollision(birdEnemies[i]->base.rect, getShotRect()))
 		{
-			renderExposion(bird_Rect[i]);
-			bird_Rect[i].x = generateRandomNum(250, game_time + 1);
-			bird_Rect[i].y = generateRandomNum(200, game_time + 1) * -1;
+			renderExposion(birdEnemies[i]->base.rect);
+			ResetBird(birdEnemies[i], true);
 			resetShot();
 		}
-		else if (checkRectangleCollision(bird_Rect[i], getHitboxRect()))
+		else if (checkRectangleCollision(birdEnemies[i]->base.rect, getHitboxRect()))
 		{
 			endGame();
 		}
 		else
 		{
-			bird_Rect[i].y += bird_velocity.y;
+		 	birdEnemies[i]->base.rect.y += birdEnemies[i]->base.velocity.y;
 		}
-		if (bird_Rect[i].y > 250)
+		if (birdEnemies[i]->base.rect.y > 250)
 		{
-			bird_Rect[i].y = generateRandomNum(100, game_time + i) * -1;
+			ResetBird(birdEnemies[i], true);
 		}
 
-		SPR_setPosition(bird_enemy[i], bird_Rect[i].x, bird_Rect[i].y);
+		SPR_setPosition(birdEnemies[i]->base.sprite, birdEnemies[i]->base.rect.x, birdEnemies[i]->base.rect.y);
 	};
 }
 
@@ -247,11 +235,22 @@ void gameScript(void)
 }
 /*<--------------------------------------------------->*/
 
+void destructGame(void)
+{
+	destructPlayer();
+	destructState();
+	for (uint8_t i = 0; i < MAX_BIRD_COUNT; i++)
+	{
+		destroyBird(birdEnemies[i]);
+	}
+}
+
 /* ---------------------------------------- */
 /* 				Program entry 			    */
 /* ---------------------------------------- */
 int main()
 {
+	
 	/* ----------------------------------------*/
 	/* 				Initiate game 			   */
 	/* ----------------------------------------*/
@@ -266,11 +265,15 @@ int main()
 	VDP_setTextPlan(PLAN_B);
 
 	VDP_drawText(label_score, 1, 1);
-	updateScoreDisplay();
 	showText(msg_start);
-	VDP_drawText("PESTER!", 16, 10);
 	SPR_init(0, 0, 0);
+	VDP_drawText("PESTER!", 16, 10);
+
 	initiateGameState();
+	
+	// Initiate game state must be run before updating score for the first time;
+	updateScoreDisplay();
+	
 	/*<--------------------------------------------------->*/
 
 	/* ----------------------------------------*/
@@ -284,7 +287,7 @@ int main()
 			tickGameTime();
 			gameScript();
 		}
- 
+
 		bg_scroll_speed -= 2;
 
 		if (bg_scroll_speed <= -250)
@@ -316,6 +319,9 @@ int main()
 
 		VDP_waitVSync();
 	}
+	
+		destructGame();
+
 	return (0);
 }
 /*<--------------------------------------------------->*/

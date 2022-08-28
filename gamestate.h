@@ -17,4 +17,6 @@ u8 getTimeMod(void);
 u32 getPlayTime(void);
 u32 getGameTime(void);
 int getScore(void);
+void destructState(void);
+void resetScore(void);
 #endif

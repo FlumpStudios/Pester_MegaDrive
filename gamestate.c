@@ -19,7 +19,7 @@ void resetGame(void)
     gamestate->current_game_state = MENU;
     gamestate->is_game_playing = false;
     gamestate->game_time = 0;
-    gamestate->game_time_mod = 1;    
+    gamestate->game_time_mod = 1;
 }
 
 void resetGameTime(void)
@@ -29,8 +29,14 @@ void resetGameTime(void)
 
 void initiateGameState(void)
 {
-    gamestate = (Gamestate_t *)MEM_alloc(sizeof(Gamestate_t));
-    resetGame();
+    if(gamestate == NULL)
+    {
+        gamestate = (Gamestate_t *)MEM_alloc(sizeof(Gamestate_t));
+    }
+    if (gamestate != NULL)
+    {
+        resetGame();
+    }
 }
 
 int getScore(void)
@@ -68,6 +74,11 @@ void increaseScore(int score)
     gamestate->score += score;
 }
 
+void resetScore(void)
+{
+    gamestate->score = 0;
+}
+
 void setGameState(u8 gameState)
 {
     gamestate->current_game_state = gameState;
@@ -91,4 +102,9 @@ void tickPlayTime(void)
 void tickGameTime(void)
 {
     gamestate->game_time += gamestate->game_time_mod;
+}
+
+void destructState(void)
+{
+    MEM_free(gamestate);
 }
