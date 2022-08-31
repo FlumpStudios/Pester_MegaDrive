@@ -3,17 +3,24 @@
 
 #include <genesis.h>
 #include "resources.h"
+#include <memory.h>
+#define DEACTIVATED_POSITION -100
 
+// Static text
+#define LABEL_SCORE "SCORE"
+#define MSG_START "Press START to Begin!"
+#define MSG_RESET  "Game over! Press START to Play Again."
 
+// Shouldn't have done this :(
 #define true TRUE
 #define false FALSE
 
+// Game state
 #define INTRO 0
 #define MENU 1
 #define GAME 2
 
-#define DEACTIVATED_POSITION -100
-
+// Shared structs 
 typedef struct 
 {
 	s16 x, y, height, width;
@@ -29,5 +36,23 @@ typedef struct
 	s16 left, right, top, bottom;
 } Edges_t;
 
+
+typedef struct
+{
+    Rectangle_t rect;
+    Sprite *sprite;
+} Entity_t;
+
+
+typedef struct
+{
+	Entity_t;
+	s16 speed;
+    Vector2_t velocity;
+} Actor_t;
+
+// Common util functions
 u16 generateRandomNum(int upper, s32 seed);
+void *MEM_realloc(u16 new_size, void *d);
+
 #endif

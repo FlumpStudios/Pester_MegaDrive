@@ -4,16 +4,13 @@
 #include <string.h>
 #include "gamestate.h"
 #include "enemies.h"
+#include "game_update_observable.h"
 
 /* ---------------------------------------- */
 /* 			Constants and defs				*/
 /* ---------------------------------------- */
 #define MAX_BIRD_COUNT 3
 
-// Static text
-char label_score[6] = "SCORE";
-char msg_start[22] = "Press START to Begin!";
-char msg_reset[40] = "Game over! Press START to Play Again.";
 /*<--------------------------------------------------->*/
 
 /*<--------------------------------------------------->*/
@@ -50,7 +47,7 @@ void updateScoreDisplay(void)
 
 void endGame(void)
 {
-	showText(msg_reset);
+	showText(MSG_RESET);
 	setGamePlaying(false);
 }
 
@@ -183,37 +180,37 @@ void updateBirdPosition(void)
 {	
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
-		if (birdEnemies[i]->base.rect.y > 0)
+		if (birdEnemies[i]->rect.y > 0)
 		{
-			if (birdEnemies[i]->base.rect.x > getPlayerRect().x)
+			if (birdEnemies[i]->rect.x > getPlayerRect().x)
 			{
-				birdEnemies[i]->base.rect.x -= birdEnemies[i]->base.velocity.y;
+				birdEnemies[i]->rect.x -= birdEnemies[i]->velocity.y;
 			}
 			else
 			{
-				birdEnemies[i]->base.rect.x += birdEnemies[i]->base.velocity.x;
+				birdEnemies[i]->rect.x += birdEnemies[i]->velocity.x;
 			}
 		}
-		if (checkRectangleCollision(birdEnemies[i]->base.rect, getShotRect()))
+		if (checkRectangleCollision(birdEnemies[i]->rect, getShotRect()))
 		{
-			renderExposion(birdEnemies[i]->base.rect);
+			renderExposion(birdEnemies[i]->rect);
 			ResetBird(birdEnemies[i], true);
 			resetShot();
 		}
-		else if (checkRectangleCollision(birdEnemies[i]->base.rect, getHitboxRect()))
+		else if (checkRectangleCollision(birdEnemies[i]->rect, getHitboxRect()))
 		{
 			endGame();
 		}
 		else
 		{
-		 	birdEnemies[i]->base.rect.y += birdEnemies[i]->base.velocity.y;
+		 	birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
 		}
-		if (birdEnemies[i]->base.rect.y > 250)
+		if (birdEnemies[i]->rect.y > 250)
 		{
 			ResetBird(birdEnemies[i], true);
 		}
 
-		SPR_setPosition(birdEnemies[i]->base.sprite, birdEnemies[i]->base.rect.x, birdEnemies[i]->base.rect.y);
+		SPR_setPosition(birdEnemies[i]->sprite, birdEnemies[i]->rect.x, birdEnemies[i]->rect.y);
 	};
 }
 
@@ -264,16 +261,15 @@ int main()
 	// Set the text plane to Plane B so texts are drawn above the tiles
 	VDP_setTextPlan(PLAN_B);
 
-	VDP_drawText(label_score, 1, 1);
-	showText(msg_start);
+	VDP_drawText(LABEL_SCORE, 1, 1);
+	showText(MSG_START);
 	SPR_init(0, 0, 0);
 	VDP_drawText("PESTER!", 16, 10);
-
+	
 	initiateGameState();
 	
 	// Initiate game state must be run before updating score for the first time;
-	updateScoreDisplay();
-	
+	updateScoreDisplay();	
 	/*<--------------------------------------------------->*/
 
 	/* ----------------------------------------*/
@@ -315,8 +311,9 @@ int main()
 			updateEnemyPositions();
 		}
 
+		// Runs any subscribed void function pointers
+		RunStoredTickFunctions();
 		SPR_update();
-
 		VDP_waitVSync();
 	}
 	

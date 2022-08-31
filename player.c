@@ -1,16 +1,13 @@
 #include "player.h"
 
+// player struct should have been an actor type, but I ballsed it up :(
+// TODO: Seperate player, shot and hitbox into seperate actos
+
 typedef struct ply
 {
-    u8 speed;
-    u8 shot_speed;
-    Vector2_t velocity;
-    Vector2_t shot_velocity;
-    Rectangle_t player_rect;
+    Actor_t ship;
+    Actor_t shot;
     Rectangle_t hitbox_rect;
-    Rectangle_t shot_rect;
-    Sprite *player_spr;
-    Sprite *shot_spr;
     Sprite *hit_box_spr;
 } Player_t;
 
@@ -19,29 +16,29 @@ static Edges_t screen_limits = {0, 320, 0, 240};
 
 void resetPlayer()
 {
-    player->speed = 3;
-    player->shot_speed = 6;
+    player->ship.speed = 3;
+    player->shot.speed = 6;
 
-    player->player_rect.height = 32;
-    player->player_rect.width = 32;
-    player->player_rect.x = 144;
-    player->player_rect.y = 160;
+    player->ship.rect.height = 32;
+    player->ship.rect.width = 32;
+    player->ship.rect.x = 144;
+    player->ship.rect.y = 160;
 
     player->hitbox_rect.x = 144;
     player->hitbox_rect.y = 160;
     player->hitbox_rect.width = 2;
     player->hitbox_rect.height = 2;
 
-    player->shot_rect.x = 160;
-    player->shot_rect.y = -14;
-    player->shot_rect.width = 8;
-    player->shot_rect.height = 8;
+    player->shot.rect.x = 160;
+    player->shot.rect.y = -14;
+    player->shot.rect.width = 8;
+    player->shot.rect.height = 8;
 
-    player->shot_velocity.x = 0;
-    player->shot_velocity.y = 0;
+    player->shot.velocity.x = 0;
+    player->shot.velocity.y = 0;
 
-    player->velocity.x = 0;
-    player->velocity.y = 0;
+    player->ship.velocity.x = 0;
+    player->ship.velocity.y = 0;
 }
 
 void initialisedPlayer(void)
@@ -54,8 +51,8 @@ void initialisedPlayer(void)
         {
             resetPlayer();
             player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-            player->player_spr = SPR_addSprite(&paddle, player->player_rect.x, player->player_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-            player->shot_spr = SPR_addSprite(&imgball, player->shot_rect.x, player->shot_rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+            player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+            player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
         }
     }
 }
@@ -63,66 +60,66 @@ void initialisedPlayer(void)
 void updatePlayerPosition(void)
 {
     // Set positions
-    player->player_rect.x += player->velocity.x;
-    player->player_rect.y += player->velocity.y;
+    player->ship.rect.x += player->ship.velocity.x;
+    player->ship.rect.y += player->ship.velocity.y;
 
     // Boundary checks
-    if (player->player_rect.x < screen_limits.left)
+    if (player->ship.rect.x < screen_limits.left)
     {
-        player->player_rect.x = screen_limits.left;
+        player->ship.rect.x = screen_limits.left;
     }
 
-    if (player->player_rect.x + player->player_rect.width > screen_limits.right)
+    if (player->ship.rect.x + player->ship.rect.width > screen_limits.right)
     {
-        player->player_rect.x = screen_limits.right - player->player_rect.width;
+        player->ship.rect.x = screen_limits.right - player->ship.rect.width;
     }
 
-    if (player->player_rect.y < screen_limits.top)
+    if (player->ship.rect.y < screen_limits.top)
     {
-        player->player_rect.y = screen_limits.top;
+        player->ship.rect.y = screen_limits.top;
     }
 
-    if (player->player_rect.y + 50 > screen_limits.bottom)
+    if (player->ship.rect.y + 50 > screen_limits.bottom)
     {
-        player->player_rect.y = screen_limits.bottom - 50;
+        player->ship.rect.y = screen_limits.bottom - 50;
     }
 
     // Position the hitbox
-    player->hitbox_rect.x = player->player_rect.x + 12;
-    player->hitbox_rect.y = player->player_rect.y + 16;
+    player->hitbox_rect.x = player->ship.rect.x + 12;
+    player->hitbox_rect.y = player->ship.rect.y + 16;
 
     // Set sprite position in SGDK
-    SPR_setPosition(player->player_spr, player->player_rect.x, player->player_rect.y);
+    SPR_setPosition(player->ship.sprite, player->ship.rect.x, player->ship.rect.y);
     SPR_setPosition(player->hit_box_spr, player->hitbox_rect.x, player->hitbox_rect.y);
 }
 
 void resetShot(void)
 {
-    player->shot_rect.y = DEACTIVATED_POSITION;
+    player->shot.rect.y = DEACTIVATED_POSITION;
 }
 
 void moveShot(void)
 {
-    player->shot_rect.x += player->shot_velocity.x;
-    player->shot_rect.y += player->shot_velocity.y;
-    SPR_setPosition(player->shot_spr, player->shot_rect.x, player->shot_rect.y);
+    player->shot.rect.x += player->shot.velocity.x;
+    player->shot.rect.y += player->shot.velocity.y;
+    SPR_setPosition(player->shot.sprite, player->shot.rect.x, player->shot.rect.y);
 }
 
 void fireShot(void)
 {
-    player->shot_rect.x = player->player_rect.x + 12;
-    player->shot_rect.y = player->player_rect.y;
+    player->shot.rect.x = player->ship.rect.x + 12;
+    player->shot.rect.y = player->ship.rect.y;
 }
 
 bool isShotOutOfBounds(void)
 {
-    return player->shot_rect.y <= -10;
+    return player->shot.rect.y <= -10;
 }
 
 void destructPlayer(void)
 {
-    SPR_releaseSprite(player->shot_spr);    
-    SPR_releaseSprite(player->player_spr);        
+    SPR_releaseSprite(player->ship.sprite);
+    SPR_releaseSprite(player->shot.sprite);        
     SPR_releaseSprite(player->hit_box_spr);
         
     MEM_free(player);
@@ -130,55 +127,55 @@ void destructPlayer(void)
 
 void moveLeft(void)
 {
-    player->velocity.x = -player->speed;
-    SPR_setAnim(player->player_spr, 1);
+    player->ship.velocity.x = -player->ship.speed;
+    SPR_setAnim(player->ship.sprite, 1);
 }
 
 void moveRight(void)
 {
-    player->velocity.x = player->speed;
-    SPR_setAnim(player->player_spr, 2);
+    player->ship.velocity.x = player->ship.speed;
+    SPR_setAnim(player->ship.sprite, 2);
 }
 
 void moveUp(void)
 {
-    player->velocity.y = -player->speed;
+    player->ship.velocity.y = -player->ship.speed;
 }
 
 void moveDown(void)
 {
-    player->velocity.y = player->speed;
+    player->ship.velocity.y = player->ship.speed;
 }
 
 void haltX(void)
 {
-    player->velocity.x = 0;
-    SPR_setAnim(player->player_spr, 0);
+    player->ship.velocity.x = 0;
+    SPR_setAnim(player->ship.sprite, 0);
 }
 
 void haltY(void)
 {
-    player->velocity.y = 0;
+    player->ship.velocity.y = 0;
 }
 
 void enableShotMovement(void)
 {
-    player->shot_velocity.y = -player->shot_speed;
+    player->shot.velocity.y = -player->shot.speed;
 }
 
 void disableShotMovement(void)
 {
-    player->shot_velocity.y = 0;
+    player->shot.velocity.y = 0;
 }
 
 Rectangle_t getPlayerRect(void)
 {
-    return player->player_rect;
+    return player->ship.rect;
 }
 
 Rectangle_t getShotRect(void)
 {
-    return player->shot_rect;
+    return player->shot.rect;
 }
 
 Rectangle_t getHitboxRect(void)
