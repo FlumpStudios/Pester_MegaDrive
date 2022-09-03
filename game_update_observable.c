@@ -1,8 +1,6 @@
 #include "game_update_observable.h"
 #include "gamestate.h"
 
-// HACK: Should be a dynamic array, but had all kinds of problems when I tried implementing. So using static array for now
-// TODO: Make dynamic
 #define FUNC_LIST_CAPACITY 10
 
 typedef struct { 

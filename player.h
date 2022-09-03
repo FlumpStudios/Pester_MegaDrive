@@ -6,7 +6,7 @@
 #include <memory.h>
 #include "resources.h"
 
-void initialisedPlayer(void);
+void PLY_init(void);
 void updatePlayerPosition(void);
 void resetPlayer(void);
 void destructPlayer(void);
@@ -19,6 +19,7 @@ void moveUp(void);
 void moveDown(void);
 void haltX(void);
 void haltY(void);
+void killPlayer(void);
 void enableShotMovement(void);
 void disableShotMovement(void);
 bool isShotOutOfBounds(void);

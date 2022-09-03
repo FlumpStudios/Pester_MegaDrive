@@ -41,7 +41,13 @@ void resetPlayer()
     player->ship.velocity.y = 0;
 }
 
-void initialisedPlayer(void)
+void killPlayer()
+{
+    // TODO: Properly handle damage
+    endGame();
+}
+
+void PLY_init(void)
 {
     if (player == NULL)
     {

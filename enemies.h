@@ -1,22 +1,18 @@
 #ifndef ENEMIES_H
 #define ENEMIES_H
-#include "gamestate.h"
+#include "collision_detection.h"
+#include "player.h"
 #include "common.h"
+#include "gamestate.h"
+#include "game_update_observable.h"
+#include "visual_effects.h"
 
-typedef struct
-{
-    Actor_t;
-    bool is_enabled;
-    u16 current_health;
-    u16 worth;
-} ENY_Actor;
+// Initiate all enemies
+void ENY_init(void);
 
-typedef struct
-{
-    ENY_Actor;
-} ENY_bird_t;
+// reset all enemies
+void ENY_reset(void);
 
-ENY_bird_t *createBird(bool setAsEnabled);
-void ResetBird(ENY_bird_t *birdptr, bool enabled);
-void destroyBird(ENY_bird_t* birdptr);
+// destruct all enemies
+void ENY_destruct(void);
 #endif

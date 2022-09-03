@@ -7,12 +7,7 @@
 #include "game_update_observable.h"
 #include "visual_effects.h"
 
-/* ---------------------------------------- */
-/* 			Constants and defs				*/
-/* ---------------------------------------- */
-#define MAX_BIRD_COUNT 3
-
-/*<--------------------------------------------------->*/
+#define GAME_NAME "PESTER!"
 
 /*<--------------------------------------------------->*/
 /* 					 Declarations 		    		   */
@@ -23,9 +18,7 @@ f16 bg_scroll_speed = 0;
 char str_score[3] = "0";
 
 // Enemy setup
-ENY_bird_t *birdEnemies[MAX_BIRD_COUNT];
 
-bool is_bird_enabled = false;
 /*<--------------------------------------------------->*/
 
 /*<--------------------------------------------------->*/
@@ -54,11 +47,7 @@ void restartGame(void)
 	setGamePlaying(true);
 	resetPlayer();
 
-	// Reset enemies
-	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
-	{
-		ResetBird(birdEnemies[i], true);
-	};
+	ENY_reset();
 
 	resetScore();
 	updateScoreDisplay();
@@ -136,76 +125,18 @@ void renderBackground(void)
 void createGameState(void)
 {
 	renderBackground();
-	initialisedPlayer();
+	PLY_init();
 	VX_init();
-
-	// Initiate bird enemies
-	// TODO: Move to enemy file
-	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
-	{
-		birdEnemies[i] = createBird(true);
-	}
+	ENY_init();
 }
 
-void resetSprites(void)
-{
-	SPR_reset();
-}
-
-void updateBirdPosition(void)
-{
-	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
-	{
-		if (birdEnemies[i]->rect.y > 0)
-		{
-			if (birdEnemies[i]->rect.x > getPlayerRect().x)
-			{
-				birdEnemies[i]->rect.x -= birdEnemies[i]->velocity.y;
-			}
-			else
-			{
-				birdEnemies[i]->rect.x += birdEnemies[i]->velocity.x;
-			}
-		}
-		if (checkRectangleCollision(birdEnemies[i]->rect, getShotRect()))
-		{
-			spawnExposion(birdEnemies[i]->rect);
-			increaseScore(10);
-			ResetBird(birdEnemies[i], true);
-			updateScoreDisplay();
-			resetShot();
-		}
-		else if (checkRectangleCollision(birdEnemies[i]->rect, getHitboxRect()))
-		{
-			endGame();
-		}
-		else
-		{
-			birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
-		}
-		if (birdEnemies[i]->rect.y > 250)
-		{
-			ResetBird(birdEnemies[i], true);
-		}
-
-		SPR_setPosition(birdEnemies[i]->sprite, birdEnemies[i]->rect.x, birdEnemies[i]->rect.y);
-	};
-}
-
-void updateEnemyPositions(void)
-{
-	if (is_bird_enabled)
-	{
-		updateBirdPosition();
-	}
-}
 
 void gameScript(void)
 {
 	u32 game_time = getGameTime();
 	if (game_time > 10)
 	{
-		is_bird_enabled = true;
+		// TODO: Add game script
 	}
 }
 /*<--------------------------------------------------->*/
@@ -214,10 +145,7 @@ void destructGame(void)
 {
 	destructPlayer();
 	destructState();
-	for (uint8_t i = 0; i < MAX_BIRD_COUNT; i++)
-	{
-		destroyBird(birdEnemies[i]);
-	}
+	ENY_destruct();
 }
 
 void init_main(void)
@@ -235,8 +163,9 @@ void init_main(void)
 	VDP_drawText(LABEL_SCORE, 1, 1);
 	showText(MSG_START);
 	SPR_init(0, 0, 0);
-	VDP_drawText("PESTER!", 16, 10);
+	VDP_drawText(GAME_NAME, 16, 10);
 	initiateGameState();
+
 	// Initiate game state must be run before updating score for the first time;
 	updateScoreDisplay();
 }
@@ -246,7 +175,6 @@ void init_main(void)
 /* ---------------------------------------- */
 int main()
 {
-
 	init_main();
 
 	/* ----------------------------------------*/
@@ -280,13 +208,11 @@ int main()
 			tickGameTime();
 			gameScript();
 			moveShot();
-			updatePlayerPosition();
-			updateEnemyPositions();
+			updatePlayerPosition();			
 		}
 
 		// Runs any subscribed void function pointers
 		runTickFunctions();
-
 		SPR_update();
 		VDP_waitVSync();
 	}
