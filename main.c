@@ -5,6 +5,7 @@
 #include "gamestate.h"
 #include "enemies.h"
 #include "game_update_observable.h"
+#include "visual_effects.h"
 
 /* ---------------------------------------- */
 /* 			Constants and defs				*/
@@ -17,15 +18,12 @@
 /* 					 Declarations 		    		   */
 /*<--------------------------------------------------->*/
 f16 bg_scroll_speed = 0;
-u8 exposion_frame_ticker;
-bool is_explosion_rendered = false;
 
 // Score variables
 char str_score[3] = "0";
-Sprite *explo_enemy;
 
 // Enemy setup
-ENY_bird_t* birdEnemies[MAX_BIRD_COUNT];
+ENY_bird_t *birdEnemies[MAX_BIRD_COUNT];
 
 bool is_bird_enabled = false;
 /*<--------------------------------------------------->*/
@@ -75,9 +73,9 @@ void handleInput(u16 joy, u16 changed, u16 state)
 	{
 		if (state & BUTTON_START)
 		{
-			if (getGameState() == MENU)
+			if (getGameState() == GAME_STATE_MENU)
 			{
-				setGameState(GAME);
+				setGameState(GAME_STATE_GAME);
 				createGameState();
 			}
 
@@ -125,28 +123,6 @@ void handleInput(u16 joy, u16 changed, u16 state)
 	}
 }
 
-void renderExposion(Rectangle_t pos)
-{
-	is_explosion_rendered = true;
-	SPR_setPosition(explo_enemy, pos.x, pos.y);
-	increaseScore(10);
-	updateScoreDisplay();
-}
-
-void exploFrameReset(void)
-{
-	if (is_explosion_rendered)
-	{
-		exposion_frame_ticker++;
-		if (exposion_frame_ticker > 6)
-		{
-			SPR_setPosition(explo_enemy, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
-			exposion_frame_ticker = 0;
-			is_explosion_rendered = false;
-		}
-	}
-}
-
 void renderBackground(void)
 {
 	VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 0, 0, CPU);
@@ -161,23 +137,23 @@ void createGameState(void)
 {
 	renderBackground();
 	initialisedPlayer();
+	VX_init();
 
 	// Initiate bird enemies
+	// TODO: Move to enemy file
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
 		birdEnemies[i] = createBird(true);
 	}
-
-	explo_enemy = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 }
 
 void resetSprites(void)
 {
-	SPR_reset();	
+	SPR_reset();
 }
 
 void updateBirdPosition(void)
-{	
+{
 	for (u8 i = 0; i < MAX_BIRD_COUNT; i++)
 	{
 		if (birdEnemies[i]->rect.y > 0)
@@ -193,8 +169,10 @@ void updateBirdPosition(void)
 		}
 		if (checkRectangleCollision(birdEnemies[i]->rect, getShotRect()))
 		{
-			renderExposion(birdEnemies[i]->rect);
+			spawnExposion(birdEnemies[i]->rect);
+			increaseScore(10);
 			ResetBird(birdEnemies[i], true);
+			updateScoreDisplay();
 			resetShot();
 		}
 		else if (checkRectangleCollision(birdEnemies[i]->rect, getHitboxRect()))
@@ -203,7 +181,7 @@ void updateBirdPosition(void)
 		}
 		else
 		{
-		 	birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
+			birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
 		}
 		if (birdEnemies[i]->rect.y > 250)
 		{
@@ -242,15 +220,8 @@ void destructGame(void)
 	}
 }
 
-/* ---------------------------------------- */
-/* 				Program entry 			    */
-/* ---------------------------------------- */
-int main()
+void init_main(void)
 {
-	
-	/* ----------------------------------------*/
-	/* 				Initiate game 			   */
-	/* ----------------------------------------*/
 	SYS_disableInts();
 	JOY_init();
 	JOY_setEventHandler(&handleInput);
@@ -265,12 +236,18 @@ int main()
 	showText(MSG_START);
 	SPR_init(0, 0, 0);
 	VDP_drawText("PESTER!", 16, 10);
-	
 	initiateGameState();
-	
 	// Initiate game state must be run before updating score for the first time;
-	updateScoreDisplay();	
-	/*<--------------------------------------------------->*/
+	updateScoreDisplay();
+}
+
+/* ---------------------------------------- */
+/* 				Program entry 			    */
+/* ---------------------------------------- */
+int main()
+{
+
+	init_main();
 
 	/* ----------------------------------------*/
 	/* 				GAME LOOP!!! 			   */
@@ -278,11 +255,6 @@ int main()
 	while (1)
 	{
 		tickPlayTime();
-		if (isGamePlaying())
-		{
-			tickGameTime();
-			gameScript();
-		}
 
 		bg_scroll_speed -= 2;
 
@@ -305,19 +277,21 @@ int main()
 
 		if (isGamePlaying())
 		{
-			exploFrameReset();
+			tickGameTime();
+			gameScript();
 			moveShot();
 			updatePlayerPosition();
 			updateEnemyPositions();
 		}
 
 		// Runs any subscribed void function pointers
-		RunStoredTickFunctions();
+		runTickFunctions();
+
 		SPR_update();
 		VDP_waitVSync();
 	}
-	
-		destructGame();
+
+	destructGame();
 
 	return (0);
 }

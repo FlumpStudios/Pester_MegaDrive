@@ -1,34 +1,27 @@
 #include "visual_effects.h"
-
+#include "game_update_observable.h"
 // THE AMOUNT OF EXPLOSIONS TO POOL
 #define EXPLOSION_POOL_COUNT 3
 
-static int current_pooled_index = 0;
+// THE NUMBER OF FRAMES THE EXPLOSIONS WILL STAY ON SCREEN FOR
+#define EXPLOSION_SCREEN_TIME 10
 
 typedef struct
 {
-    Entity_t;
+    Sprite *sprite;
     bool is_rendered;
     u8 frame_ticker;
+
 } VX_EnemyExplosion_t;
 
 VX_EnemyExplosion_t *explosion_pool[EXPLOSION_POOL_COUNT];
 
-void ResetExplosion(VX_EnemyExplosion_t *explosion)
-{
-    explosion->is_rendered = false;
-    explosion->frame_ticker = 0;
-    explosion->rect.height = 32;
-    explosion->rect.width = 32;
-    explosion->rect.x = DEACTIVATED_POSITION;
-    explosion->rect.y = DEACTIVATED_POSITION;
-    explosion->sprite = SPR_addSprite(&imgexplo, explosion->rect.x, explosion->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-}
-
 VX_EnemyExplosion_t *CreateExplosion(void)
 {
-    VX_EnemyExplosion_t *createdExplosion = (VX_EnemyExplosion_t *)MEM_alloc(sizeof(VX_EnemyExplosion_t));
-    ResetExplosion(createdExplosion);
+    VX_EnemyExplosion_t *createdExplosion = MEM_alloc(sizeof(VX_EnemyExplosion_t));
+    createdExplosion->is_rendered = false;
+    createdExplosion->frame_ticker = 0;
+    createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return createdExplosion;
 }
 
@@ -40,12 +33,41 @@ void CreateExplosionPool(void)
     }
 }
 
-void SpawnExposion(Vector2_t position)
+void spawnExposion(Rectangle_t position)
 {
-    // TODO: Add spawn
-    current_pooled_index ++; 
-    if(current_pooled_index >= EXPLOSION_POOL_COUNT)
+    static int current_pooled_index = 0;
+
+    if (current_pooled_index >= EXPLOSION_POOL_COUNT - 1)
     {
-        current_pooled_index = 0;    
+        current_pooled_index = 0;
     }
+
+    explosion_pool[current_pooled_index]->is_rendered = true;
+    
+    SPR_setPosition(explosion_pool[current_pooled_index]->sprite, position.x, position.y);
+    current_pooled_index++;
+}
+
+static void VX_update(void)
+{
+    for (u8 i = 0; i < EXPLOSION_POOL_COUNT; i++)
+    {
+        if (explosion_pool[i]->is_rendered)
+        {
+            explosion_pool[i]->frame_ticker++;
+            if (explosion_pool[i]->frame_ticker >= EXPLOSION_SCREEN_TIME)
+            {
+                explosion_pool[i]->is_rendered = false;
+                explosion_pool[i]->frame_ticker = 0;
+                // NOTE: Sprite visibility was being weird, so just hiding off screen for now.
+                SPR_setPosition(explosion_pool[i]->sprite, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
+            }
+        }
+    }
+}
+
+void VX_init(void)
+{
+    CreateExplosionPool();
+    addTickFunc(VX_update, true);
 }

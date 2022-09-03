@@ -16,9 +16,9 @@
 #define false FALSE
 
 // Game state
-#define INTRO 0
-#define MENU 1
-#define GAME 2
+#define GAME_STATE_INTRO 0
+#define GAME_STATE_MENU 1
+#define GAME_STATE_GAME 2
 
 // Shared structs 
 typedef struct 

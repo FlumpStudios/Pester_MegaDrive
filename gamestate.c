@@ -16,7 +16,7 @@ void resetGame(void)
 {
     gamestate->score = 0;
     gamestate->play_time = 0;
-    gamestate->current_game_state = MENU;
+    gamestate->current_game_state = GAME_STATE_MENU;
     gamestate->is_game_playing = false;
     gamestate->game_time = 0;
     gamestate->game_time_mod = 1;
@@ -31,7 +31,7 @@ void initiateGameState(void)
 {
     if(gamestate == NULL)
     {
-        gamestate = (Gamestate_t *)MEM_alloc(sizeof(Gamestate_t));
+        gamestate = MEM_alloc(sizeof(Gamestate_t));
     }
     if (gamestate != NULL)
     {

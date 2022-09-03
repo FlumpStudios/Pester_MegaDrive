@@ -4,7 +4,7 @@
 
 typedef void (*tickFunction)(void);
 
-void AddFunc(tickFunction f);
-void RunStoredTickFunctions(void);
+void addTickFunc(tickFunction f, bool gameplay_only);
+void runTickFunctions(void);
 
 #endif

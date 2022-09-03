@@ -2,6 +2,6 @@
 #define VISUAL_EFFECTS_H
 #include "common.h"
 
-void CreateExplosionPool(void);
-void SpawnExposion(Vector2_t position);
+void VX_init(void);
+void spawnExposion(Rectangle_t position);
 #endif
