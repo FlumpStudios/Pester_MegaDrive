@@ -1,5 +1,6 @@
 #include "player.h"
-
+#include "game_update_observable.h"
+#include "gamestate.h"
 // player struct should have been an actor type, but I ballsed it up :(
 // TODO: Seperate player, shot and hitbox into seperate actos
 
@@ -43,24 +44,7 @@ void resetPlayer()
 
 void killPlayer()
 {
-    // TODO: Properly handle damage
     endGame();
-}
-
-void PLY_init(void)
-{
-    if (player == NULL)
-    {
-        player = (Player_t *)MEM_alloc(sizeof(Player_t));
-
-        if (player != NULL)
-        {
-            resetPlayer();
-            player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-            player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-            player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
-        }
-    }
 }
 
 void updatePlayerPosition(void)
@@ -125,9 +109,9 @@ bool isShotOutOfBounds(void)
 void destructPlayer(void)
 {
     SPR_releaseSprite(player->ship.sprite);
-    SPR_releaseSprite(player->shot.sprite);        
+    SPR_releaseSprite(player->shot.sprite);
     SPR_releaseSprite(player->hit_box_spr);
-        
+
     MEM_free(player);
 }
 
@@ -187,4 +171,43 @@ Rectangle_t getShotRect(void)
 Rectangle_t getHitboxRect(void)
 {
     return player->hitbox_rect;
+}
+
+void PLY_update(void)
+{
+    moveShot();
+
+    if(isGamePlaying())
+    {
+        updatePlayerPosition();
+    }
+    
+    if (isShotOutOfBounds())
+    {
+        disableShotMovement();
+    }
+    else
+    {
+        enableShotMovement();
+    }
+}
+
+void PLY_init(void)
+{
+    // Create the player entity
+    if (player == NULL)
+    {
+        player = (Player_t *)MEM_alloc(sizeof(Player_t));
+
+        if (player != NULL)
+        {
+            resetPlayer();
+            player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+            player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+            player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        }
+    }
+
+    // subscribe update funciton to the game ticker
+    addTickFunc(PLY_update, true);
 }
