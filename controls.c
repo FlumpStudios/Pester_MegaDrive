@@ -10,8 +10,7 @@ void handleInput(u16 joy, u16 changed, u16 state)
 		{
 			if (getGameState() == GAME_STATE_MENU)
 			{
-				setGameState(GAME_STATE_GAME);
-				createGameState();
+				startGame();
 			}
 
 			if (!isGamePlaying())

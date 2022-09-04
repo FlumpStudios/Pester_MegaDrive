@@ -1,27 +1,29 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 #include "common.h"
+#include "ui.h"
+#include "enemies.h"
+#include "player.h"
+#include "background.h"
+#include "game_update_observable.h"
 
-void initiateGameState(void);
+void ST_init(void);
 
-void resetGameState(void);
-void resetGameTime(void);
+void startGame(void);
+void restartGame(void);
+void endGame(void);
+
 void increaseScore(int score);
-void tickPlayTime(void);
-void tickGameTime(void);
-void destructState(void);
-void resetScore(void);
-bool isGamePlaying(void);
 
-// Setters
-void setGamePlaying(bool isGamePlaying);
-void setGameState(u8 gameState);
 void setTimeMod(u8 timeMod);
 
-// Getters
+bool isGamePlaying(void);
 u8 getGameState(void);
 u8 getTimeMod(void);
 u32 getPlayTime(void);
 u32 getGameTime(void);
 int getScore(void);
+int getHighScore(void);
+
+void destructState(void);
 #endif

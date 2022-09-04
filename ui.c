@@ -1,21 +1,33 @@
 #include "ui.h"
 #include "gamestate.h"
 
-static char str_score[3] = "0";
+#define MAX_SCORE_LENGTH 5
 
-void showText(char s[])
+static char score_str_bufer[MAX_SCORE_LENGTH] = "0";
+static char high_str_buffer[MAX_SCORE_LENGTH] = "0";
+
+void drawCentredText(char s[])
 {
 	VDP_drawText(s, 20 - strlen(s) / 2, 15);
 }
 
 void updateScoreDisplay(void)
 {
-	sprintf(str_score, "%d", getScore());
-	VDP_clearText(1, 2, 3);
-	VDP_drawText(str_score, 1, 2);
+	sprintf(score_str_bufer, "%d", getScore());
+	VDP_clearText(1, 2, MAX_SCORE_LENGTH);
+	VDP_drawText(score_str_bufer, 1, 2);
+}
+
+void updateHighScoreDisplay(void)
+{
+	u16 high = getHighScore();
+	sprintf(high_str_buffer, "%d", high);
+	VDP_clearText(1, 483, MAX_SCORE_LENGTH);
+	VDP_drawText(high_str_buffer, 487 - strlen(high_str_buffer) , 2);
 }
 
 void UI_init(void)
 {
-    updateScoreDisplay();   
+    updateScoreDisplay();  
+	updateHighScoreDisplay(); 
 }

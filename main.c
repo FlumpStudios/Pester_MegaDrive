@@ -12,32 +12,6 @@
 
 #define GAME_NAME "PESTER!"
 
-// TODO : MOVE THE FOLLOWING FUNCTIONS OUT OF MAIN.C
-void endGame(void)
-{
-	showText(MSG_RESET);
-	setGamePlaying(false);
-}
-
-void restartGame(void)
-{
-	setGamePlaying(true);
-	resetPlayer();
-	ENY_reset();
-	resetScore();
-	updateScoreDisplay();
-	resetGameTime();
-	VDP_clearTextArea(0, 10, 40, 10);
-}
-
-void createGameState(void)
-{
-	BCK_init();
-	PLY_init();
-	VX_init();
-	ENY_init();
-}
-
 void gameScript(void)
 {
 	u32 game_time = getGameTime();
@@ -46,9 +20,6 @@ void gameScript(void)
 		// TODO: This is where we'll add the games script
 	}
 }
-
-// TODO ENDS HERE
-/*<--------------------------------------------------->*/
 
 void destructGame(void)
 {
@@ -62,19 +33,21 @@ void init_main(void)
 	SYS_disableInts();
 	JOY_init();
 	JOY_setEventHandler(&handleInput);
-	VDP_setPalette(PAL2, paddle.palette->data);
 	VDP_setPalette(PAL1, tile.palette->data);
+	VDP_setPalette(PAL2, paddle.palette->data);
 	SYS_enableInts();
 
 	// Set the text plane to Plane B so texts are drawn above the tiles
 	VDP_setTextPlan(PLAN_B);
 
 	VDP_drawText(LABEL_SCORE, 1, 1);
-	showText(MSG_START);
+	VDP_drawText(LABEL_HIGH, 483, 1);
+
+	drawCentredText(MSG_START);
 	SPR_init(0, 0, 0);
 	VDP_drawText(GAME_NAME, 16, 10);
 	
-	initiateGameState();
+	ST_init();
 	UI_init();	
 }
 
@@ -89,17 +62,7 @@ int main()
 	/* 				GAME LOOP!!! 			   */
 	/* ----------------------------------------*/
 	while (1)
-	{
-		tickPlayTime();
-
-		if (isGamePlaying())
-		{
-			tickGameTime();
-			gameScript();						
-		}
-
-		// Runs any subscribed void function pointers
-		runTickFunctions();
+	{	runTickFunctions();
 
 		SPR_update();
 		VDP_waitVSync();
@@ -109,4 +72,3 @@ int main()
 
 	return (0);
 }
-/*<--------------------------------------------------->*/

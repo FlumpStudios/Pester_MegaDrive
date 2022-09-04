@@ -6,6 +6,7 @@ typedef struct gs
     u8 current_game_state;
     u8 game_time_mod;
     u32 score;
+    u32 high_score;
     u32 play_time;
     u32 game_time;
 } Gamestate_t;
@@ -20,28 +21,22 @@ void resetGame(void)
     gamestate->is_game_playing = false;
     gamestate->game_time = 0;
     gamestate->game_time_mod = 1;
+    gamestate->high_score = 0; 
 }
-
+ 
 void resetGameTime(void)
 {
     gamestate->game_time = 0;
 }
 
-void initiateGameState(void)
-{
-    if(gamestate == NULL)
-    {
-        gamestate = MEM_alloc(sizeof(Gamestate_t));
-    }
-    if (gamestate != NULL)
-    {
-        resetGame();
-    }
-}
-
 int getScore(void)
 {
     return gamestate->score;
+}
+
+int getHighScore(void)
+{
+    return gamestate->high_score;
 }
 
 u8 getGameState(void)
@@ -102,6 +97,60 @@ void tickPlayTime(void)
 void tickGameTime(void)
 {
     gamestate->game_time += gamestate->game_time_mod;
+}
+
+void endGame(void)
+{
+    drawCentredText(MSG_RESET);
+    setGamePlaying(false);
+    if(gamestate->score > gamestate->high_score)
+    {
+        gamestate->high_score = gamestate->score;
+        updateHighScoreDisplay();
+    }
+}
+
+void restartGame(void)
+{
+    setGamePlaying(true);
+    resetPlayer();
+    ENY_reset();
+    resetScore();
+    updateScoreDisplay();
+    resetGameTime();
+    VDP_clearTextArea(0, 10, 40, 10);
+}
+
+void startGame(void)
+{
+    BCK_init();
+    PLY_init();
+    VX_init();
+    ENY_init();
+    setGameState(GAME_STATE_GAME);
+}
+
+void ST_update(void)
+{
+    tickPlayTime();
+    if(isGamePlaying())
+    {
+        tickGameTime();
+    }
+}
+
+void ST_init(void)
+{
+    if (gamestate == NULL)
+    {
+        gamestate = MEM_alloc(sizeof(Gamestate_t));
+    }
+    if (gamestate != NULL)
+    {
+        resetGame();
+    }
+
+    addTickFunc(ST_update, false);
 }
 
 void destructState(void)

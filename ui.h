@@ -3,7 +3,7 @@
 #include "common.h"
 
 void UI_init(void);
-void showText(char s[]);
+void drawCentredText(char s[]);
 void updateScoreDisplay(void);
-
+void updateHighScoreDisplay(void);
 #endif
