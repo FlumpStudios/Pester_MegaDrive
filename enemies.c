@@ -1,8 +1,7 @@
 #include "enemies.h"
 
 // defines
-#define MAX_BIRD_COUNT 3
-
+#define MAX_BIRD_COUNT 2
 // Structs
 typedef struct
 {
@@ -23,9 +22,8 @@ static ENY_bird_t *birdEnemies[MAX_BIRD_COUNT];
 void resetBird(ENY_bird_t *birdptr, bool enabled)
 {
     s32 game_time = getGameTime();
-    birdptr->current_health = 10;
+    birdptr->current_health = 4;
     birdptr->is_enabled = enabled;
-
     birdptr->rect.height = 32;
     birdptr->rect.width = 32;
     birdptr->rect.x = generateRandomNum(250, game_time);
@@ -55,13 +53,24 @@ ENY_bird_t *createBird(bool setAsEnabled)
     return result;
 }
 
-void handleBirdHitByShot(ENY_bird_t* eny)
+void killBird(ENY_bird_t* eny)
 {
     spawnExposion(eny->rect);
     resetBird(eny, true);
     increaseScore(10);
-    updateScoreDisplay();
+    updateScoreDisplay();    
+}
+
+void handleBirdHitByShot(ENY_bird_t* eny)
+{
+    // Flash on hit
+    eny->sprite->visibility = false;
     resetShot();
+    eny->current_health --;    
+    if(eny->current_health <= 0)
+    {
+        killBird(eny);
+    }
 }
 
 void updateBirdPosition(void)
@@ -90,6 +99,7 @@ void updateBirdPosition(void)
         else
         {
             birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
+            birdEnemies[i]->sprite->visibility = true;
         }
         if (birdEnemies[i]->rect.y > 250)
         {

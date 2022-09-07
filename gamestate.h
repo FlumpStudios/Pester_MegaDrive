@@ -8,13 +8,12 @@
 #include "game_update_observable.h"
 
 void ST_init(void);
+void destructState(void);
 
 void startGame(void);
 void restartGame(void);
 void endGame(void);
-
 void increaseScore(int score);
-
 void setTimeMod(u8 timeMod);
 
 bool isGamePlaying(void);
@@ -25,5 +24,4 @@ u32 getGameTime(void);
 int getScore(void);
 int getHighScore(void);
 
-void destructState(void);
 #endif

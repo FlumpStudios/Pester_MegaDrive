@@ -8,6 +8,7 @@
 #include "game_update_observable.h"
 #include "visual_effects.h"
 #include "background.h"
+#include "game_script.h"
 #include "ui.h"
 
 #define GAME_NAME "PESTER!"
@@ -49,6 +50,7 @@ void init_main(void)
 	
 	ST_init();
 	UI_init();	
+	SCR_init();
 }
 
 /* ---------------------------------------- */
