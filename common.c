@@ -5,6 +5,24 @@ u16 generateRandomNum(int upper, s32 seed)
 	setRandomSeed(seed);
 	return random() % upper;
 }
+// TODO: This is cheap and potentially expensive, switch out when possible
+u16 generateRandomNumWithRange(int lower, int upper, s32 seed)
+{
+	if(lower == upper) { return lower; }
+	if(lower >= upper) { return 0; }
+
+	setRandomSeed(seed);
+
+	
+	int response = random() % upper;
+	
+	if(response < lower )
+	{
+		return lower;
+	}
+
+	return response;
+}
 
 // Super basic realloc, only realloc to larger
 void *MEM_realloc(u16 new_size, void *d)

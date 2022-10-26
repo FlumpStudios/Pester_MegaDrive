@@ -4,7 +4,7 @@
 #include <genesis.h>
 #include "resources.h"
 #include <memory.h>
-#define DEACTIVATED_POSITION -100
+#define DEACTIVATED_POSITION 500
 
 // Static text
 #define LABEL_SCORE "SCORE"
@@ -33,6 +33,12 @@ typedef struct Vector2_t
 	f16 x, y;
 } Vector2_t;
 
+typedef struct Range_t
+{
+	f16 min, max;
+} Range_t;
+
+
 typedef struct 
 {
 	s16 left, right, top, bottom;
@@ -55,6 +61,6 @@ typedef struct
 
 // Common util functions
 u16 generateRandomNum(int upper, s32 seed);
+u16 generateRandomNumWithRange(int lower, int upper, s32 seed);
 void *MEM_realloc(u16 new_size, void *d);
-
 #endif

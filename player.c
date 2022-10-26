@@ -33,7 +33,7 @@ void resetPlayer()
     player->shot.rect.x = 160;
     player->shot.rect.y = -14;
     player->shot.rect.width = 8;
-    player->shot.rect.height = 8;
+    player->shot.rect.height = 16;
 
     player->shot.velocity.x = 0;
     player->shot.velocity.y = 0;
@@ -85,7 +85,7 @@ void updatePlayerPosition(void)
 
 void resetShot(void)
 {
-    player->shot.rect.y = DEACTIVATED_POSITION;
+    player->shot.rect.y = -27;
 }
 
 void moveShot(void)

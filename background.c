@@ -5,7 +5,7 @@ void BCK_update(void)
 {
     static f16 bg_scroll_speed = 0;
 
-    bg_scroll_speed -= 2;
+     bg_scroll_speed -= 4;
 
     if (bg_scroll_speed <= -250)
     {
@@ -17,16 +17,23 @@ void BCK_update(void)
         bg_scroll_speed = 0;
     }
 
-    VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);
+    VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);    
 }
 
 void BCK_init(void)
 {
     addTickFunc(BCK_update, true);
-    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 0, 0, CPU);
-    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 16, 0, CPU);
+    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 0, 0, 0, CPU);
+    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 0, 16, 0, CPU);
     VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 16, 0, 0, CPU);
-    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 16, 16, 0, CPU);
+    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 1, 1), 16, 16, 0, CPU);
     VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 0, 0, CPU);
-    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 16, 0, CPU);
+    VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 32, 16, 0, CPU);   
+
+    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 0, 0, 0, CPU);
+    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 16, 0, CPU);
+    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 16, 0, 0, CPU);
+    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 16, 16, 0, CPU);
+    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 32, 0, 0, CPU);
+    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 32, 16, 0, CPU);  
 }

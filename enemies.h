@@ -15,4 +15,7 @@ void ENY_reset(void);
 
 // destruct all enemies
 void ENY_destruct(void);
+
+void ENY_setBirdCount(int count);
+void ENY_setGrabberCount(int count);
 #endif
