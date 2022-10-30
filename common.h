@@ -4,14 +4,14 @@
 #include <genesis.h>
 #include "resources.h"
 #include <memory.h>
-#define DEACTIVATED_POSITION 500
+#define DEACTIVATED_POSITION 300
 
 // Static text
 #define LABEL_SCORE "SCORE"
 #define LABEL_HIGH "HIGH"
 
 #define MSG_START "Press START to Begin!"
-#define MSG_RESET  "Game over! Press START to Play Again."
+#define MSG_RESET "Game over! Press START to Play Again."
 
 // Shouldn't have done this :(
 #define true TRUE
@@ -22,8 +22,8 @@
 #define GAME_STATE_MENU 1
 #define GAME_STATE_GAME 2
 
-// Shared structs 
-typedef struct 
+// Shared structs
+typedef struct
 {
 	s16 x, y, height, width;
 } Rectangle_t;
@@ -38,25 +38,22 @@ typedef struct Range_t
 	f16 min, max;
 } Range_t;
 
-
-typedef struct 
+typedef struct
 {
 	s16 left, right, top, bottom;
 } Edges_t;
 
-
 typedef struct
 {
-    Rectangle_t rect;
-    Sprite *sprite;
+	Rectangle_t rect;
+	Sprite *sprite;
 } Entity_t;
-
 
 typedef struct
 {
 	Entity_t;
 	s16 speed;
-    Vector2_t velocity;
+	Vector2_t velocity;
 } Actor_t;
 
 // Common util functions

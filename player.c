@@ -103,7 +103,7 @@ void fireShot(void)
 
 bool isShotOutOfBounds(void)
 {
-    return player->shot.rect.y <= -10;
+    return player->shot.rect.y <= 0;
 }
 
 void destructPlayer(void)
@@ -185,6 +185,7 @@ void PLY_update(void)
     if (isShotOutOfBounds())
     {
         disableShotMovement();
+        resetShot();
     }
     else
     {

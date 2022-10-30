@@ -5,7 +5,6 @@
 #include <memory.h>
 #include "common.h"
 
-
 // Initialiser
 void PLY_init(void);
 

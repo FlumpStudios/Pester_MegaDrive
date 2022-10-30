@@ -24,4 +24,6 @@ u32 getGameTime(void);
 int getScore(void);
 int getHighScore(void);
 
+u16 getCurrentLevel(void);
+void increaseCurrentLevel(void);
 #endif

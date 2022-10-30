@@ -8,52 +8,73 @@
 typedef struct
 {
     Actor_t;
-    Range_t x_speed_range;
-    Range_t y_speed_range;
     bool is_enabled;
     u16 initial_health;
     u16 current_health;
     u16 worth;
+    u16 lifeTime;
+    u16 timeAlive;
 } ENY_Actor;
 
 // fields
 static ENY_Actor *birdEnemies[BIRD_POOL_COUNT];
 static ENY_Actor *grabberEnemies[GRABBER_POOL_SIZE];
 
-static int bird_count = 0;
-static int grabber_count = 0;
-
 static int bird_active_count = 0;
 static int grabber_active_count = 0;
-
-static int bird_spawn_frequency = 50;
-static int grabber_spawn_frequency = 100;
 
 static int bird_current_pool_index = 0;
 static int grabber_current_pool_index = 0;
 
-static int bird_spawn_ticker = 0;
-static int grabber_spawn_ticker = 0;
-
-void ENY_setBirdCount(int count)
+void runSpawnSetup(ENY_Actor *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
-    bird_count = count;
+    a->is_enabled = true;
+    a->rect.x = x;
+    a->rect.y = y;
+    a->velocity.x = xSpeed;
+    a->velocity.y = ySpeed;
 }
 
-void ENY_setGrabberCount(int count)
+void ENY_spawnBird(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
-    grabber_count = count;
+    if (bird_active_count <= BIRD_POOL_COUNT)
+    {
+        bird_active_count++;
+        runSpawnSetup(birdEnemies[bird_current_pool_index],x,y,xSpeed, ySpeed);
+        bird_current_pool_index++;
+        if (bird_current_pool_index > BIRD_POOL_COUNT)
+        {
+            bird_current_pool_index = 0;
+        }
+    }
 }
+
+void ENY_spawnGrabber(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
+{
+    if (grabber_active_count <= GRABBER_POOL_SIZE)
+    {
+        grabber_active_count++;
+        runSpawnSetup(grabberEnemies[grabber_current_pool_index],x,y,xSpeed, ySpeed);
+        grabber_current_pool_index++;
+        if (grabber_current_pool_index > GRABBER_POOL_SIZE)
+        {
+            grabber_current_pool_index = 0;
+        }
+    }
+}
+
 
 void resetEnemy(ENY_Actor *enyptr)
 {
-    s32 game_time = getGameTime();
+    enyptr->timeAlive = 0;
+    enyptr->velocity.x = 0;
+    enyptr->velocity.y = 0;
+
+    enyptr->rect.x = DEACTIVATED_POSITION;
+    enyptr->rect.y = DEACTIVATED_POSITION;
+
     enyptr->current_health = enyptr->initial_health;
     enyptr->is_enabled = false;
-    enyptr->rect.y = generateRandomNumWithRange(50, 100, game_time) * -1;
-    enyptr->rect.x = generateRandomNumWithRange(20, 300, game_time);
-    enyptr->velocity.x = generateRandomNumWithRange(enyptr->x_speed_range.min, enyptr->x_speed_range.max, game_time);
-    enyptr->velocity.y = generateRandomNumWithRange(enyptr->y_speed_range.min, enyptr->y_speed_range.max, game_time);
 }
 
 void ENY_reset(void)
@@ -68,25 +89,15 @@ void ENY_reset(void)
         resetEnemy(grabberEnemies[i]);
     }
 
-    bird_count = 0;
-    grabber_count = 0;
-
     bird_active_count = 0;
     grabber_active_count = 0;
 
-    bird_spawn_frequency = 50;
-    grabber_spawn_frequency = 100;
-
     bird_current_pool_index = 0;
     grabber_current_pool_index = 0;
-
-    bird_spawn_ticker = 0;
-    grabber_spawn_ticker = 0;
 }
 
 ENY_Actor *createBird()
 {
-
     ENY_Actor *result = NULL;
     result = (ENY_Actor *)MEM_alloc(sizeof(ENY_Actor));
 
@@ -94,10 +105,6 @@ ENY_Actor *createBird()
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 10;
-    result->x_speed_range.min = 1;
-    result->x_speed_range.max = 1;
-    result->y_speed_range.min = 1;
-    result->y_speed_range.max = 3;
 
     resetEnemy(result);
     result->sprite = SPR_addSprite(&bird, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
@@ -113,11 +120,8 @@ ENY_Actor *createGrabber()
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 5;
-    result->x_speed_range.min = 0;
-    result->x_speed_range.max = 0;
-    result->y_speed_range.min = 1;
-    result->y_speed_range.max = 5;
-
+    result->timeAlive = 0;
+    result->lifeTime = 300;
     resetEnemy(result);
 
     result->sprite = SPR_addSprite(&grabber, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
@@ -128,7 +132,7 @@ void killEnemy(ENY_Actor *eny)
 {
     spawnExposion(eny->rect);
     increaseScore(eny->worth);
-    updateScoreDisplay();
+    UI_updateScoreDisplay();
     eny->rect.y = DEACTIVATED_POSITION;
 }
 
@@ -147,22 +151,6 @@ void handleEnemyHitByShot(ENY_Actor *eny)
 
 void updateBird(void)
 {
-    if (bird_count > 0)
-    {
-        bird_spawn_ticker++;
-        if (bird_spawn_ticker > bird_spawn_frequency && bird_active_count < bird_count)
-        {
-            birdEnemies[bird_current_pool_index]->is_enabled = true;
-            bird_active_count++;
-            bird_current_pool_index++;
-            if (bird_current_pool_index >= BIRD_POOL_COUNT)
-            {
-                bird_current_pool_index = 0;
-            }
-            bird_spawn_ticker = 0;
-        }
-    }
-
     for (u8 i = 0; i < BIRD_POOL_COUNT; i++)
     {
         if (birdEnemies[i]->is_enabled)
@@ -203,27 +191,11 @@ void updateBird(void)
 
 void updateGrabber(void)
 {
-    if (grabber_count > 0)
-    {
-        grabber_spawn_ticker++;
-        if (grabber_spawn_ticker > grabber_spawn_frequency && grabber_active_count < grabber_count)
-        {
-            grabberEnemies[grabber_current_pool_index]->is_enabled = true;
-            grabber_active_count++;
-
-            grabber_current_pool_index++;
-            if (grabber_current_pool_index >= GRABBER_POOL_SIZE)
-            {
-                grabber_current_pool_index = 0;
-            }
-            grabber_spawn_ticker = 0;
-        }
-    }
-
     for (u8 i = 0; i < GRABBER_POOL_SIZE; i++)
     {
         if (grabberEnemies[i]->is_enabled)
         {
+            grabberEnemies[i]->timeAlive ++;            
             if (checkRectangleCollision(grabberEnemies[i]->rect, getShotRect()))
             {
                 handleEnemyHitByShot(grabberEnemies[i]);
@@ -235,9 +207,14 @@ void updateGrabber(void)
             else
             {
                 grabberEnemies[i]->rect.y += grabberEnemies[i]->velocity.y;
+                grabberEnemies[i]->rect.x += grabberEnemies[i]->velocity.x;
+                
                 grabberEnemies[i]->sprite->visibility = true;
             }
-            if (grabberEnemies[i]->rect.y > 250)
+            if (grabberEnemies[i]->rect.y > 250 
+                || grabberEnemies[i]->timeAlive > grabberEnemies[i]->lifeTime
+                || grabberEnemies[i]->rect.x > 440
+                || grabberEnemies[i]->rect.x < -128)
             {
                 grabber_active_count--;
                 resetEnemy(grabberEnemies[i]);
@@ -273,6 +250,7 @@ void destroyEnemy(ENY_Actor *birdptr)
     SPR_releaseSprite(birdptr->sprite);
     MEM_free(birdptr);
 }
+
 void ENY_destruct(void)
 {
     // Destory all enemies here

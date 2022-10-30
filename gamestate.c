@@ -9,6 +9,7 @@ typedef struct gs
     u32 high_score;
     u32 play_time;
     u32 game_time;
+    u16 current_level;
 } Gamestate_t;
 
 static Gamestate_t *gamestate = NULL;
@@ -22,6 +23,7 @@ void resetGame(void)
     gamestate->game_time = 0;
     gamestate->game_time_mod = 1;
     gamestate->high_score = 0; 
+    gamestate->current_level = 0;
 }
  
 void resetGameTime(void)
@@ -32,6 +34,16 @@ void resetGameTime(void)
 int getScore(void)
 {
     return gamestate->score;
+}
+
+u16 getCurrentLevel(void)
+{
+    return gamestate->current_level;
+}
+
+void increaseCurrentLevel(void)
+{
+    gamestate->current_level ++;
 }
 
 int getHighScore(void)
@@ -101,12 +113,12 @@ void tickGameTime(void)
 
 void endGame(void)
 {
-    drawCentredText(MSG_RESET);
+    UI_drawCentredText(MSG_RESET);
     setGamePlaying(false);
     if(gamestate->score > gamestate->high_score)
     {
         gamestate->high_score = gamestate->score;
-        updateHighScoreDisplay();
+        UI_updateHighScoreDisplay();
     }
 }
 
@@ -116,7 +128,7 @@ void restartGame(void)
     resetPlayer();
     ENY_reset();
     resetScore();
-    updateScoreDisplay();
+    UI_updateScoreDisplay();
     resetGameTime();
     VDP_clearTextArea(0, 10, 40, 10);
 }
@@ -127,6 +139,7 @@ void startGame(void)
     PLY_init();
     VX_init();
     ENY_init();
+    UI_drawHud();
     setGameState(GAME_STATE_GAME);
 }
 

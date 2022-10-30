@@ -37,10 +37,9 @@ void init_main(void)
 	// Set the text plane to Plane B so texts are drawn above the tiles
 	VDP_setTextPlan(PLAN_B);
 
-	VDP_drawText(LABEL_SCORE, 1, 1);
-	VDP_drawText(LABEL_HIGH, 483, 1);
+	UI_drawHud();
 
-	drawCentredText(MSG_START);
+	UI_drawCentredText(MSG_START);
 	SPR_init(0, 0, 0);
 	VDP_drawText(GAME_NAME, 16, 10);	
 		
