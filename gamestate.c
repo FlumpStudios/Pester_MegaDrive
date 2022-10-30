@@ -126,7 +126,7 @@ void restartGame(void)
 {
     setGamePlaying(true);
     resetPlayer();
-    ENY_reset();
+    ENY_resetAllEnemies();
     resetScore();
     UI_updateScoreDisplay();
     resetGameTime();

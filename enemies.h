@@ -1,17 +1,15 @@
 #ifndef ENEMIES_H
 #define ENEMIES_H
 #include "collision_detection.h"
-#include "player.h"
-#include "common.h"
-#include "gamestate.h"
-#include "game_update_observable.h"
 #include "visual_effects.h"
+#include "enemy_core.h"
+#include "game_update_observable.h"
 
 // Initiate all enemies
 void ENY_init(void);
 
 // reset all enemies
-void ENY_reset(void);
+void ENY_resetAllEnemies(void);
 
 // destruct all enemies
 void ENY_destruct(void);
