@@ -15,15 +15,16 @@ void restartGame(void);
 void endGame(void);
 void increaseScore(int score);
 void setTimeMod(u8 timeMod);
+void resetLevelTime(void);
 
 bool isGamePlaying(void);
 u8 getGameState(void);
 u8 getTimeMod(void);
-u32 getPlayTime(void);
+u32 getLevelTime(void);
 u32 getGameTime(void);
 int getScore(void);
 int getHighScore(void);
 
-u16 getCurrentLevel(void);
+u8 getCurrentLevel(void);
 void increaseCurrentLevel(void);
 #endif

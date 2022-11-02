@@ -29,11 +29,4 @@ void BCK_init(void)
     VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 1, 1), 16, 16, 0, CPU);
     VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 32, 0, 0, CPU);
     VDP_drawImageEx(PLAN_A, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 32, 16, 0, CPU);   
-
-    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 0, 0, 0, CPU);
-    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 0, 1), 0, 16, 0, CPU);
-    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 16, 0, 0, CPU);
-    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 16, 16, 0, CPU);
-    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 0, 1, 1), 32, 0, 0, CPU);
-    VDP_drawImageEx(PLAN_B, &tile, TILE_ATTR_FULL(PAL1, 0, 1, 0, 1), 32, 16, 0, CPU);  
 }

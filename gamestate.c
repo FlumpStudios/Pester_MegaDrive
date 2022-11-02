@@ -1,5 +1,7 @@
 #include "gamestate.h"
 
+#define STARTING_LEVEL 1;
+
 typedef struct gs
 {
     bool is_game_playing;
@@ -7,9 +9,9 @@ typedef struct gs
     u8 game_time_mod;
     u32 score;
     u32 high_score;
-    u32 play_time;
+    u32 level_time;
     u32 game_time;
-    u16 current_level;
+    u8 current_level;
 } Gamestate_t;
 
 static Gamestate_t *gamestate = NULL;
@@ -17,13 +19,13 @@ static Gamestate_t *gamestate = NULL;
 void resetGame(void)
 {
     gamestate->score = 0;
-    gamestate->play_time = 0;
+    gamestate->level_time = 0;
     gamestate->current_game_state = GAME_STATE_MENU;
     gamestate->is_game_playing = false;
     gamestate->game_time = 0;
     gamestate->game_time_mod = 1;
     gamestate->high_score = 0; 
-    gamestate->current_level = 0;
+    gamestate->current_level = STARTING_LEVEL;
 }
  
 void resetGameTime(void)
@@ -31,12 +33,17 @@ void resetGameTime(void)
     gamestate->game_time = 0;
 }
 
+void resetLevelTime(void)
+{
+    gamestate->level_time = 0;
+}
+
 int getScore(void)
 {
     return gamestate->score;
 }
 
-u16 getCurrentLevel(void)
+u8 getCurrentLevel(void)
 {
     return gamestate->current_level;
 }
@@ -66,9 +73,9 @@ bool isGamePlaying(void)
     return gamestate->is_game_playing;
 }
 
-u32 getPlayTime(void)
+u32 getLevelTime(void)
 {
-    return gamestate->play_time;
+    return gamestate->level_time;
 }
 
 u32 getGameTime(void)
@@ -101,9 +108,9 @@ void setGamePlaying(bool isGamePlaying)
     gamestate->is_game_playing = isGamePlaying;
 }
 
-void tickPlayTime(void)
+void tickLevelTime(void)
 {
-    gamestate->play_time++;
+    gamestate->level_time +=  gamestate->game_time_mod;
 }
 
 void tickGameTime(void)
@@ -122,6 +129,11 @@ void endGame(void)
     }
 }
 
+void resetCurrentLevel(void)
+{
+    gamestate->current_level = STARTING_LEVEL;    
+}
+
 void restartGame(void)
 {
     setGamePlaying(true);
@@ -130,6 +142,8 @@ void restartGame(void)
     resetScore();
     UI_updateScoreDisplay();
     resetGameTime();
+    resetLevelTime();
+    resetCurrentLevel();
     VDP_clearTextArea(0, 10, 40, 10);
 }
 
@@ -145,9 +159,9 @@ void startGame(void)
 
 void ST_update(void)
 {
-    tickPlayTime();
     if(isGamePlaying())
     {
+        tickLevelTime();
         tickGameTime();
     }
 }

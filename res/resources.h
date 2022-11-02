@@ -1,6 +1,7 @@
 #ifndef _RES_RESOURCES_H_
 #define _RES_RESOURCES_H_
 
+extern const SpriteDefinition astroid;
 extern const SpriteDefinition paddle;
 extern const SpriteDefinition imgexplo;
 extern const SpriteDefinition bird;

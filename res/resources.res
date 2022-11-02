@@ -1,4 +1,5 @@
 IMAGE tile  "tiles/sky2.png" 0
+SPRITE astroid "sprites/astroid.png" 4 4 FAST 2
 SPRITE paddle  "sprites/PlayerSheet.png" 4 4 FAST 2
 SPRITE imgexplo  "sprites/explo.png" 4 4 FAST 2
 SPRITE bird  "sprites/bird.png" 4 4 FAST 2
