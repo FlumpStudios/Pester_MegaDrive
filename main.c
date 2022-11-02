@@ -11,7 +11,7 @@
 #include "game_script.h"
 #include "ui.h"
 
-#define GAME_NAME "PESTER 2!" 
+#define GAME_NAME "PESTER II" 
 
 
 void destructGame(void)
