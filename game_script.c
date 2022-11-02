@@ -2,6 +2,8 @@
 #include "enemies.h"
 #include "game_update_observable.h"
 #include "gamestate.h"
+#include "controls.h"
+#include "player.h"
 
 #define MAX_LEVEL_DIDGETS 3
 #define INTRO_LENGTH 300
@@ -41,6 +43,28 @@ static void startNewLevel(u32 level_time)
 static void level_1(void)
 {
     u32 level_time = getLevelTime();
+
+
+    // ship move intro
+    if (level_time == 1)
+    {
+        CTR_set_locked_controls(true);
+        PLY_set_boundary_checks_enabled(false);
+    }
+
+    if (level_time > 75 && level_time < 150)
+    {
+        moveDown();
+    }
+
+    if (level_time == 150)
+    {
+        haltY();
+        CTR_set_locked_controls(false);
+        PLY_set_boundary_checks_enabled(true);
+    }
+    // Intro stops here
+
     if (level_time == 10)
     {
         UI_drawCentredText("Get Ready");

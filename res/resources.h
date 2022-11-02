@@ -9,5 +9,6 @@ extern const SpriteDefinition imgball;
 extern const SpriteDefinition hitBox;
 extern const SpriteDefinition grabber;
 extern const Image tile;
+extern const Image introImage;
 
 #endif // _RES_RESOURCES_H_

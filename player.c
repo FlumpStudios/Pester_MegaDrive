@@ -14,6 +14,12 @@ typedef struct ply
 
 static Player_t *player = NULL;
 static Edges_t screen_limits = {0, 320, 0, 240};
+static are_bondary_checks_enabled = false;
+
+void PLY_set_boundary_checks_enabled(bool enabled)
+{
+    are_bondary_checks_enabled = enabled;
+}
 
 void resetPlayer()
 {
@@ -23,10 +29,10 @@ void resetPlayer()
     player->ship.rect.height = 32;
     player->ship.rect.width = 32;
     player->ship.rect.x = 144;
-    player->ship.rect.y = 160;
+    player->ship.rect.y = -50;
 
     player->hitbox_rect.x = 144;
-    player->hitbox_rect.y = 160;
+    player->hitbox_rect.y = -50;
     player->hitbox_rect.width = 2;
     player->hitbox_rect.height = 2;
 
@@ -54,24 +60,27 @@ void updatePlayerPosition(void)
     player->ship.rect.y += player->ship.velocity.y;
 
     // Boundary checks
-    if (player->ship.rect.x < screen_limits.left)
+    if (are_bondary_checks_enabled)
     {
-        player->ship.rect.x = screen_limits.left;
-    }
+        if (player->ship.rect.x < screen_limits.left)
+        {
+            player->ship.rect.x = screen_limits.left;
+        }
 
-    if (player->ship.rect.x + player->ship.rect.width > screen_limits.right)
-    {
-        player->ship.rect.x = screen_limits.right - player->ship.rect.width;
-    }
+        if (player->ship.rect.x + player->ship.rect.width > screen_limits.right)
+        {
+            player->ship.rect.x = screen_limits.right - player->ship.rect.width;
+        }
 
-    if (player->ship.rect.y < screen_limits.top)
-    {
-        player->ship.rect.y = screen_limits.top;
-    }
+        if (player->ship.rect.y < screen_limits.top)
+        {
+            player->ship.rect.y = screen_limits.top;
+        }
 
-    if (player->ship.rect.y + 50 > screen_limits.bottom)
-    {
-        player->ship.rect.y = screen_limits.bottom - 50;
+        if (player->ship.rect.y + 50 > screen_limits.bottom)
+        {
+            player->ship.rect.y = screen_limits.bottom - 50;
+        }
     }
 
     // Position the hitbox
@@ -177,11 +186,11 @@ void PLY_update(void)
 {
     moveShot();
 
-    if(isGamePlaying())
+    if (isGamePlaying())
     {
         updatePlayerPosition();
     }
-    
+
     if (isShotOutOfBounds())
     {
         disableShotMovement();

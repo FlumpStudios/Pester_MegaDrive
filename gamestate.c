@@ -149,12 +149,12 @@ void restartGame(void)
 
 void startGame(void)
 {
-    BCK_init();
+    BCK_init_starfield();
     PLY_init();
     VX_init();
     ENY_init();
     UI_drawHud();
-    setGameState(GAME_STATE_GAME);
+    setGameState(GAME_STATE_GAME);    
 }
 
 void ST_update(void)

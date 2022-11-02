@@ -18,6 +18,7 @@ void haltX(void);
 void haltY(void);
 
 // Actions
+void PLY_set_boundary_checks_enabled(bool enabled);
 void resetPlayer(void);
 void destructPlayer(void);
 void resetShot(void);

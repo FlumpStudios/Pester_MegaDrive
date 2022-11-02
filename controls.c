@@ -2,9 +2,16 @@
 #include "gamestate.h"
 #include "player.h"
 
+static bool are_controls_locked = false;
+
+void CTR_set_locked_controls(bool locked)
+{
+	are_controls_locked = locked;
+}
+
 void handleInput(u16 joy, u16 changed, u16 state)
 {
-	if (joy == JOY_1)
+	if (!are_controls_locked && joy == JOY_1)
 	{
 		if (state & BUTTON_START)
 		{
