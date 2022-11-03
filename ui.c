@@ -8,7 +8,7 @@ static char high_str_buffer[MAX_SCORE_LENGTH] = "0";
 
 void UI_clearCentredText(void)
 {
-	VDP_clearText(0, 15, 1000);
+	VDP_clearText(0, 15, 300);
 }
 
 void UI_drawCentredText(char s[])
@@ -17,10 +17,19 @@ void UI_drawCentredText(char s[])
 	VDP_drawText(s, 20 - strlen(s) / 2, 15);
 }
 
+void UI_updateLivesText(void)
+{
+	u8 lives = getLivesCount();
+	char buffer[2];
+	sprintf(buffer, "X%d", lives);
+	VDP_drawText(buffer, 4, 26);
+}
+
 void UI_drawHud(void)
 {
 	VDP_drawText(LABEL_SCORE, 1, 1);
 	VDP_drawText(LABEL_HIGH, 483, 1);
+	SPR_addSprite(&lifeSprite, 10, 203, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 }
 
 void UI_updateScoreDisplay(void)

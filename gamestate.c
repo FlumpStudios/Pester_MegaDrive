@@ -1,6 +1,7 @@
 #include "gamestate.h"
-
-#define STARTING_LEVEL 1;
+#include "ui.h"
+#define STARTING_LEVEL 1
+#define STARTING_LIVES 2
 
 typedef struct gs
 {
@@ -12,6 +13,7 @@ typedef struct gs
     u32 level_time;
     u32 game_time;
     u8 current_level;
+    u8 current_lives;
 } Gamestate_t;
 
 static Gamestate_t *gamestate = NULL;
@@ -26,8 +28,26 @@ void resetGame(void)
     gamestate->game_time_mod = 1;
     gamestate->high_score = 0; 
     gamestate->current_level = STARTING_LEVEL;
+    gamestate->current_lives = STARTING_LIVES;
 }
  
+void removeLife(void)
+{
+    gamestate->current_lives --;
+    UI_updateLivesText();
+}
+
+void addLife(void)
+{
+    gamestate->current_lives ++;
+    UI_updateLivesText();
+}
+
+u8 getLivesCount(void)
+{
+    return gamestate->current_lives;
+}
+
 void resetGameTime(void)
 {
     gamestate->game_time = 0;
@@ -136,6 +156,7 @@ void resetCurrentLevel(void)
 
 void restartGame(void)
 {
+    gamestate->current_lives = STARTING_LIVES;
     setGamePlaying(true);
     resetPlayer();
     ENY_resetAllEnemies();
@@ -145,6 +166,7 @@ void restartGame(void)
     resetLevelTime();
     resetCurrentLevel();
     VDP_clearTextArea(0, 10, 40, 10);
+    UI_updateLivesText();
 }
 
 void startGame(void)
@@ -155,6 +177,7 @@ void startGame(void)
     ENY_init();
     UI_drawHud();
     setGameState(GAME_STATE_GAME);    
+    UI_updateLivesText();
 }
 
 void ST_update(void)

@@ -4,6 +4,7 @@
 #include <genesis.h>
 #include <memory.h>
 #include "common.h"
+#include "visual_effects.h"
 
 // Initialiser
 void PLY_init(void);
@@ -22,7 +23,7 @@ void PLY_set_boundary_checks_enabled(bool enabled);
 void resetPlayer(void);
 void destructPlayer(void);
 void resetShot(void);
-void killPlayer(void);
+void runPlayerHit(void);
 void enableShotMovement(void);
 void disableShotMovement(void);
 bool isShotOutOfBounds(void);

@@ -2,7 +2,8 @@
 #include "game_update_observable.h"
 #include "gamestate.h"
 // player struct should have been an actor type, but I ballsed it up :(
-// TODO: Seperate player, shot and hitbox into seperate actos
+
+#define DEATH_TIMEOUT 100
 
 typedef struct ply
 {
@@ -15,14 +16,40 @@ typedef struct ply
 static Player_t *player = NULL;
 static Edges_t screen_limits = {0, 320, 0, 240};
 static are_bondary_checks_enabled = false;
+static is_player_in_death_state = false;
+static death_ticker = 0;
 
 void PLY_set_boundary_checks_enabled(bool enabled)
 {
     are_bondary_checks_enabled = enabled;
 }
 
+static void reset_after_death(void)
+{
+    death_ticker = 0;
+    is_player_in_death_state = false;
+
+    if (getLivesCount() > 0)
+    {
+        removeLife();
+        ENY_resetAllEnemies();
+        player->ship.sprite->visibility = true;
+        player->ship.rect.height = 32;
+        player->ship.rect.width = 32;
+        player->ship.rect.x = 144;
+        player->ship.rect.y = 150;
+    }
+    else
+    {
+        endGame();
+    }
+}
+
 void resetPlayer()
 {
+    death_ticker = 0;
+    is_player_in_death_state = false;
+
     player->ship.speed = 3;
     player->shot.speed = 6;
 
@@ -46,11 +73,18 @@ void resetPlayer()
 
     player->ship.velocity.x = 0;
     player->ship.velocity.y = 0;
+    player->ship.sprite->visibility = true;
+    are_bondary_checks_enabled = false;    
 }
 
-void killPlayer()
+void runPlayerHit()
 {
-    endGame();
+    if (!is_player_in_death_state)
+    {
+        is_player_in_death_state = true;
+        spawnExposion(player->ship.rect);
+        player->ship.sprite->visibility = false;
+    }
 }
 
 void updatePlayerPosition(void)
@@ -89,7 +123,6 @@ void updatePlayerPosition(void)
 
     // Set sprite position in SGDK
     SPR_setPosition(player->ship.sprite, player->ship.rect.x, player->ship.rect.y);
-    SPR_setPosition(player->hit_box_spr, player->hitbox_rect.x, player->hitbox_rect.y);
 }
 
 void resetShot(void)
@@ -186,9 +219,20 @@ void PLY_update(void)
 {
     moveShot();
 
-    if (isGamePlaying())
+    if (is_player_in_death_state)
     {
-        updatePlayerPosition();
+        death_ticker++;
+        if (death_ticker > DEATH_TIMEOUT)
+        {
+            reset_after_death();
+        }
+    }
+    else
+    {
+        if (isGamePlaying())
+        {
+            updatePlayerPosition();
+        }
     }
 
     if (isShotOutOfBounds())
@@ -212,7 +256,7 @@ void PLY_init(void)
         if (player != NULL)
         {
             resetPlayer();
-            player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+            // player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
             player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
             player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
         }

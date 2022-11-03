@@ -25,6 +25,10 @@ u32 getGameTime(void);
 int getScore(void);
 int getHighScore(void);
 
+void addLife(void);
+void removeLife(void);
+u8 getLivesCount(void);
+
 u8 getCurrentLevel(void);
 void increaseCurrentLevel(void);
 #endif

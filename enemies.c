@@ -82,7 +82,6 @@ void ENY_resetAllEnemies(void)
         SPR_setPosition(astroidEnemies[i]->sprite, astroidEnemies[i]->rect.x, astroidEnemies[i]->rect.y);
     }
 
-
     bird_active_count = 0;
     grabber_active_count = 0;
     astroid_active_count = 0;
@@ -145,7 +144,7 @@ static void updateBird(void)
     {
         for (u8 i = 0; i < BIRD_POOL_COUNT; i++)
         {
-            ENY_Actor* enemy = birdEnemies[i];
+            ENY_Actor *enemy = birdEnemies[i];
             if (enemy->is_enabled)
             {
                 if (enemy->rect.y > 0)
@@ -165,13 +164,12 @@ static void updateBird(void)
                 }
                 else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
                 {
-                    killPlayer();
+                    runPlayerHit();
                 }
-                else
-                {
-                    birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
-                    birdEnemies[i]->sprite->visibility = true;
-                }
+
+                birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
+                birdEnemies[i]->sprite->visibility = true;
+
                 if (birdEnemies[i]->rect.y > 250)
                 {
                     bird_active_count--;
@@ -189,7 +187,7 @@ static void updateGrabber(void)
     {
         for (u8 i = 0; i < GRABBER_POOL_SIZE; i++)
         {
-            ENY_Actor* enemy = grabberEnemies[i];
+            ENY_Actor *enemy = grabberEnemies[i];
             if (enemy->is_enabled)
             {
                 if (checkRectangleCollision(enemy->rect, getShotRect()))
@@ -198,15 +196,14 @@ static void updateGrabber(void)
                 }
                 else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
                 {
-                    killPlayer();
+                    runPlayerHit();
                 }
-                else
-                {
-                    enemy->rect.y += enemy->velocity.y;
-                    enemy->rect.x += enemy->velocity.x;
 
-                    enemy->sprite->visibility = true;
-                }
+                enemy->rect.y += enemy->velocity.y;
+                enemy->rect.x += enemy->velocity.x;
+
+                enemy->sprite->visibility = true;
+
                 if (enemy->rect.y > 250 || enemy->rect.x > 440 || enemy->rect.x < -128)
                 {
                     grabber_active_count--;
@@ -224,7 +221,7 @@ static void updateAstroid(void)
     {
         for (u8 i = 0; i < ASTROID_POOL_SIZE; i++)
         {
-            ENY_Actor* enemy = astroidEnemies[i];
+            ENY_Actor *enemy = astroidEnemies[i];
             if (enemy->is_enabled)
             {
                 enemy->rect.y += enemy->velocity.y;
@@ -235,13 +232,13 @@ static void updateAstroid(void)
                 }
                 else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
                 {
-                    killPlayer();
+                    runPlayerHit();
                 }
                 else
                 {
                     enemy->rect.y += enemy->velocity.y;
                     enemy->rect.x += enemy->velocity.x;
-                    
+
                     enemy->sprite->visibility = true;
                 }
                 if (enemy->rect.y > 250)
@@ -293,7 +290,7 @@ void ENY_destruct(void)
     {
         ENY_destroyEnemy(grabberEnemies[i]);
     }
-    
+
     for (u8 i = 0; i < ASTROID_POOL_SIZE; i++)
     {
         ENY_destroyEnemy(astroidEnemies[i]);
