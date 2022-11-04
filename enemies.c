@@ -5,20 +5,44 @@
 #define GRABBER_POOL_SIZE 5
 #define ASTROID_POOL_SIZE 6
 
-// Structs
+#define CIRCLE_BULLETS_POOL_SIZE 8
+
+#define ENEMY_HIT_FLASH_TIME 2
 
 // fields
-static ENY_Actor *birdEnemies[BIRD_POOL_COUNT];
-static ENY_Actor *grabberEnemies[GRABBER_POOL_SIZE];
-static ENY_Actor *astroidEnemies[ASTROID_POOL_SIZE];
+static ENY_Actor_t *birdEnemies[BIRD_POOL_COUNT];
+static ENY_Actor_t *grabberEnemies[GRABBER_POOL_SIZE];
+static ENY_Actor_t *astroidEnemies[ASTROID_POOL_SIZE];
+static Actor_t *circleBullets[CIRCLE_BULLETS_POOL_SIZE];
 
 static int bird_active_count = 0;
 static int grabber_active_count = 0;
 static int astroid_active_count = 0;
+static int circle_bullet_active_count = 0;
 
 static int bird_current_pool_index = 0;
 static int grabber_current_pool_index = 0;
 static int astroid_current_pool_index = 0;
+static int circle_bullet_current_pool_index = 0;
+
+void ENY_spawncircleBullet(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
+{
+    ENY_runBulletSpawnSetup(circleBullets[circle_bullet_current_pool_index], x, y, xSpeed, ySpeed);
+    circle_bullet_active_count++;
+    circle_bullet_current_pool_index++;
+    if (circle_bullet_current_pool_index > CIRCLE_BULLETS_POOL_SIZE)
+    {
+        circle_bullet_current_pool_index = 0;
+    }
+}
+
+void ENY_spawncircleBullets_squarepattern(s16 x, s16 y)
+{
+    ENY_spawncircleBullet(x, y, -1, 0);
+    ENY_spawncircleBullet(x, y, 0, 1);
+    ENY_spawncircleBullet(x, y, 1, 0);
+    ENY_spawncircleBullet(x, y, 0, -1);
+}
 
 void ENY_spawnBird(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
@@ -62,6 +86,14 @@ void ENY_spawnAstroid(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
     }
 }
 
+void ENY_resetAllBullets(void)
+{
+    for (u16 i = 0; i < CIRCLE_BULLETS_POOL_SIZE; i++)
+    {
+        ENY_reset_bullet(circleBullets[i]);
+    }
+}
+
 void ENY_resetAllEnemies(void)
 {
     for (u8 i = 0; i < BIRD_POOL_COUNT; i++)
@@ -91,25 +123,26 @@ void ENY_resetAllEnemies(void)
     astroid_current_pool_index = 0;
 }
 
-static ENY_Actor *createBird()
+static ENY_Actor_t *createBird(void)
 {
-    ENY_Actor *result = NULL;
-    result = (ENY_Actor *)MEM_alloc(sizeof(ENY_Actor));
+    ENY_Actor_t *result = NULL;
+    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
 
     result->initial_health = 3;
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 10;
+    result->timeOfLastHit = 0;
 
     ENY_reset(result);
     result->sprite = SPR_addSprite(&bird, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
 }
 
-static ENY_Actor *createGrabber()
+static ENY_Actor_t *createGrabber(void)
 {
-    ENY_Actor *result = NULL;
-    result = (ENY_Actor *)MEM_alloc(sizeof(ENY_Actor));
+    ENY_Actor_t *result = NULL;
+    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
 
     result->initial_health = 1;
     result->rect.height = 32;
@@ -117,24 +150,39 @@ static ENY_Actor *createGrabber()
     result->worth = 5;
     result->timeAlive = 0;
     result->lifeTime = 300;
+    result->timeOfLastHit = 0;
     ENY_reset(result);
 
     result->sprite = SPR_addSprite(&grabber, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
 }
 
-static ENY_Actor *createAstroid()
+static ENY_Actor_t *createAstroid(void)
 {
-    ENY_Actor *result = NULL;
-    result = (ENY_Actor *)MEM_alloc(sizeof(ENY_Actor));
+    ENY_Actor_t *result = NULL;
+    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
 
     result->initial_health = 1;
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 5;
+    result->timeOfLastHit = 0;
     ENY_reset(result);
 
     result->sprite = SPR_addSprite(&astroid, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    return result;
+}
+
+static Actor_t *CreateCircleBullet(void)
+{
+    Actor_t *result = NULL;
+    result = (Actor_t *)MEM_alloc(sizeof(Actor_t));
+
+    result->rect.height = 16;
+    result->rect.width = 16;
+    ENY_reset_bullet(result);
+
+    result->sprite = SPR_addSprite(&enemyBullet, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
 }
 
@@ -144,7 +192,7 @@ static void updateBird(void)
     {
         for (u8 i = 0; i < BIRD_POOL_COUNT; i++)
         {
-            ENY_Actor *enemy = birdEnemies[i];
+            ENY_Actor_t *enemy = birdEnemies[i];
             if (enemy->is_enabled)
             {
                 if (enemy->rect.y > 0)
@@ -167,16 +215,19 @@ static void updateBird(void)
                     runPlayerHit();
                 }
 
-                birdEnemies[i]->rect.y += birdEnemies[i]->velocity.y;
-                birdEnemies[i]->sprite->visibility = true;
+                enemy->rect.y += enemy->velocity.y;
+                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                {
+                    enemy->sprite->visibility = true;
+                }
 
-                if (birdEnemies[i]->rect.y > 250)
+                if (enemy->rect.y > 250)
                 {
                     bird_active_count--;
-                    ENY_reset(birdEnemies[i]);
+                    ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(birdEnemies[i]->sprite, birdEnemies[i]->rect.x, birdEnemies[i]->rect.y);
+            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
         };
     }
 }
@@ -187,7 +238,7 @@ static void updateGrabber(void)
     {
         for (u8 i = 0; i < GRABBER_POOL_SIZE; i++)
         {
-            ENY_Actor *enemy = grabberEnemies[i];
+            ENY_Actor_t *enemy = grabberEnemies[i];
             if (enemy->is_enabled)
             {
                 if (checkRectangleCollision(enemy->rect, getShotRect()))
@@ -201,8 +252,6 @@ static void updateGrabber(void)
 
                 enemy->rect.y += enemy->velocity.y;
                 enemy->rect.x += enemy->velocity.x;
-
-                enemy->sprite->visibility = true;
 
                 if (enemy->rect.y > 250 || enemy->rect.x > 440 || enemy->rect.x < -128)
                 {
@@ -221,7 +270,7 @@ static void updateAstroid(void)
     {
         for (u8 i = 0; i < ASTROID_POOL_SIZE; i++)
         {
-            ENY_Actor *enemy = astroidEnemies[i];
+            ENY_Actor_t *enemy = astroidEnemies[i];
             if (enemy->is_enabled)
             {
                 enemy->rect.y += enemy->velocity.y;
@@ -234,13 +283,10 @@ static void updateAstroid(void)
                 {
                     runPlayerHit();
                 }
-                else
-                {
-                    enemy->rect.y += enemy->velocity.y;
-                    enemy->rect.x += enemy->velocity.x;
 
-                    enemy->sprite->visibility = true;
-                }
+                enemy->rect.y += enemy->velocity.y;
+                enemy->rect.x += enemy->velocity.x;
+
                 if (enemy->rect.y > 250)
                 {
                     astroid_active_count--;
@@ -252,11 +298,40 @@ static void updateAstroid(void)
     }
 }
 
+static void updateCircleBullets(void)
+{
+    if (circle_bullet_active_count > 0)
+    {
+        for (u8 i = 0; i < CIRCLE_BULLETS_POOL_SIZE; i++)
+        {
+            Actor_t *bullet = circleBullets[i];
+            if (bullet->is_enabled)
+            {
+                if (checkRectangleCollision(bullet->rect, getHitboxRect()))
+                {
+                    runPlayerHit();
+                }
+
+                bullet->rect.y += bullet->velocity.y;
+                bullet->rect.x += bullet->velocity.x;
+                
+                if (bullet->rect.y < -100 || bullet->rect.y > 250 || bullet->rect.x > 440 || bullet->rect.x < -128)
+                {
+                    circle_bullet_active_count--;
+                    ENY_reset_bullet(bullet);
+                }
+            }
+            SPR_setPosition(bullet->sprite, bullet->rect.x, bullet->rect.y);
+        }
+    }
+}
+
 void update(void)
 {
     updateBird();
     updateGrabber();
     updateAstroid();
+    updateCircleBullets();
 }
 
 void ENY_init(void)
@@ -274,6 +349,11 @@ void ENY_init(void)
     for (u8 i = 0; i < ASTROID_POOL_SIZE; i++)
     {
         astroidEnemies[i] = createAstroid();
+    }
+
+    for (u8 i = 0; i < CIRCLE_BULLETS_POOL_SIZE; i++)
+    {
+        circleBullets[i] = CreateCircleBullet();
     }
 
     addTickFunc(update, TRUE);
@@ -294,5 +374,10 @@ void ENY_destruct(void)
     for (u8 i = 0; i < ASTROID_POOL_SIZE; i++)
     {
         ENY_destroyEnemy(astroidEnemies[i]);
+    }
+
+    for (u8 i = 0; i < CIRCLE_BULLETS_POOL_SIZE; i++)
+    {
+        ENY_destroyBullet(circleBullets[i]);
     }
 }

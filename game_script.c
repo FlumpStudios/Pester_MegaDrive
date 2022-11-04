@@ -82,8 +82,8 @@ static void level_1(void)
 
     if (level_time == 300)
     {
-        ENY_spawnGrabber(-50, -10, 1, 1);
-        ENY_spawnGrabber(300, -2, -3, 1);
+        ENY_spawnGrabber(-600, -35, 3, 1);
+        ENY_spawnGrabber(300, -25, -2, 1);
     }
     if (level_time == 400)
     {

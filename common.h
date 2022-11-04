@@ -54,6 +54,7 @@ typedef struct
 	Entity_t;
 	s16 speed;
 	Vector2_t velocity;
+	bool is_enabled;    
 } Actor_t;
 
 // Common util functions

@@ -33,6 +33,8 @@ static void reset_after_death(void)
     {
         removeLife();
         ENY_resetAllEnemies();
+        ENY_resetAllBullets();
+        CTR_set_locked_controls(false);
         player->ship.sprite->visibility = true;
         player->ship.rect.height = 32;
         player->ship.rect.width = 32;
@@ -74,13 +76,14 @@ void resetPlayer()
     player->ship.velocity.x = 0;
     player->ship.velocity.y = 0;
     player->ship.sprite->visibility = true;
-    are_bondary_checks_enabled = false;    
+    are_bondary_checks_enabled = false;
 }
 
 void runPlayerHit()
 {
     if (!is_player_in_death_state)
     {
+        CTR_set_locked_controls(true);
         is_player_in_death_state = true;
         spawnExposion(player->ship.rect);
         player->ship.sprite->visibility = false;
