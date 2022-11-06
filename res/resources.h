@@ -11,6 +11,7 @@ extern const SpriteDefinition grabber;
 extern const SpriteDefinition enemyBullet;
 extern const SpriteDefinition enemyRocket;
 extern const SpriteDefinition bouncer;
+extern const SpriteDefinition floater;
 extern const Image starfield;
 extern const Image moon;
 extern const Image flump;

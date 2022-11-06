@@ -15,10 +15,10 @@ void handleInput(u16 joy, u16 changed, u16 state)
 {
 	if (joy == JOY_1)
 	{
-		bool isPaused = ST_is_game_paused(); 
-		if((state & BUTTON_START) && getGameState() == GAME_STATE_GAME)
+		bool isPaused = ST_is_game_paused();
+		if ((state & BUTTON_START) && getGameState() == GAME_STATE_GAME)
 		{
-			if(isPaused)
+			if (isPaused)
 			{
 				ST_set_is_game_paused(false);
 				UI_clearCentredText();
@@ -49,6 +49,11 @@ void handleInput(u16 joy, u16 changed, u16 state)
 
 			if (state & BUTTON_B)
 			{
+				if (getGameState() == GAME_STATE_MENU)
+				{
+					startGame();
+				}
+				
 				if (isGamePlaying() && isShotOutOfBounds())
 				{
 					fireShot();

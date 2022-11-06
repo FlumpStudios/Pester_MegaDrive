@@ -128,10 +128,16 @@ void updatePlayerPosition(void)
     SPR_setPosition(player->ship.sprite, player->ship.rect.x, player->ship.rect.y);
 }
 
+void PLY_disableShot(void)
+{
+    player->shot.is_enabled = false;
+    player->shot.sprite->visibility = false;
+}
+
 void resetShot(void)
 {
     player->shot.rect.y = -30;
-    player->shot.is_enabled = false;
+    PLY_disableShot();
 }
 
 void moveShot(void)
@@ -143,6 +149,7 @@ void moveShot(void)
 
 void fireShot(void)
 {
+    player->shot.sprite->visibility = true;
     player->shot.is_enabled = true;
     player->shot.rect.x = player->ship.rect.x + 12;
     player->shot.rect.y = player->ship.rect.y;

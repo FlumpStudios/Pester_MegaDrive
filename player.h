@@ -28,6 +28,7 @@ void enableShotMovement(void);
 void disableShotMovement(void);
 bool isShotOutOfBounds(void);
 bool PLY_is_player_shot_enabled(void);
+void PLY_disableShot(void);
 
 // Getters
 Rectangle_t getPlayerRect(void);

@@ -1,8 +1,8 @@
 #include "enemies.h"
 
 // defines
+#define FLOATER_POOL_COUNT 2
 #define BOUNCER_POOL_COUNT 2
-
 #define BIRD_POOL_COUNT 5
 #define GRABBER_POOL_SIZE 5
 #define ASTROID_POOL_SIZE 6
@@ -12,12 +12,14 @@
 
 #define GRABBER_ROCKET_SPAWN_DELAY 50
 #define BOUNCER_BULLET_SPAWN_DELAY 150
+#define FLOATER_BULLET_SPAWN_DELAY 75
 
 // fields
 static ENY_Actor_t *birdEnemies[BIRD_POOL_COUNT];
 static ENY_Actor_t *grabberEnemies[GRABBER_POOL_SIZE];
 static ENY_Actor_t *astroidEnemies[ASTROID_POOL_SIZE];
 static ENY_Actor_t *bouncerEnemies[BOUNCER_POOL_COUNT];
+static ENY_Actor_t *floaterEnemies[FLOATER_POOL_COUNT];
 
 static Actor_t *circleBullets[CIRCLE_BULLETS_POOL_SIZE];
 static Actor_t *rocketBullets[ROCKET_BULLET_POOL_SIZE];
@@ -28,6 +30,7 @@ static int astroid_active_count = 0;
 static int circle_bullet_active_count = 0;
 static int rocket_bullet_active_count = 0;
 static int bouncer_active_count = 0;
+static int floater_active_count = 0;
 
 static int bird_current_pool_index = 0;
 static int grabber_current_pool_index = 0;
@@ -35,6 +38,7 @@ static int astroid_current_pool_index = 0;
 static int circle_bullet_current_pool_index = 0;
 static int rocket_bullet_current_pool_index = 0;
 static int bouncer_current_pool_index = 0;
+static int floater_current_pool_index = 0;
 
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed)
 {
@@ -73,6 +77,12 @@ void ENY_spawncircleBullets_tripplepattern(s16 x, s16 y)
     ENY_spawncircleBullet(x, y, 1, 1);
 }
 
+void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y)
+{
+    ENY_spawncircleBullet(x, y, -1, 2);
+    ENY_spawncircleBullet(x, y, 1, 2);
+}
+
 void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
 {
     if (bouncer_active_count <= BOUNCER_POOL_COUNT)
@@ -84,6 +94,20 @@ void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
         if (bouncer_current_pool_index > BOUNCER_POOL_COUNT)
         {
             bouncer_current_pool_index = 0;
+        }
+    }
+}
+
+void ENY_spawnFloater(s16 x, s16 y,s16 ySpeed)
+{
+    if (floater_active_count <= FLOATER_POOL_COUNT)
+    {
+        floater_active_count++;
+        ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);
+        floater_current_pool_index++;
+        if (floater_current_pool_index > FLOATER_POOL_COUNT)
+        {
+            floater_current_pool_index = 0;
         }
     }
 }
@@ -169,15 +193,43 @@ void ENY_resetAllEnemies(void)
         SPR_setPosition(bouncerEnemies[i]->sprite, bouncerEnemies[i]->rect.x, bouncerEnemies[i]->rect.y);
     }
 
+    for (u8 i = 0; i < FLOATER_POOL_COUNT; i++)
+    {
+        ENY_reset(floaterEnemies[i]);
+        SPR_setPosition(floaterEnemies[i]->sprite, floaterEnemies[i]->rect.x, floaterEnemies[i]->rect.y);
+    }
+
+
     bird_active_count = 0;
     grabber_active_count = 0;
     astroid_active_count = 0;
     bouncer_active_count = 0;
+    floater_active_count = 0;
+
 
     bird_current_pool_index = 0;
     grabber_current_pool_index = 0;
     astroid_current_pool_index = 0;
     bouncer_current_pool_index = 0;
+    floater_current_pool_index = 0;
+}
+
+
+static ENY_Actor_t *createFloater(void)
+{
+    ENY_Actor_t *result = NULL;
+    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+
+    result->initial_health = 2;
+    result->rect.height = 16;
+    result->rect.width = 32;
+    result->worth = 25;
+    result->timeOfLastHit = 0;
+    result->lifeTime = 0;
+
+    ENY_reset(result);
+    result->sprite = SPR_addSprite(&floater, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    return result;
 }
 
 static ENY_Actor_t *createBouncer(void)
@@ -271,6 +323,52 @@ static Actor_t *CreateRocketBullet(void)
 
     result->sprite = SPR_addSprite(&enemyRocket, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
+}
+
+static void updateFloater(void)
+{
+    if (floater_active_count > 0)
+    {
+        for (u8 i = 0; i < FLOATER_POOL_COUNT; i++)
+        {
+            ENY_Actor_t *enemy = floaterEnemies[i];
+            if (enemy->is_enabled)
+            {
+                enemy->timeAlive++;                
+
+                enemy->rect.y += enemy->velocity.y;
+                
+                // IF on screen
+                if (enemy->rect.y > 0 &&  enemy->rect.y < 100)
+                {
+                    if (enemy->timeAlive % FLOATER_BULLET_SPAWN_DELAY == 0)
+                    {
+                        ENY_spawncircleBullets_forkedpattern(enemy->rect.x + 8, enemy->rect.y + 3);
+                    }
+                }
+                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                {
+                    ENY_handleHitByShot(enemy);
+                }
+                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                {
+                    runPlayerHit();
+                }
+
+                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                {
+                    enemy->sprite->visibility = true;
+                }
+
+                if (enemy->rect.y > 250 || enemy->rect.y < -100 || enemy->rect.x > 440 || enemy->rect.x < -128)
+                {
+                    floater_active_count--;
+                    ENY_reset(enemy);
+                }
+            }
+            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+        };
+    }
 }
 
 static void updateBouncer(void)
@@ -517,6 +615,7 @@ void update(void)
     updateCircleBullets();
     updateRocketBullets();
     updateBouncer();
+    updateFloater();
 }
 
 void ENY_init(void)
@@ -551,6 +650,11 @@ void ENY_init(void)
         rocketBullets[i] = CreateRocketBullet();
     }
 
+    for (u8 i = 0; i < FLOATER_POOL_COUNT; i++)
+    {
+        floaterEnemies[i] = createFloater();
+    }
+
     addTickFunc(update, TRUE);
 }
 
@@ -577,6 +681,11 @@ void ENY_destruct(void)
         ENY_destroyEnemy(astroidEnemies[i]);
     }
 
+    for (u8 i = 0; i < FLOATER_POOL_COUNT; i++)
+    {
+        ENY_destroyEnemy(floaterEnemies[i]);
+    }
+
     for (u8 i = 0; i < CIRCLE_BULLETS_POOL_SIZE; i++)
     {
         ENY_destroyBullet(circleBullets[i]);
@@ -586,4 +695,5 @@ void ENY_destruct(void)
     {
         ENY_destroyBullet(rocketBullets[i]);
     }
+
 }
