@@ -130,7 +130,8 @@ void updatePlayerPosition(void)
 
 void resetShot(void)
 {
-    player->shot.rect.y = -27;
+    player->shot.rect.y = -30;
+    player->shot.is_enabled = false;
 }
 
 void moveShot(void)
@@ -142,6 +143,7 @@ void moveShot(void)
 
 void fireShot(void)
 {
+    player->shot.is_enabled = true;
     player->shot.rect.x = player->ship.rect.x + 12;
     player->shot.rect.y = player->ship.rect.y;
 }
@@ -216,6 +218,11 @@ Rectangle_t getShotRect(void)
 Rectangle_t getHitboxRect(void)
 {
     return player->hitbox_rect;
+}
+
+bool PLY_is_player_shot_enabled(void)
+{
+    return player->shot.is_enabled;
 }
 
 void PLY_update(void)

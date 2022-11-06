@@ -14,11 +14,10 @@ void ENY_resetAllBullets(void);
 // destruct all enemies
 void ENY_destruct(void);
 
-
 void ENY_spawnGrabber(s16 x, s16 y, s16 xSpeed, s16 ySpeed);
-void ENY_spawnBird(s16 x, s16 y, s16 xSpeed,s16 ySpeed);
-void ENY_spawnAstroid(s16 x, s16 y, s16 xSpeed,s16 ySpeed);
-
+void ENY_spawnBird(s16 x, s16 y, s16 xSpeed, s16 ySpeed);
+void ENY_spawnAstroid(s16 x, s16 y, s16 xSpeed, s16 ySpeed);
+void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime);
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed);
 
 void ENY_spawncircleBullets_squarepattern(s16 x, s16 y);

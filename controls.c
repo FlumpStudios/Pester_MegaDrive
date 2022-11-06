@@ -2,7 +2,7 @@
 #include "gamestate.h"
 #include "player.h"
 
-static bool are_controls_locked = false;
+static bool are_controls_locked = true;
 
 void CTR_set_locked_controls(bool locked)
 {
@@ -15,21 +15,37 @@ void handleInput(u16 joy, u16 changed, u16 state)
 {
 	if (joy == JOY_1)
 	{
-		if (state & BUTTON_START)
+		bool isPaused = ST_is_game_paused(); 
+		if((state & BUTTON_START) && getGameState() == GAME_STATE_GAME)
 		{
-			if (getGameState() == GAME_STATE_MENU)
+			if(isPaused)
 			{
-				startGame();
+				ST_set_is_game_paused(false);
+				UI_clearCentredText();
+				haltY();
+				haltX();
 			}
-
-			if (!isGamePlaying())
+			else
 			{
-				restartGame();
+				ST_set_is_game_paused(true);
+				UI_drawCentredText("Game paused");
 			}
 		}
 
-		if (!are_controls_locked)
+		if (!are_controls_locked && !isPaused)
 		{
+			if (state & BUTTON_START)
+			{
+				if (getGameState() == GAME_STATE_MENU)
+				{
+					startGame();
+				}
+
+				if (!isGamePlaying())
+				{
+					restartGame();
+				}
+			}
 
 			if (state & BUTTON_B)
 			{

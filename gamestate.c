@@ -14,6 +14,7 @@ typedef struct gs
     u32 game_time;
     u8 current_level;
     u8 current_lives;
+    bool isGamePaused;
 } Gamestate_t;
 
 static Gamestate_t *gamestate = NULL;
@@ -26,20 +27,31 @@ void resetGame(void)
     gamestate->is_game_playing = false;
     gamestate->game_time = 0;
     gamestate->game_time_mod = 1;
-    gamestate->high_score = 0; 
+    gamestate->high_score = 0;
     gamestate->current_level = STARTING_LEVEL;
     gamestate->current_lives = STARTING_LIVES;
+    gamestate->isGamePaused = false;
 }
- 
+
+bool ST_is_game_paused(void)
+{
+    return gamestate->isGamePaused;
+}
+
+void ST_set_is_game_paused(bool isPaused)
+{
+    gamestate->isGamePaused = isPaused;
+}
+
 void removeLife(void)
 {
-    gamestate->current_lives --;
+    gamestate->current_lives--;
     UI_updateLivesText();
 }
 
 void addLife(void)
 {
-    gamestate->current_lives ++;
+    gamestate->current_lives++;
     UI_updateLivesText();
 }
 
@@ -70,7 +82,7 @@ u8 getCurrentLevel(void)
 
 void increaseCurrentLevel(void)
 {
-    gamestate->current_level ++;
+    gamestate->current_level++;
 }
 
 int getHighScore(void)
@@ -130,19 +142,25 @@ void setGamePlaying(bool isGamePlaying)
 
 void tickLevelTime(void)
 {
-    gamestate->level_time +=  gamestate->game_time_mod;
+    if (!gamestate->isGamePaused)
+    {
+        gamestate->level_time += gamestate->game_time_mod;
+    }
 }
 
 void tickGameTime(void)
 {
-    gamestate->game_time += gamestate->game_time_mod;
+    if (!gamestate->isGamePaused)
+    {
+        gamestate->game_time += gamestate->game_time_mod;
+    }
 }
 
 void endGame(void)
 {
     UI_drawCentredText(MSG_RESET);
     setGamePlaying(false);
-    if(gamestate->score > gamestate->high_score)
+    if (gamestate->score > gamestate->high_score)
     {
         gamestate->high_score = gamestate->score;
         UI_updateHighScoreDisplay();
@@ -151,7 +169,7 @@ void endGame(void)
 
 void resetCurrentLevel(void)
 {
-    gamestate->current_level = STARTING_LEVEL;    
+    gamestate->current_level = STARTING_LEVEL;
 }
 
 void restartGame(void)
@@ -171,18 +189,20 @@ void restartGame(void)
 
 void startGame(void)
 {
-    BCK_init_starfield();
+    UI_clearCentredText();
+    PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
+    BCK_draw_starfield();
+    setGameState(GAME_STATE_GAME);
+    UI_drawHud();
     PLY_init();
     VX_init();
     ENY_init();
-    UI_drawHud();
-    setGameState(GAME_STATE_GAME);    
     UI_updateLivesText();
 }
 
 void ST_update(void)
 {
-    if(isGamePlaying())
+    if (isGamePlaying())
     {
         tickLevelTime();
         tickGameTime();

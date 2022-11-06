@@ -31,4 +31,7 @@ u8 getLivesCount(void);
 
 u8 getCurrentLevel(void);
 void increaseCurrentLevel(void);
+
+bool ST_is_game_paused(void);
+void ST_set_is_game_paused(bool isPaused);
 #endif

@@ -21,23 +21,34 @@ void destructGame(void)
 void init_main(void)
 {
 
+	// SDK setups
 	SYS_disableInts();
 	JOY_init();
 	JOY_setEventHandler(&handleInput);
-	VDP_setPalette(PAL1, tile.palette->data);
+	VDP_setPalette(PAL1, imgexplo.palette->data);
 	VDP_setPalette(PAL2, bird.palette->data);
-	VDP_setPalette(PAL3, introImage.palette->data);
+	VDP_setPalette(PAL3, palette_black);
+	VDP_setTextPlan(PLAN_B);
 	SYS_enableInts();
-	VDP_setTextPlan(PLAN_B);	
-	
-	UI_drawHud();
-	
+
+	// Initiate stuff
+	BCK_draw_intro_screen();
+	PAL_fadeInPalette(PAL3, flump.palette->data, 150, false);
+	waitMs(1000);
+	PAL_fadeOutPalette(PAL3, 100, false);
+	waitMs(200);
+	BCK_draw_title_screen();
+	PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
+	CTR_set_locked_controls(false);
+
+	// module setups
 	SPR_init(0, 0, 0);
+	BCK_init();
 	ST_init();
-	UI_init();	
+	UI_init();
 	SCR_init();
-	
-	BCK_init_title_screen();
+
+	UI_drawHud();
 }
 
 /* ---------------------------------------- */
@@ -52,27 +63,29 @@ int main()
 	/* ----------------------------------------*/
 	u8 intro_ticker = 0;
 	while (1)
-	{	
+	{
 		// TODO: Move into menu file
-		if(getGameState() ==  GAME_STATE_MENU)
+		if (getGameState() == GAME_STATE_MENU)
 		{
 			intro_ticker++;
-			if(intro_ticker == 1)
+			if (intro_ticker == 1)
 			{
 				UI_drawCentredText(MSG_START);
 			}
-			if(intro_ticker > 30)
+			if (intro_ticker > 30)
 			{
 				UI_clearCentredText();
 			}
-			if(intro_ticker > 45)
+			if (intro_ticker > 45)
 			{
 				intro_ticker = 0;
 			}
 		}
-		
-				
-		runTickFunctions();
+
+		if (!ST_is_game_paused())
+		{
+			runTickFunctions();
+		}
 		
 		SPR_update();
 		VDP_waitVSync();

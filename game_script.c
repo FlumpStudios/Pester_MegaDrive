@@ -44,7 +44,6 @@ static void level_1(void)
 {
     u32 level_time = getLevelTime();
 
-
     // ship move intro
     if (level_time == 1)
     {
@@ -85,20 +84,22 @@ static void level_1(void)
         ENY_spawnGrabber(-600, -35, 3, 1);
         ENY_spawnGrabber(300, -25, -2, 1);
     }
+
     if (level_time == 400)
     {
-        ENY_spawnGrabber(-50, -20, 3, 1);
-        ENY_spawnGrabber(300, -15, -2, 1);
+        ENY_spawnGrabber(-50, -25, 3, 1);
+        ENY_spawnGrabber(300, -25, -2, 1);
     }
 
     if (level_time == 500)
     {
-        ENY_spawnBird(150, -10, 1, 2);
+        ENY_spawnBird(150, -25, 1, 2);
     }
 
     if (level_time == 700)
     {
         endCurrentLevel();
+        PAL_fadeOutPalette(PAL3, 50, true);
     }
 }
 
@@ -112,62 +113,65 @@ static void level_2(void)
 
     if (level_time == 300)
     {
-        ENY_spawnAstroid(100, -10, 0, 2);
-        ENY_spawnAstroid(190, -30, 0, 1);
-        ENY_spawnAstroid(150, -30, 0, 2);
+        BCK_draw_darkSky();
+        PAL_fadeInPalette(PAL3, moon.palette->data, 50, true);
+
+        ENY_spawnAstroid(100, -25, 0, 2);
+        ENY_spawnAstroid(190, -35, 0, 1);
+        ENY_spawnAstroid(150, -40, 0, 2);
     }
 
     if (level_time == 350)
     {
-        ENY_spawnAstroid(55, -10, 0, 3);
+        ENY_spawnAstroid(55, -35, 0, 3);
         ENY_spawnAstroid(120, -30, 0, 2);
         ENY_spawnAstroid(200, -30, 0, 2);
     }
     if (level_time == 400)
     {
-        ENY_spawnAstroid(90, -20, 0, 2);
+        ENY_spawnAstroid(90, -35, 0, 2);
         ENY_spawnAstroid(124, -60, 0, 3);
         ENY_spawnAstroid(210, -30, 0, 2);
     }
 
     if (level_time == 450)
     {
-        ENY_spawnAstroid(40, -10, 0, 1);
-        ENY_spawnAstroid(160, -250, 0, 3);
-        ENY_spawnAstroid(220, -15, 0, 2);
+        ENY_spawnAstroid(40, -25, 0, 1);
+        ENY_spawnAstroid(160, -200, 0, 3);
+        ENY_spawnAstroid(220, -30, 0, 2);
     }
 
     if (level_time == 500)
     {
-        ENY_spawnAstroid(100, -10, 0, 2);
-        ENY_spawnAstroid(190, -30, 0, 1);
-        ENY_spawnAstroid(150, -30, 0, 2);
-        ENY_spawnGrabber(-50, -10, 1, 1);
-        ENY_spawnGrabber(300, -2, -3, 1);
+        ENY_spawnAstroid(100, -30, 0, 2);
+        ENY_spawnAstroid(190, -45, 0, 1);
+        ENY_spawnAstroid(150, -42, 0, 2);
+        ENY_spawnGrabber(-50, -42, 1, 1);
+        ENY_spawnGrabber(300, -20, -3, 1);
     }
 
     if (level_time == 550)
     {
-        ENY_spawnAstroid(55, -10, 0, 3);
-        ENY_spawnAstroid(120, -30, 0, 2);
-        ENY_spawnAstroid(200, -30, 0, 3);
-        ENY_spawnGrabber(-50, -20, 3, 1);
-        ENY_spawnGrabber(300, -15, -2, 1);
+        ENY_spawnAstroid(55, -26, 0, 3);
+        ENY_spawnAstroid(120, -32, 0, 2);
+        ENY_spawnAstroid(200, -31, 0, 3);
+        ENY_spawnGrabber(-50, -35, 3, 1);
+        ENY_spawnGrabber(300, -27, -2, 1);
     }
     if (level_time == 600)
     {
-        ENY_spawnAstroid(90, -20, 0, 2);
+        ENY_spawnAstroid(90, -30, 0, 2);
         ENY_spawnAstroid(124, -60, 0, 3);
-        ENY_spawnAstroid(210, -30, 0, 2);
+        ENY_spawnAstroid(210, -35, 0, 2);
     }
 
     if (level_time == 650)
     {
-        ENY_spawnAstroid(40, -10, 0, 3);
+        ENY_spawnAstroid(40, -25, 0, 3);
         ENY_spawnAstroid(160, -250, 0, 3);
-        ENY_spawnAstroid(220, -15, 0, 2);
-        ENY_spawnGrabber(-50, -20, 3, 1);
-        ENY_spawnGrabber(300, -15, -2, 1);
+        ENY_spawnAstroid(220, -33, 0, 2);
+        ENY_spawnGrabber(-50, -40, 3, 1);
+        ENY_spawnGrabber(300, -31, -2, 1);
     }
 
     if (level_time == 900)
@@ -182,6 +186,12 @@ static void level_3(void)
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
+    }
+
+    if (level_time == 300)
+    {
+        ENY_spawnBouncer(80, -50, 5, 1, 150);
+        ENY_spawnBouncer(200, -50, 5, 1, 150);
     }
 }
 

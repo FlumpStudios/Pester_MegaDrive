@@ -16,12 +16,27 @@ typedef struct
 
 VX_EnemyExplosion_t *explosion_pool[EXPLOSION_POOL_COUNT];
 
-VX_EnemyExplosion_t *CreateExplosion(void)
+VX_EnemyExplosion_t *CreateExplosion(u8 i)
 {
     VX_EnemyExplosion_t *createdExplosion = MEM_alloc(sizeof(VX_EnemyExplosion_t));
     createdExplosion->is_rendered = false;
     createdExplosion->frame_ticker = 0;
-    createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    if(i == 0)
+    {
+        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL1, 0, FALSE, FALSE));
+    }
+    else if(i == 1)
+    {
+        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    }
+    else if(i == 2)
+    {
+        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL3, 0, FALSE, FALSE));
+    }
+    else 
+    {
+        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL1, 0, FALSE, FALSE));
+    }
     return createdExplosion;
 }
 
@@ -29,7 +44,7 @@ void CreateExplosionPool(void)
 {
     for (u8 i = 0; i < EXPLOSION_POOL_COUNT; i++)
     {
-        explosion_pool[i] = CreateExplosion();
+        explosion_pool[i] = CreateExplosion(i);
     }
 }
 

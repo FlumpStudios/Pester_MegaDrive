@@ -1,8 +1,8 @@
 #include "enemy_core.h"
 
-
 void ENY_runBulletSpawnSetup(Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
+    a->sprite->visibility = true;
     a->is_enabled = true;
     a->rect.x = x;
     a->rect.y = y;
@@ -12,6 +12,7 @@ void ENY_runBulletSpawnSetup(Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 
 void ENY_runSpawnSetup(ENY_Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
+    a->sprite->visibility = true;
     a->is_enabled = true;
     a->rect.x = x;
     a->rect.y = y;
@@ -27,6 +28,7 @@ void ENY_reset_bullet(Actor_t *enyptr)
     enyptr->rect.x = DEACTIVATED_POSITION;
     enyptr->rect.y = DEACTIVATED_POSITION;
     enyptr->is_enabled = false;
+    enyptr->sprite->visibility = false;
 }
 
 void ENY_reset(ENY_Actor_t *enyptr)
@@ -40,8 +42,8 @@ void ENY_reset(ENY_Actor_t *enyptr)
 
     enyptr->current_health = enyptr->initial_health;
     enyptr->is_enabled = false;
-    enyptr->sprite->visibility = true;
     enyptr->timeOfLastHit = 0;
+    enyptr->sprite->visibility = false;
 }
 
 void ENY_kill(ENY_Actor_t *eny)
@@ -55,15 +57,20 @@ void ENY_kill(ENY_Actor_t *eny)
 void ENY_handleHitByShot(ENY_Actor_t *eny)
 {
     // Flash on hit
-    eny->sprite->visibility = false;
-    
-    eny->timeOfLastHit = getLevelTime();
 
-    resetShot();
-    eny->current_health--;
-    if (eny->current_health <= 0)
+    if (PLY_is_player_shot_enabled())
     {
-        ENY_kill(eny);
+
+        eny->sprite->visibility = false;
+
+        eny->timeOfLastHit = getLevelTime();
+
+        resetShot();
+        eny->current_health--;
+        if (eny->current_health <= 0)
+        {
+            ENY_kill(eny);
+        }
     }
 }
 
