@@ -16,7 +16,7 @@ static void endCurrentLevel(void)
 
 static void displayNewLevelText(void)
 {
-    char levelTextBuffer[6 + MAX_LEVEL_DIDGETS] = "Level ";
+    char levelTextBuffer[6 + MAX_LEVEL_DIDGETS] = "Wave ";
     char levelNumberBuffer[MAX_LEVEL_DIDGETS];
 
     sprintf(levelNumberBuffer, "%d", getCurrentLevel());
@@ -37,6 +37,18 @@ static void startNewLevel(u32 level_time)
     if (level_time == 200)
     {
         UI_clearCentredText();
+    }
+}
+
+static void showWarning(u16 levelTime)
+{
+    if (levelTime % 50 == 0)
+    {
+        UI_display_warning();
+    }
+    else if (levelTime % 25 == 0)
+    {
+        UI_clear_warning();
     }
 }
 
@@ -81,11 +93,21 @@ static void level_1(void)
 
     if (level_time == 300)
     {
-        ENY_spawnFloater(100, -35, 1);
-        ENY_spawnFloater(180, -65, 1);
-        
-        // ENY_spawnGrabber(-600, -35, 3, 1);
-        // ENY_spawnGrabber(300, -25, -2, 1);
+        ENY_spawnPopcorn(-30, 40, 0, 2, 0);
+    }
+
+    if (level_time == 310)
+    {
+        ENY_spawnPopcorn(320, 80, 0, -2, 1);
+    }
+    if (level_time == 320)
+    {
+        ENY_spawnPopcorn(-30, 120, 0, 2, 0);
+    }
+
+    if (level_time == 330)
+    {
+        ENY_spawnPopcorn(320, 160, 0, -2, 1);
     }
 
     if (level_time == 400)
@@ -195,6 +217,15 @@ static void level_3(void)
     {
         ENY_spawnBouncer(80, -50, 5, 1, 150);
         ENY_spawnBouncer(200, -50, 5, 1, 150);
+    }
+
+    if (level_time == 450)
+    {
+        ENY_spawnFloater(100, -35, 2, 1);
+        ENY_spawnFloater(180, -65, 1, 0);
+
+        ENY_spawnGrabber(-600, -35, 3, 1);
+        ENY_spawnGrabber(300, -25, -2, 1);
     }
 }
 

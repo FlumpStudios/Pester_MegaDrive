@@ -2,6 +2,7 @@
 #define _RES_RESOURCES_H_
 
 extern const SpriteDefinition lifeSprite;
+extern const SpriteDefinition popcorn;
 extern const SpriteDefinition astroid;
 extern const SpriteDefinition paddle;
 extern const SpriteDefinition imgexplo;

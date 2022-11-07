@@ -18,6 +18,7 @@ void ENY_runSpawnSetup(ENY_Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed)
     a->rect.y = y;
     a->velocity.x = xSpeed;
     a->velocity.y = ySpeed;
+    a->variationId = 0;
 }
 
 void ENY_reset_bullet(Actor_t *enyptr)

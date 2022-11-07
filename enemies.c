@@ -2,6 +2,8 @@
 
 // defines
 #define FLOATER_POOL_COUNT 2
+#define POPCORN_POOL_COUNT 8
+
 #define BOUNCER_POOL_COUNT 2
 #define BIRD_POOL_COUNT 5
 #define GRABBER_POOL_SIZE 5
@@ -12,7 +14,7 @@
 
 #define GRABBER_ROCKET_SPAWN_DELAY 50
 #define BOUNCER_BULLET_SPAWN_DELAY 150
-#define FLOATER_BULLET_SPAWN_DELAY 75
+#define FLOATER_BULLET_SPAWN_DELAY 50
 
 // fields
 static ENY_Actor_t *birdEnemies[BIRD_POOL_COUNT];
@@ -20,6 +22,7 @@ static ENY_Actor_t *grabberEnemies[GRABBER_POOL_SIZE];
 static ENY_Actor_t *astroidEnemies[ASTROID_POOL_SIZE];
 static ENY_Actor_t *bouncerEnemies[BOUNCER_POOL_COUNT];
 static ENY_Actor_t *floaterEnemies[FLOATER_POOL_COUNT];
+static ENY_Actor_t *popcornEnemies[POPCORN_POOL_COUNT];
 
 static Actor_t *circleBullets[CIRCLE_BULLETS_POOL_SIZE];
 static Actor_t *rocketBullets[ROCKET_BULLET_POOL_SIZE];
@@ -31,6 +34,7 @@ static int circle_bullet_active_count = 0;
 static int rocket_bullet_active_count = 0;
 static int bouncer_active_count = 0;
 static int floater_active_count = 0;
+static int popcorn_active_count = 0;
 
 static int bird_current_pool_index = 0;
 static int grabber_current_pool_index = 0;
@@ -39,6 +43,7 @@ static int circle_bullet_current_pool_index = 0;
 static int rocket_bullet_current_pool_index = 0;
 static int bouncer_current_pool_index = 0;
 static int floater_current_pool_index = 0;
+static int popcorn_current_pool_index = 0;
 
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed)
 {
@@ -83,6 +88,12 @@ void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y)
     ENY_spawncircleBullet(x, y, 1, 2);
 }
 
+void ENY_spawncircleBullets_sidepattern(s16 x, s16 y)
+{
+    ENY_spawncircleBullet(x, y, -1, 0);
+    ENY_spawncircleBullet(x, y, 1, 0);
+}
+
 void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
 {
     if (bouncer_active_count <= BOUNCER_POOL_COUNT)
@@ -98,12 +109,34 @@ void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
     }
 }
 
-void ENY_spawnFloater(s16 x, s16 y,s16 ySpeed)
+void ENY_spawnPopcorn(s16 x, s16 y, s16 ySpeed, s16 xSpeed, u8 variation)
+{
+    if (popcorn_active_count <= POPCORN_POOL_COUNT)
+    {
+        popcorn_active_count++;
+        ENY_runSpawnSetup(popcornEnemies[popcorn_current_pool_index], x, y, xSpeed, ySpeed);
+        popcornEnemies[popcorn_current_pool_index]->variationId = variation;
+        
+        SPR_setAnim(floaterEnemies[popcorn_current_pool_index]->sprite, variation);
+
+        popcorn_current_pool_index++;
+        if (popcorn_current_pool_index > POPCORN_POOL_COUNT)
+        {
+            popcorn_current_pool_index = 0;
+        }
+    }
+}
+
+void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
 {
     if (floater_active_count <= FLOATER_POOL_COUNT)
     {
         floater_active_count++;
         ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);
+        floaterEnemies[floater_current_pool_index]->variationId = variation;
+        
+        SPR_setAnim(floaterEnemies[floater_current_pool_index]->sprite, variation);
+
         floater_current_pool_index++;
         if (floater_current_pool_index > FLOATER_POOL_COUNT)
         {
@@ -199,21 +232,45 @@ void ENY_resetAllEnemies(void)
         SPR_setPosition(floaterEnemies[i]->sprite, floaterEnemies[i]->rect.x, floaterEnemies[i]->rect.y);
     }
 
+    for (u8 i = 0; i < POPCORN_POOL_COUNT; i++)
+    {
+        ENY_reset(popcornEnemies[i]);
+        SPR_setPosition(popcornEnemies[i]->sprite, popcornEnemies[i]->rect.x, popcornEnemies[i]->rect.y);
+    }
+    
 
     bird_active_count = 0;
     grabber_active_count = 0;
     astroid_active_count = 0;
     bouncer_active_count = 0;
     floater_active_count = 0;
-
+    popcorn_active_count = 0;
 
     bird_current_pool_index = 0;
     grabber_current_pool_index = 0;
     astroid_current_pool_index = 0;
     bouncer_current_pool_index = 0;
     floater_current_pool_index = 0;
+    popcorn_current_pool_index = 0;
 }
 
+static ENY_Actor_t *createPopcorn(void)
+{
+    ENY_Actor_t *result = NULL;
+    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+
+    result->initial_health = 1;
+    result->rect.height = 16;
+    result->rect.width = 16;
+    result->worth = 5;
+    result->timeOfLastHit = 0;
+    result->lifeTime = 0;
+
+    ENY_reset(result);
+    result->sprite = SPR_addSprite(&popcorn, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    
+    return result;
+}
 
 static ENY_Actor_t *createFloater(void)
 {
@@ -334,16 +391,23 @@ static void updateFloater(void)
             ENY_Actor_t *enemy = floaterEnemies[i];
             if (enemy->is_enabled)
             {
-                enemy->timeAlive++;                
+                enemy->timeAlive++;
 
                 enemy->rect.y += enemy->velocity.y;
-                
+
                 // IF on screen
-                if (enemy->rect.y > 0 &&  enemy->rect.y < 100)
+                if (enemy->rect.y > 0)
                 {
                     if (enemy->timeAlive % FLOATER_BULLET_SPAWN_DELAY == 0)
                     {
-                        ENY_spawncircleBullets_forkedpattern(enemy->rect.x + 8, enemy->rect.y + 3);
+                        if (enemy->variationId == 0 && enemy->rect.y < 100)
+                        {
+                            ENY_spawncircleBullets_forkedpattern(enemy->rect.x + 8, enemy->rect.y + 3);
+                        }
+                        else if (enemy->variationId == 1)
+                        {
+                            ENY_spawncircleBullets_sidepattern(enemy->rect.x + 8, enemy->rect.y + 3);
+                        }
                     }
                 }
                 if (checkRectangleCollision(enemy->rect, getShotRect()))
@@ -363,6 +427,46 @@ static void updateFloater(void)
                 if (enemy->rect.y > 250 || enemy->rect.y < -100 || enemy->rect.x > 440 || enemy->rect.x < -128)
                 {
                     floater_active_count--;
+                    ENY_reset(enemy);
+                }
+            }
+            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+        };
+    }
+}
+
+static void updatePopcorn(void)
+{
+    if (popcorn_active_count > 0)
+    {
+        for (u8 i = 0; i < POPCORN_POOL_COUNT; i++)
+        {
+            ENY_Actor_t *enemy = popcornEnemies[i];
+            if (enemy->is_enabled)
+            {
+                enemy->timeAlive++;
+
+                enemy->rect.y += enemy->velocity.y;
+                enemy->rect.x += enemy->velocity.x;
+
+                
+                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                {
+                    ENY_handleHitByShot(enemy);
+                }                
+                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                {
+                    runPlayerHit();
+                }
+
+                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                {
+                    enemy->sprite->visibility = true;
+                }
+
+                if (enemy->rect.y > 250 || enemy->rect.y < -100 || enemy->rect.x > 440 || enemy->rect.x < -128)
+                {
+                    popcorn_active_count--;
                     ENY_reset(enemy);
                 }
             }
@@ -616,6 +720,7 @@ void update(void)
     updateRocketBullets();
     updateBouncer();
     updateFloater();
+    updatePopcorn();
 }
 
 void ENY_init(void)
@@ -655,6 +760,11 @@ void ENY_init(void)
         floaterEnemies[i] = createFloater();
     }
 
+    for (u8 i = 0; i < POPCORN_POOL_COUNT; i++)
+    {
+        popcornEnemies[i] = createPopcorn();
+    }
+
     addTickFunc(update, TRUE);
 }
 
@@ -686,6 +796,11 @@ void ENY_destruct(void)
         ENY_destroyEnemy(floaterEnemies[i]);
     }
 
+    for (u8 i = 0; i < POPCORN_POOL_COUNT; i++)
+    {
+        ENY_destroyEnemy(popcornEnemies[i]);
+    }
+
     for (u8 i = 0; i < CIRCLE_BULLETS_POOL_SIZE; i++)
     {
         ENY_destroyBullet(circleBullets[i]);
@@ -695,5 +810,4 @@ void ENY_destruct(void)
     {
         ENY_destroyBullet(rocketBullets[i]);
     }
-
 }

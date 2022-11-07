@@ -17,6 +17,30 @@ void UI_drawCentredText(char s[])
 	VDP_drawText(s, 20 - strlen(s) / 2, 15);
 }
 
+void UI_display_warning(void)
+{
+	VDP_setPalette(PAL0, palette_red);	
+	u8 xPos = 10;
+	UI_clearCentredText();
+	VDP_drawText("********************", xPos, 11);
+	VDP_drawText("*//////////////////*", xPos, 12);
+	VDP_drawText("*//              //*", xPos, 13);
+	VDP_drawText("*//   WARNING!   //*", xPos, 14);
+	VDP_drawText("*//              //*", xPos, 15);
+	VDP_drawText("*//////////////////*", xPos, 16);
+	VDP_drawText("********************", xPos, 17);
+}
+
+void UI_clear_warning(void)
+{
+	VDP_setPalette(PAL0, palette_grey);	
+	
+	for (u8 i = 11; i < 18; i++)
+	{
+		VDP_clearText(0, i, 300);
+	}
+}
+
 void UI_updateLivesText(void)
 {
 	u8 lives = getLivesCount();

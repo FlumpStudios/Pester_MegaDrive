@@ -11,6 +11,8 @@
 #include "game_script.h"
 #include "ui.h"
 
+#define SKIP_INTRO 1
+
 void destructGame(void)
 {
 	destructPlayer();
@@ -20,11 +22,11 @@ void destructGame(void)
 
 void init_main(void)
 {
-
 	// SDK setups
 	SYS_disableInts();
 	JOY_init();
 	JOY_setEventHandler(&handleInput);
+	VDP_setPalette(PAL0, palette_grey);
 	VDP_setPalette(PAL1, imgexplo.palette->data);
 	VDP_setPalette(PAL2, bird.palette->data);
 	VDP_setPalette(PAL3, palette_black);
@@ -32,11 +34,15 @@ void init_main(void)
 	SYS_enableInts();
 
 	// Initiate stuff
-	BCK_draw_intro_screen();
-	PAL_fadeInPalette(PAL3, flump.palette->data, 150, false);
-	waitMs(1000);
-	PAL_fadeOutPalette(PAL3, 100, false);
-	waitMs(200);
+	if (SKIP_INTRO != 1)
+	{
+		BCK_draw_intro_screen();
+		PAL_fadeInPalette(PAL3, flump.palette->data, 150, false);
+		waitMs(1000);
+		PAL_fadeOutPalette(PAL3, 100, false);
+		waitMs(200);
+	}
+
 	BCK_draw_title_screen();
 	PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
 	CTR_set_locked_controls(false);
@@ -86,7 +92,7 @@ int main()
 		{
 			runTickFunctions();
 		}
-		
+
 		SPR_update();
 		VDP_waitVSync();
 	}

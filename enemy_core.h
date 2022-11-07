@@ -13,6 +13,7 @@ typedef struct
     u16 lifeTime;
     u16 timeAlive;
     u16 timeOfLastHit;
+    u8 variationId;
 } ENY_Actor_t;
 
 void ENY_runSpawnSetup(ENY_Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed);
