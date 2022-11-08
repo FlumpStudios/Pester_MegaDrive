@@ -109,15 +109,14 @@ void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
     }
 }
 
-void ENY_spawnPopcorn(s16 x, s16 y, s16 ySpeed, s16 xSpeed, u8 variation)
+void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u8 variation)
 {
     if (popcorn_active_count <= POPCORN_POOL_COUNT)
     {
         popcorn_active_count++;
         ENY_runSpawnSetup(popcornEnemies[popcorn_current_pool_index], x, y, xSpeed, ySpeed);
         popcornEnemies[popcorn_current_pool_index]->variationId = variation;
-        
-        SPR_setAnim(floaterEnemies[popcorn_current_pool_index]->sprite, variation);
+        SPR_setAnim(popcornEnemies[popcorn_current_pool_index]->sprite, variation);
 
         popcorn_current_pool_index++;
         if (popcorn_current_pool_index > POPCORN_POOL_COUNT)
@@ -134,7 +133,7 @@ void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
         floater_active_count++;
         ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);
         floaterEnemies[floater_current_pool_index]->variationId = variation;
-        
+
         SPR_setAnim(floaterEnemies[floater_current_pool_index]->sprite, variation);
 
         floater_current_pool_index++;
@@ -237,7 +236,6 @@ void ENY_resetAllEnemies(void)
         ENY_reset(popcornEnemies[i]);
         SPR_setPosition(popcornEnemies[i]->sprite, popcornEnemies[i]->rect.x, popcornEnemies[i]->rect.y);
     }
-    
 
     bird_active_count = 0;
     grabber_active_count = 0;
@@ -268,7 +266,7 @@ static ENY_Actor_t *createPopcorn(void)
 
     ENY_reset(result);
     result->sprite = SPR_addSprite(&popcorn, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-    
+
     return result;
 }
 
@@ -446,14 +444,32 @@ static void updatePopcorn(void)
             {
                 enemy->timeAlive++;
 
+                // Custom behavior for variation 1
+                if (enemy->variationId == 2)
+                {
+                    if (enemy->timeAlive % 2 == 0)
+                    {
+                        enemy->rect.y += enemy->velocity.y;
+                        if (enemy->timeAlive % 80 < 40)
+                        {
+                            enemy->rect.x += 2;
+                        }
+                        else
+                        {
+                            enemy->rect.x -= 2;
+                        }
+                    }
+                }
+                else
+                {
+                    enemy->rect.x += enemy->velocity.x;
+                }
                 enemy->rect.y += enemy->velocity.y;
-                enemy->rect.x += enemy->velocity.x;
 
-                
                 if (checkRectangleCollision(enemy->rect, getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
-                }                
+                }
                 else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
                 {
                     runPlayerHit();

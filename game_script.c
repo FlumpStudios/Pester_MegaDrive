@@ -93,21 +93,22 @@ static void level_1(void)
 
     if (level_time == 300)
     {
-        ENY_spawnPopcorn(-30, 40, 0, 2, 0);
+        ENY_spawnPopcorn(100, -40, 0, 1, 2);
+        ENY_spawnPopcorn(180, -25, 0, 1, 2);
     }
 
     if (level_time == 310)
     {
-        ENY_spawnPopcorn(320, 80, 0, -2, 1);
+        //ENY_spawnPopcorn(320, 80, 0, -2, 1);
     }
     if (level_time == 320)
     {
-        ENY_spawnPopcorn(-30, 120, 0, 2, 0);
+        //ENY_spawnPopcorn(-30, 120, 0, 2, 0);
     }
 
     if (level_time == 330)
     {
-        ENY_spawnPopcorn(320, 160, 0, -2, 1);
+        //ENY_spawnPopcorn(320, 160, 0, -2, 1);
     }
 
     if (level_time == 400)

@@ -22,7 +22,7 @@ void ENY_spawnAstroid(s16 x, s16 y, s16 xSpeed, s16 ySpeed);
 void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime);
 void ENY_spawnFloater(s16 x, s16 y,s16 ySpeed, u8 variation);
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed);
-void ENY_spawnPopcorn(s16 x, s16 y, s16 ySpeed, s16 xSpeed, u8 variation);
+void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed,s16 ySpeed, u8 variation);
 
 // Bullet patterns
 void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y);
