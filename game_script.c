@@ -91,42 +91,111 @@ static void level_1(void)
         UI_clearCentredText();
     }
 
-    if (level_time == 300)
-    {
-        ENY_spawnPopcorn(100, -40, 0, 1, 2);
-        ENY_spawnPopcorn(180, -25, 0, 1, 2);
-    }
-
-    if (level_time == 310)
-    {
-        //ENY_spawnPopcorn(320, 80, 0, -2, 1);
-    }
     if (level_time == 320)
     {
-        //ENY_spawnPopcorn(-30, 120, 0, 2, 0);
+        ENY_spawnPopcorn(75, -40, 1, 1, 2);        
+        ENY_spawnPopcorn(200, -40, 1, 1, 2);        
     }
 
-    if (level_time == 330)
+    if (level_time == 350)
     {
-        //ENY_spawnPopcorn(320, 160, 0, -2, 1);
+        ENY_spawnPopcorn(75, -40, 1, 1, 2);        
+        ENY_spawnPopcorn(200, -40, 1, 1, 2);
     }
 
-    if (level_time == 400)
+    if (level_time == 380)
     {
-        ENY_spawnGrabber(-50, -25, 3, 1);
-        ENY_spawnGrabber(300, -25, -2, 1);
+        ENY_spawnPopcorn(75, -40, 1, 1, 2);        
+        ENY_spawnPopcorn(200, -40, 1, 1, 2); 
     }
 
-    if (level_time == 500)
+    if (level_time == 410)
     {
-        ENY_spawnBird(150, -25, 1, 2);
+        ENY_spawnPopcorn(75, -40, 1, 1, 2);        
+        ENY_spawnPopcorn(200, -40, 1, 1, 2); 
     }
 
-    if (level_time == 700)
+    if (level_time == 540)
+    {
+        ENY_spawnPopcorn(150, -40, 0, 1, 2); 
+    }
+
+    if (level_time == 570)
+    {
+        ENY_spawnPopcorn(125, -40, 0, 1, 2);        
+        ENY_spawnPopcorn(175, -40, 0, 1, 2); 
+    }
+
+    if (level_time == 600)
+    {
+        ENY_spawnPopcorn(150, -40, 0, 1, 2); 
+    }
+
+    if (level_time == 720)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 1, 2); 
+    }
+
+    if (level_time == 740)
+    {
+        ENY_spawnPopcorn(175, -40, 1, 1, 2); 
+        ENY_spawnPopcorn(125, -40, 1, 1, 2);
+    }
+
+    if (level_time == 760)
+    {
+        ENY_spawnPopcorn(200, -40, 1, 1, 2); 
+        ENY_spawnPopcorn(100, -40, 1, 1, 2);
+    }
+
+    if (level_time == 780)
+    {
+        ENY_spawnPopcorn(225, -40, 1, 1, 2); 
+        ENY_spawnPopcorn(75, -40, 1, 1, 2);
+    }
+
+
+    if (level_time == 1000)
+    {
+        ENY_spawnPopcorn(150, -40, -5, 1, 2); 
+        ENY_spawnPopcorn(150, -40, 5, 1, 2);
+    }
+
+    if (level_time == 1030)
+    {
+        ENY_spawnPopcorn(150, -40, -5, 1, 2); 
+        ENY_spawnPopcorn(150, -40, 5, 1, 2);
+    }
+
+    if (level_time == 1060)
+    {
+        ENY_spawnPopcorn(150, -40, -5, 1, 2); 
+        ENY_spawnPopcorn(150, -40, 5, 1, 2);
+    }
+
+
+    if (level_time == 1220)
     {
         endCurrentLevel();
-        PAL_fadeOutPalette(PAL3, 50, true);
     }
+
+
+    // if (level_time == 400)
+    // {
+    //     ENY_spawnGrabber(-50, -25, 3, 1);
+    //     ENY_spawnGrabber(300, -25, -2, 1);
+    // }
+
+    // if (level_time == 500)
+    // {
+    //     ENY_spawnBird(150, -25, 1, 2);
+    // }
+
+    // if (level_time == 700)
+    // {
+    //     endCurrentLevel();
+    //     PAL_fadeOutPalette(PAL3, 50, true);
+    // }
 }
 
 static void level_2(void)

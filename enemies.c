@@ -96,22 +96,23 @@ void ENY_spawncircleBullets_sidepattern(s16 x, s16 y)
 
 void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
 {
-    if (bouncer_active_count <= BOUNCER_POOL_COUNT)
+    if (bouncer_active_count < BOUNCER_POOL_COUNT)
     {
         bouncer_active_count++;
         ENY_runSpawnSetup(bouncerEnemies[bouncer_current_pool_index], x, y, xSpeed, ySpeed);
         bouncerEnemies[bouncer_current_pool_index]->lifeTime = lifeTime;
         bouncer_current_pool_index++;
-        if (bouncer_current_pool_index > BOUNCER_POOL_COUNT)
-        {
-            bouncer_current_pool_index = 0;
-        }
+    }
+
+    if (bouncer_current_pool_index >= BOUNCER_POOL_COUNT)
+    {
+        bouncer_current_pool_index = 0;
     }
 }
 
 void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u8 variation)
 {
-    if (popcorn_active_count <= POPCORN_POOL_COUNT)
+    if (popcorn_active_count < POPCORN_POOL_COUNT)
     {
         popcorn_active_count++;
         ENY_runSpawnSetup(popcornEnemies[popcorn_current_pool_index], x, y, xSpeed, ySpeed);
@@ -119,16 +120,17 @@ void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u8 variation)
         SPR_setAnim(popcornEnemies[popcorn_current_pool_index]->sprite, variation);
 
         popcorn_current_pool_index++;
-        if (popcorn_current_pool_index > POPCORN_POOL_COUNT)
-        {
-            popcorn_current_pool_index = 0;
-        }
+    }
+
+    if (popcorn_current_pool_index >= POPCORN_POOL_COUNT)
+    {
+        popcorn_current_pool_index = 0;
     }
 }
 
 void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
 {
-    if (floater_active_count <= FLOATER_POOL_COUNT)
+    if (floater_active_count < FLOATER_POOL_COUNT)
     {
         floater_active_count++;
         ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);
@@ -137,10 +139,11 @@ void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
         SPR_setAnim(floaterEnemies[floater_current_pool_index]->sprite, variation);
 
         floater_current_pool_index++;
-        if (floater_current_pool_index > FLOATER_POOL_COUNT)
-        {
-            floater_current_pool_index = 0;
-        }
+    }
+
+    if (floater_current_pool_index >= FLOATER_POOL_COUNT)
+    {
+        floater_current_pool_index = 0;
     }
 }
 
@@ -151,10 +154,11 @@ void ENY_spawnBird(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
         bird_active_count++;
         ENY_runSpawnSetup(birdEnemies[bird_current_pool_index], x, y, xSpeed, ySpeed);
         bird_current_pool_index++;
-        if (bird_current_pool_index > BIRD_POOL_COUNT)
-        {
-            bird_current_pool_index = 0;
-        }
+    }
+
+    if (bird_current_pool_index >= BIRD_POOL_COUNT)
+    {
+        bird_current_pool_index = 0;
     }
 }
 
@@ -165,10 +169,11 @@ void ENY_spawnGrabber(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
         grabber_active_count++;
         ENY_runSpawnSetup(grabberEnemies[grabber_current_pool_index], x, y, xSpeed, ySpeed);
         grabber_current_pool_index++;
-        if (grabber_current_pool_index > GRABBER_POOL_SIZE)
-        {
-            grabber_current_pool_index = 0;
-        }
+    }
+
+    if (grabber_current_pool_index >= GRABBER_POOL_SIZE)
+    {
+        grabber_current_pool_index = 0;
     }
 }
 
@@ -179,10 +184,11 @@ void ENY_spawnAstroid(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
         astroid_active_count++;
         ENY_runSpawnSetup(astroidEnemies[astroid_current_pool_index], x, y, xSpeed, ySpeed);
         astroid_current_pool_index++;
-        if (astroid_current_pool_index > ASTROID_POOL_SIZE)
-        {
-            astroid_current_pool_index = 0;
-        }
+    }
+
+    if (astroid_current_pool_index >= ASTROID_POOL_SIZE)
+    {
+        astroid_current_pool_index = 0;
     }
 }
 
@@ -452,11 +458,11 @@ static void updatePopcorn(void)
                         enemy->rect.y += enemy->velocity.y;
                         if (enemy->timeAlive % 80 < 40)
                         {
-                            enemy->rect.x += 2;
+                            enemy->rect.x += enemy->velocity.x;
                         }
                         else
                         {
-                            enemy->rect.x -= 2;
+                            enemy->rect.x -= enemy->velocity.x;
                         }
                     }
                 }
