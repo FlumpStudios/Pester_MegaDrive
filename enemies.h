@@ -28,5 +28,5 @@ void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed,s16 ySpeed, u8 variation);
 void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y);
 void ENY_spawncircleBullets_squarepattern(s16 x, s16 y);
 void ENY_spawncircleBullet(s16 x, s16 y, s16 xSpeed, s16 ySpeed);
-void ENY_spawncircleBullets_sidepattern(s16 x, s16 y);
+void ENY_spawncircleBullets_sidepattern(s16 x, s16 y,  s8 speed);
 #endif

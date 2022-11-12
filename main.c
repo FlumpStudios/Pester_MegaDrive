@@ -11,6 +11,8 @@
 #include "game_script.h"
 #include "ui.h"
 
+#define SKIP_INTRO TRUE
+
 void destructGame(void)
 {
 	destructPlayer();

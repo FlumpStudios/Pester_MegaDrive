@@ -4,7 +4,9 @@
 #include <genesis.h>
 #include "resources.h"
 #include <memory.h>
-#include "game_config.h"
+
+#define true TRUE
+#define false FALSE
 
 #define DEACTIVATED_POSITION 300
 
@@ -14,10 +16,6 @@
 
 #define MSG_START "Press START to Begin!"
 #define MSG_RESET "Game over! Press START to Play Again."
-
-// Shouldn't have done this :(
-#define true TRUE
-#define false FALSE
 
 // Game state
 #define GAME_STATE_INTRO 0

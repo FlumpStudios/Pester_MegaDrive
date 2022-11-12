@@ -187,7 +187,7 @@ static void level_1(void)
         ENY_spawnPopcorn(150, -40, 5, 1, 2);
     }
 
-    if (level_time == 1220)
+    if (level_time == 1250)
     {
         endCurrentLevel();
     }
@@ -221,18 +221,9 @@ static void level_2(void)
     if (level_time == 300)
     {
         ENY_spawnFloater(100, -35, 1, 1);
+        ENY_spawnFloater(200, -75, 1, 1);
+        ENY_spawnFloater(100, -105, 1, 1);
     }
-
-    if (level_time == 350)
-    {
-        ENY_spawnFloater(200, -35, 1, 1);
-    }
-
-    if (level_time == 400)
-    {
-        ENY_spawnFloater(100, -35, 1, 1);
-    }
-
     if (level_time == 550)
     {
         ENY_spawnPopcorn(150, -40, 1, 1, 2);
@@ -312,64 +303,142 @@ static void level_3(void)
         startNewLevel(level_time);
     }
 
-    if (level_time == 300)
+    if (level_time == 325)
     {
-        BCK_draw_darkSky();
-        PAL_fadeInPalette(PAL3, moon.palette->data, 50, true);
-
-        ENY_spawnAstroid(100, -25, 0, 1);
-        ENY_spawnAstroid(190, -35, 0, 1);
-        ENY_spawnAstroid(150, -40, 0, 2);
-    }    
+        ENY_spawnAstroid(110, -30, 0, 1);
+    }
 
     if (level_time == 350)
     {
-        ENY_spawnAstroid(55, -35, 0, 1);
-        ENY_spawnAstroid(120, -30, 0, 2);
         ENY_spawnAstroid(200, -30, 0, 1);
     }
+
     if (level_time == 400)
     {
         ENY_spawnAstroid(90, -35, 0, 2);
-        ENY_spawnAstroid(124, -60, 0, 1);
         ENY_spawnAstroid(210, -30, 0, 1);
-    }
-
-    if (level_time == 450)
-    {
-        ENY_spawnAstroid(40, -25, 0, 1);
-        ENY_spawnAstroid(160, -200, 0, 1);
-        ENY_spawnAstroid(220, -30, 0, 1);
     }
 
     if (level_time == 500)
     {
         ENY_spawnAstroid(100, -30, 0, 2);
-        ENY_spawnAstroid(190, -45, 0, 1);
-        ENY_spawnAstroid(150, -42, 0, 2);
+        ENY_spawnAstroid(190, -45, 0, 1);        
     }
 
-    if (level_time == 550)
+    if (level_time == 575)
     {
-        ENY_spawnAstroid(55, -26, 0, 2);
-        ENY_spawnAstroid(120, -32, 0, 2);
+        ENY_spawnAstroid(55, -26, 0, 1);
         ENY_spawnAstroid(200, -31, 0, 1);
     }
-    if (level_time == 600)
+    if (level_time == 650)
     {
         ENY_spawnAstroid(90, -30, 0, 1);
-        ENY_spawnAstroid(124, -60, 0, 1);
         ENY_spawnAstroid(210, -35, 0, 2);
     }
 
-    if (level_time == 650)
+    if (level_time == 725)
     {
-        ENY_spawnAstroid(40, -25, 0, 1);
-        ENY_spawnAstroid(160, -250, 0, 1);
-        ENY_spawnAstroid(220, -33, 0, 2);
+        ENY_spawnAstroid(65, -25, 0, 1);
+        ENY_spawnAstroid(185, -55, 0, 2);
+        ENY_spawnAstroid(210, -33, 0, 2);
     }
 
-    if (level_time == 1450)
+    if (level_time == 750)
+    {
+        ENY_spawnAstroid(115, -33, 0, 1);
+    }
+
+    if (level_time == 875)
+    {
+        ENY_spawnFloater(100, -35, 1, 0);
+        ENY_spawnFloater(200, -35, 1, 0);
+    }
+
+    if (level_time == 950)
+    {
+        ENY_spawnFloater(150, -35, 1, 0);
+    }
+
+    if (level_time == 1100)
+    {
+        ENY_spawnPopcorn(150, -40, 0, 1, 2);
+    }
+
+    if (level_time == 1125)
+    {
+        ENY_spawnPopcorn(130, -40, 0, 1, 2);
+        ENY_spawnPopcorn(170, -40, 0, 1, 2);
+    }
+
+    if (level_time == 1150)
+    {
+        ENY_spawnPopcorn(110, -40, 0, 1, 2);
+        ENY_spawnPopcorn(190, -40, 0, 1, 2);
+    }
+    if (level_time == 1175)
+    {
+        ENY_spawnPopcorn(90, -40, 0, 1, 2);
+        ENY_spawnPopcorn(210, -40, 0, 1, 2);
+        ENY_spawnPopcorn(150, -40, 0, 1, 2);
+    }
+
+    if (level_time == 1300)
+    {
+        ENY_spawnAstroid(50, -25, 0, 1);
+        ENY_spawnAstroid(150, -55, 0, 2);        
+    }
+
+    if (level_time == 1375)
+    {
+        ENY_spawnFloater(100, -45, 2, 1);
+        ENY_spawnFloater(200, -45, 2, 1);
+    }
+
+    if (level_time == 1425)
+    {
+        ENY_spawnFloater(50, -45, 2, 1);
+        ENY_spawnFloater(250, -45, 2, 1);
+    }
+
+    if (level_time == 1325)
+    {
+        ENY_spawnAstroid(202, -33, 0, 1);
+    }
+
+    if (level_time == 1375)
+    {
+        ENY_spawnAstroid(54, -45, 0, 2);
+        ENY_spawnAstroid(125, -75, 0, 1);
+    }
+
+    if (level_time == 1425)
+    {
+        ENY_spawnAstroid(92, -45, 0, 2);
+        ENY_spawnAstroid(176, -75, 0, 1);
+    }
+
+    if (level_time == 1475)
+    {
+        ENY_spawnAstroid(44, -45, 0, 2);
+        ENY_spawnAstroid(245, -33, 0, 2);
+    }
+
+    if (level_time == 1500)
+    {
+        ENY_spawnAstroid(75, -35, 0, 3);
+    }
+
+    if (level_time == 1550)
+    {
+        ENY_spawnAstroid(200, -35, 0, 3);
+    }
+
+    if (level_time == 1600)
+    {
+        ENY_spawnAstroid(120, -35, 0, 2);
+    }
+
+    if (level_time == 1650)
     {
         endCurrentLevel();
     }
@@ -411,6 +480,9 @@ void runscript(void)
         level_2();
         break;
     case 3:
+        level_3();
+        break;
+    case 4:
         level_3();
         break;
     }

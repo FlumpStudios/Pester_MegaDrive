@@ -8,7 +8,7 @@
 #define BIRD_POOL_COUNT 5
 #define GRABBER_POOL_SIZE 5
 #define ASTROID_POOL_SIZE 6
-#define CIRCLE_BULLETS_POOL_SIZE 12
+#define CIRCLE_BULLETS_POOL_SIZE 10
 #define ENEMY_HIT_FLASH_TIME 2
 #define ROCKET_BULLET_POOL_SIZE 5
 
@@ -50,7 +50,7 @@ void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed)
     ENY_runBulletSpawnSetup(rocketBullets[rocket_bullet_current_pool_index], x, y, 0, ySpeed);
     rocket_bullet_active_count++;
     rocket_bullet_current_pool_index++;
-    if (rocket_bullet_current_pool_index > CIRCLE_BULLETS_POOL_SIZE)
+    if (rocket_bullet_current_pool_index >= ROCKET_BULLET_POOL_SIZE)
     {
         rocket_bullet_current_pool_index = 0;
     }
@@ -61,7 +61,7 @@ void ENY_spawncircleBullet(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
     ENY_runBulletSpawnSetup(circleBullets[circle_bullet_current_pool_index], x, y, xSpeed, ySpeed);
     circle_bullet_active_count++;
     circle_bullet_current_pool_index++;
-    if (circle_bullet_current_pool_index > CIRCLE_BULLETS_POOL_SIZE)
+    if (circle_bullet_current_pool_index >= CIRCLE_BULLETS_POOL_SIZE)
     {
         circle_bullet_current_pool_index = 0;
     }
@@ -88,10 +88,10 @@ void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y)
     ENY_spawncircleBullet(x, y, 1, 2);
 }
 
-void ENY_spawncircleBullets_sidepattern(s16 x, s16 y)
+void ENY_spawncircleBullets_sidepattern(s16 x, s16 y,  s8 speed)
 {
-    ENY_spawncircleBullet(x, y, -1, 0);
-    ENY_spawncircleBullet(x, y, 1, 0);
+    ENY_spawncircleBullet(x, y, speed *-1, 0);
+    ENY_spawncircleBullet(x, y, speed, 0);
 }
 
 void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
@@ -410,7 +410,7 @@ static void updateFloater(void)
                         }
                         else if (enemy->variationId == 1)
                         {
-                            ENY_spawncircleBullets_sidepattern(enemy->rect.x + 8, enemy->rect.y + 3);
+                            ENY_spawncircleBullets_sidepattern(enemy->rect.x + 8, enemy->rect.y + 3, 2);
                         }
                     }
                 }
@@ -428,7 +428,7 @@ static void updateFloater(void)
                     enemy->sprite->visibility = true;
                 }
 
-                if (enemy->rect.y > 250 || enemy->rect.y < -100 || enemy->rect.x > 440 || enemy->rect.x < -128)
+                if (enemy->rect.y > 250 || enemy->rect.x > 440 || enemy->rect.x < -128)
                 {
                     floater_active_count--;
                     ENY_reset(enemy);
@@ -695,7 +695,7 @@ static void updateCircleBullets(void)
                 bullet->rect.y += bullet->velocity.y;
                 bullet->rect.x += bullet->velocity.x;
 
-                if (bullet->rect.y < -100 || bullet->rect.y > 250 || bullet->rect.x > 440 || bullet->rect.x < -128)
+                if (bullet->rect.y < -100 || bullet->rect.y > 250 || bullet->rect.x > 400 || bullet->rect.x < -80)
                 {
                     circle_bullet_active_count--;
                     ENY_reset_bullet(bullet);

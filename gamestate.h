@@ -7,6 +7,9 @@
 #include "background.h"
 #include "game_update_observable.h"
 
+#define STARTING_LEVEL 1
+#define STARTING_LIVES 2
+
 void ST_init(void);
 void destructState(void);
 
