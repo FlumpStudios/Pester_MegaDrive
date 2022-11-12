@@ -6,7 +6,7 @@
 
 #define BOUNCER_POOL_COUNT 2
 #define BIRD_POOL_COUNT 5
-#define GRABBER_POOL_SIZE 5
+#define GRABBER_POOL_SIZE 6
 #define ASTROID_POOL_SIZE 6
 #define CIRCLE_BULLETS_POOL_SIZE 10
 #define ENEMY_HIT_FLASH_TIME 2
@@ -130,7 +130,7 @@ void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u8 variation)
 
 void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
 {
-    if (floater_active_count <= FLOATER_POOL_COUNT)
+    if (floater_active_count < FLOATER_POOL_COUNT)
     {
         floater_active_count++;
         ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);
@@ -149,7 +149,7 @@ void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
 
 void ENY_spawnBird(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
-    if (bird_active_count <= BIRD_POOL_COUNT)
+    if (bird_active_count < BIRD_POOL_COUNT)
     {
         bird_active_count++;
         ENY_runSpawnSetup(birdEnemies[bird_current_pool_index], x, y, xSpeed, ySpeed);
@@ -164,7 +164,7 @@ void ENY_spawnBird(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 
 void ENY_spawnGrabber(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
-    if (grabber_active_count <= GRABBER_POOL_SIZE)
+    if (grabber_active_count < GRABBER_POOL_SIZE)
     {
         grabber_active_count++;
         ENY_runSpawnSetup(grabberEnemies[grabber_current_pool_index], x, y, xSpeed, ySpeed);
@@ -179,7 +179,7 @@ void ENY_spawnGrabber(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 
 void ENY_spawnAstroid(s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
-    if (astroid_active_count <= ASTROID_POOL_SIZE)
+    if (astroid_active_count < ASTROID_POOL_SIZE)
     {
         astroid_active_count++;
         ENY_runSpawnSetup(astroidEnemies[astroid_current_pool_index], x, y, xSpeed, ySpeed);

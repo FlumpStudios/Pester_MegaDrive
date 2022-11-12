@@ -192,12 +192,6 @@ static void level_1(void)
         endCurrentLevel();
     }
 
-    // if (level_time == 400)
-    // {
-    //     ENY_spawnGrabber(-50, -25, 3, 1);
-    //     ENY_spawnGrabber(300, -25, -2, 1);
-    // }
-
     // if (level_time == 500)
     // {
     //     ENY_spawnBird(150, -25, 1, 2);
@@ -515,12 +509,118 @@ static void level_4(void)
     {
         ENY_spawnPopcorn(90, -40, 1, 1, 4);
     }
-    if (level_time == 450)
+
+    if (level_time == 575)
     {
-        // ENY_spawnBouncer(80, -50, 5, 1, 150);
-        // ENY_spawnBouncer(200, -50, 5, 1, 150);
-        // ENY_spawnGrabber(-600, -35, 3, 1);
-        // ENY_spawnGrabber(300, -25, -2, 1);
+        ENY_spawnGrabber(-50, 50, 1, 0);
+        ENY_spawnGrabber(340, 50, -1, 0);
+    }
+
+    if (level_time == 615)
+    {
+        ENY_spawnGrabber(-50, -35, 2, 1);
+        ENY_spawnGrabber(340, -35, -2, 1);
+    }
+
+    if (level_time == 900)
+    {
+        ENY_spawnGrabber(-50, 25, 2, 0);
+        ENY_spawnGrabber(340, 25, -2, 0);
+    }
+
+    if (level_time == 1050)
+    {
+        ENY_spawnFloater(150, -35, 1, 0);
+    }
+
+    if (level_time == 1100)
+    {
+        ENY_spawnFloater(100, -45, 1, 0);
+        ENY_spawnFloater(200, -45, 1, 0);
+    }
+
+    if (level_time == 1250)
+    {
+        ENY_spawnGrabber(-50, 25, 2, 0);
+        ENY_spawnGrabber(340, 25, -2, 0);
+    }
+
+    if (level_time == 1350)
+    {
+        ENY_spawnGrabber(-50, 50, 2, 0);
+        ENY_spawnGrabber(340, 50, -2, 0);
+    }
+
+    if (level_time == 1450)
+    {
+        ENY_spawnGrabber(-50, 75, 1, 0);
+        ENY_spawnGrabber(340, 75, -1, 0);
+    }
+
+    if (level_time == 1400)
+    {
+        ENY_spawnFloater(80, -45, 2, 1);
+        ENY_spawnFloater(220, -45, 2, 1);
+    }
+
+    if (level_time == 1500)
+    {
+        ENY_spawnFloater(110, -45, 2, 1);
+        ENY_spawnFloater(190, -45, 2, 1);
+    }
+
+    if (level_time == 1600)
+    {
+        ENY_spawnFloater(150, -45, 2, 1);
+    }
+
+    if (level_time == 1750)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 3);
+    }
+    if (level_time == 1753)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+    if (level_time == 1756)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+    if (level_time == 1759)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+    if (level_time == 1762)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+    if (level_time == 1765)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+    if (level_time == 1768)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+    if (level_time == 1771)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+    }
+
+    if (level_time == 1971)
+    {
+        endCurrentLevel();
+    }
+    // ENY_spawnBouncer(80, -50, 5, 1, 150);
+    // ENY_spawnBouncer(200, -50, 5, 1, 150);
+}
+
+static void level_5(void)
+{
+    u32 level_time = getLevelTime();
+    if (level_time < INTRO_LENGTH)
+    {
+        startNewLevel(level_time);
     }
 }
 
@@ -540,6 +640,9 @@ void runscript(void)
         break;
     case 4:
         level_4();
+        break;
+    case 5:
+        level_5();
         break;
     }
 }
