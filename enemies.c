@@ -1,20 +1,20 @@
 #include "enemies.h"
 
 // defines
-#define FLOATER_POOL_COUNT 2
+#define FLOATER_POOL_COUNT 6
 #define POPCORN_POOL_COUNT 8
 
 #define BOUNCER_POOL_COUNT 2
 #define BIRD_POOL_COUNT 5
 #define GRABBER_POOL_SIZE 5
 #define ASTROID_POOL_SIZE 6
-#define CIRCLE_BULLETS_POOL_SIZE 8
+#define CIRCLE_BULLETS_POOL_SIZE 12
 #define ENEMY_HIT_FLASH_TIME 2
 #define ROCKET_BULLET_POOL_SIZE 5
 
 #define GRABBER_ROCKET_SPAWN_DELAY 50
 #define BOUNCER_BULLET_SPAWN_DELAY 150
-#define FLOATER_BULLET_SPAWN_DELAY 50
+#define FLOATER_BULLET_SPAWN_DELAY 75
 
 // fields
 static ENY_Actor_t *birdEnemies[BIRD_POOL_COUNT];
@@ -130,7 +130,7 @@ void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u8 variation)
 
 void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
 {
-    if (floater_active_count < FLOATER_POOL_COUNT)
+    if (floater_active_count <= FLOATER_POOL_COUNT)
     {
         floater_active_count++;
         ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);

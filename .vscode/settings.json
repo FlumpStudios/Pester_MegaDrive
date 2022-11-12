@@ -3,6 +3,7 @@
         "types.h": "c",
         "sprite_eng.h": "c",
         "collision_detection.h": "c",
-        "genesis.h": "c"
+        "genesis.h": "c",
+        "game_update_observable.h": "c"
     }
 }

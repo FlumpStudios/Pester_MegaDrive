@@ -1,19 +1,30 @@
 #include "background.h"
 #include "game_update_observable.h"
+
+static u8 frameskip = 2;
+static u8 frame = 0;
+
 static u8 scrollSpeed = 4;
 
 void BCK_update(void)
 {
     static u8 bg_scroll_speed = 0;
 
-    bg_scroll_speed -= scrollSpeed;
+    frame++;
+    if(frame > frameskip)
+    {
+        frame = 0;
+        bg_scroll_speed -= scrollSpeed;
+    }
+
     
     VDP_setVerticalScroll(PLAN_A, bg_scroll_speed);
 }
 
 void BCK_draw_starfield(void)
 {
-    scrollSpeed = 5;
+    scrollSpeed = 1;
+    frameskip = 2;
     VDP_clearPlan(PLAN_A, 0);
     VDP_drawImageEx(PLAN_A, &starfield, TILE_ATTR_FULL(PAL3, 0, 1, 0, 1), 0, 0, 0, CPU);
     VDP_drawImageEx(PLAN_A, &starfield, TILE_ATTR_FULL(PAL3, 0, 0, 0, 1), 0, 16, 0, CPU);
@@ -25,7 +36,8 @@ void BCK_draw_starfield(void)
 
 void BCK_draw_darkSky(void)
 {
-    scrollSpeed = 5;
+    scrollSpeed = 1;
+    frameskip = 2;    
     VDP_clearPlan(PLAN_A, 0);
     VDP_drawImageEx(PLAN_A, &moon, TILE_ATTR_FULL(PAL3, 0, 0, 0, 1), 0, 0, 0, CPU);
     VDP_drawImageEx(PLAN_A, &moon, TILE_ATTR_FULL(PAL3, 0, 0, 0, 1), 0, 16, 0, CPU);

@@ -1,7 +1,5 @@
 #include "gamestate.h"
 #include "ui.h"
-#define STARTING_LEVEL 1
-#define STARTING_LIVES 2
 
 typedef struct gs
 {

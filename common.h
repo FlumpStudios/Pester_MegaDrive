@@ -4,6 +4,8 @@
 #include <genesis.h>
 #include "resources.h"
 #include <memory.h>
+#include "game_config.h"
+
 #define DEACTIVATED_POSITION 300
 
 // Static text
