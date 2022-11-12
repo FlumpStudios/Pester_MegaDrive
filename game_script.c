@@ -322,7 +322,7 @@ static void level_3(void)
     if (level_time == 500)
     {
         ENY_spawnAstroid(100, -30, 0, 2);
-        ENY_spawnAstroid(190, -45, 0, 1);        
+        ENY_spawnAstroid(190, -45, 0, 1);
     }
 
     if (level_time == 575)
@@ -385,7 +385,7 @@ static void level_3(void)
     if (level_time == 1300)
     {
         ENY_spawnAstroid(50, -25, 0, 1);
-        ENY_spawnAstroid(150, -55, 0, 2);        
+        ENY_spawnAstroid(150, -55, 0, 2);
     }
 
     if (level_time == 1375)
@@ -454,17 +454,73 @@ static void level_4(void)
 
     if (level_time == 300)
     {
-        ENY_spawnBouncer(80, -50, 5, 1, 150);
-        ENY_spawnBouncer(200, -50, 5, 1, 150);
+        ENY_spawnPopcorn(90, -40, 1, 1, 3);
     }
 
+    if (level_time == 306)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+    if (level_time == 312)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+    if (level_time == 318)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+    if (level_time == 324)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+
+    if (level_time == 414)
+    {
+        ENY_spawnPopcorn(180, -40, 1, 1, 3);
+    }
+    if (level_time == 420)
+    {
+        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+    }
+    if (level_time == 426)
+    {
+        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+    }
+    if (level_time == 432)
+    {
+        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+    }
+    if (level_time == 438)
+    {
+        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+    }
+
+    if (level_time == 496)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 3);
+    }
+    if (level_time == 500)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+    if (level_time == 506)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+    if (level_time == 512)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
+    if (level_time == 518)
+    {
+        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+    }
     if (level_time == 450)
     {
-        ENY_spawnFloater(100, -35, 2, 1);
-        ENY_spawnFloater(180, -65, 1, 0);
-
-        ENY_spawnGrabber(-600, -35, 3, 1);
-        ENY_spawnGrabber(300, -25, -2, 1);
+        // ENY_spawnBouncer(80, -50, 5, 1, 150);
+        // ENY_spawnBouncer(200, -50, 5, 1, 150);
+        // ENY_spawnGrabber(-600, -35, 3, 1);
+        // ENY_spawnGrabber(300, -25, -2, 1);
     }
 }
 
@@ -483,7 +539,7 @@ void runscript(void)
         level_3();
         break;
     case 4:
-        level_3();
+        level_4();
         break;
     }
 }

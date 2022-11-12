@@ -211,6 +211,7 @@ void ST_update(void)
 
 void ST_init(void)
 {
+    gamestate = NULL;
     if (gamestate == NULL)
     {
         gamestate = MEM_alloc(sizeof(Gamestate_t));

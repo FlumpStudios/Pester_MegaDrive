@@ -2,7 +2,7 @@
 
 // defines
 #define FLOATER_POOL_COUNT 6
-#define POPCORN_POOL_COUNT 8
+#define POPCORN_POOL_COUNT 10
 
 #define BOUNCER_POOL_COUNT 2
 #define BIRD_POOL_COUNT 5
@@ -88,9 +88,9 @@ void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y)
     ENY_spawncircleBullet(x, y, 1, 2);
 }
 
-void ENY_spawncircleBullets_sidepattern(s16 x, s16 y,  s8 speed)
+void ENY_spawncircleBullets_sidepattern(s16 x, s16 y, s8 speed)
 {
-    ENY_spawncircleBullet(x, y, speed *-1, 0);
+    ENY_spawncircleBullet(x, y, speed * -1, 0);
     ENY_spawncircleBullet(x, y, speed, 0);
 }
 
@@ -450,19 +450,35 @@ static void updatePopcorn(void)
             {
                 enemy->timeAlive++;
 
-                // Custom behavior for variation 1
-                if (enemy->variationId == 2)
+                // Custom behavior for variations 2+
+                if (enemy->variationId >= 2)
                 {
                     if (enemy->timeAlive % 2 == 0)
                     {
                         enemy->rect.y += enemy->velocity.y;
-                        if (enemy->timeAlive % 80 < 40)
+                        
+                        if (enemy->variationId == 2)
                         {
-                            enemy->rect.x += enemy->velocity.x;
+                            if (enemy->timeAlive % 80 < 40)
+                            {
+                                enemy->rect.x += enemy->velocity.x;
+                            }
+                            else
+                            {
+                                enemy->rect.x -= enemy->velocity.x;
+                            }
                         }
-                        else
+
+                        if (enemy->variationId > 2)
                         {
-                            enemy->rect.x -= enemy->velocity.x;
+                            if (enemy->timeAlive % 20 < 10)
+                            {
+                                enemy->rect.x += enemy->velocity.x;
+                            }
+                            else
+                            {
+                                enemy->rect.x -= enemy->velocity.x;
+                            }
                         }
                     }
                 }
