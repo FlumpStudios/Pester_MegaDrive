@@ -5,7 +5,7 @@ u16 generateRandomNum(int upper, s32 seed)
 	setRandomSeed(seed);
 	return random() % upper;
 }
-// TODO: This is cheap and potentially expensive, switch out when possible
+// TODO: This is basically but potentially expensive, switch out when possible
 u16 generateRandomNumWithRange(int lower, int upper, s32 seed)
 {
 	if(lower == upper) { return lower; }

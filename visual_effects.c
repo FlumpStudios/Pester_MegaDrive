@@ -18,7 +18,8 @@ VX_EnemyExplosion_t *explosion_pool[EXPLOSION_POOL_COUNT];
 
 VX_EnemyExplosion_t *CreateExplosion(u8 i)
 {
-    VX_EnemyExplosion_t *createdExplosion = MEM_alloc(sizeof(VX_EnemyExplosion_t));
+    VX_EnemyExplosion_t *createdExplosion  = NULL;
+    createdExplosion = MEM_alloc(sizeof(VX_EnemyExplosion_t));
     createdExplosion->is_rendered = false;
     createdExplosion->frame_ticker = 0;
     if(i == 0)

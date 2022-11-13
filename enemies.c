@@ -455,8 +455,6 @@ static void updatePopcorn(void)
                 {
                     if (enemy->timeAlive % 2 == 0)
                     {
-                        enemy->rect.y += enemy->velocity.y;
-                        
                         if (enemy->variationId == 2)
                         {
                             if (enemy->timeAlive % 80 < 40)
@@ -467,9 +465,10 @@ static void updatePopcorn(void)
                             {
                                 enemy->rect.x -= enemy->velocity.x;
                             }
+                            enemy->rect.y += enemy->velocity.y;
                         }
 
-                        if (enemy->variationId > 2)
+                        if (enemy->variationId == 3)
                         {
                             if (enemy->timeAlive % 20 < 10)
                             {
@@ -479,14 +478,30 @@ static void updatePopcorn(void)
                             {
                                 enemy->rect.x -= enemy->velocity.x;
                             }
+                            enemy->rect.y += enemy->velocity.y;
+                        }
+
+                        // For side entering snakes
+                        if (enemy->variationId == 4 || enemy->variationId == 5)
+                        {
+                            if (enemy->timeAlive % 20 < 10)
+                            {
+                                enemy->rect.y += enemy->velocity.y;
+                            }
+                            else
+                            {
+                                enemy->rect.y -= enemy->velocity.y;
+                            }
+                            
+                            enemy->rect.x += enemy->velocity.x;
                         }
                     }
                 }
                 else
                 {
                     enemy->rect.x += enemy->velocity.x;
+                    enemy->rect.y += enemy->velocity.y;
                 }
-                enemy->rect.y += enemy->velocity.y;
 
                 if (checkRectangleCollision(enemy->rect, getShotRect()))
                 {

@@ -448,66 +448,66 @@ static void level_4(void)
 
     if (level_time == 300)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 3);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
 
     if (level_time == 306)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 312)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 318)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 324)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
 
     if (level_time == 414)
     {
-        ENY_spawnPopcorn(180, -40, 1, 1, 3);
+        ENY_spawnPopcorn(180, -40, 1, 2, 3);
     }
     if (level_time == 420)
     {
-        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+        ENY_spawnPopcorn(180, -40, 1, 2, 3);
     }
     if (level_time == 426)
     {
-        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+        ENY_spawnPopcorn(180, -40, 1, 2, 3);
     }
     if (level_time == 432)
     {
-        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+        ENY_spawnPopcorn(180, -40, 1, 2, 3);
     }
     if (level_time == 438)
     {
-        ENY_spawnPopcorn(180, -40, 1, 1, 4);
+        ENY_spawnPopcorn(180, -40, 1, 2, 3);
     }
 
     if (level_time == 496)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 3);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 500)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 506)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 512)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
     if (level_time == 518)
     {
-        ENY_spawnPopcorn(90, -40, 1, 1, 4);
+        ENY_spawnPopcorn(90, -40, 1, 2, 3);
     }
 
     if (level_time == 575)
@@ -576,38 +576,38 @@ static void level_4(void)
 
     if (level_time == 1750)
     {
-        ENY_spawnPopcorn(150, -40, 1, 2, 3);
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
     }
-    if (level_time == 1753)
+    if (level_time == 1755)
     {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
     }
-    if (level_time == 1756)
+    if (level_time == 1760)
     {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
-    }
-    if (level_time == 1759)
-    {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
-    }
-    if (level_time == 1762)
-    {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
     }
     if (level_time == 1765)
     {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
     }
-    if (level_time == 1768)
+    if (level_time == 1770)
     {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
     }
-    if (level_time == 1771)
+    if (level_time == 1775)
     {
-        ENY_spawnPopcorn(150, -40, 1, 2, 4);
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
+    }
+    if (level_time == 1780)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
+    }
+    if (level_time == 1785)
+    {
+        ENY_spawnPopcorn(150, -40, 1, 3, 3);
     }
 
-    if (level_time == 1971)
+    if (level_time == 1990)
     {
         endCurrentLevel();
     }
@@ -621,6 +621,28 @@ static void level_5(void)
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
+    }
+
+    if (level_time == 300)
+    {
+        ENY_spawnPopcorn(-30, 60, 3, 1, 4);
+    }
+
+    if (level_time == 306)
+    {
+        ENY_spawnPopcorn(-30, 60, 3, 1, 4);
+    }
+    if (level_time == 312)
+    {
+        ENY_spawnPopcorn(-30, 60, 3, 1, 4);
+    }
+    if (level_time == 318)
+    {
+        ENY_spawnPopcorn(-30, 60, 3, 1, 4);
+    }
+    if (level_time == 324)
+    {
+        ENY_spawnPopcorn(-30, 60, 3, 1, 4);
     }
 }
 

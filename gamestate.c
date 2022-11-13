@@ -1,8 +1,6 @@
 #include "gamestate.h"
 #include "ui.h"
 
-
-
 typedef struct gs
 {
     bool is_game_playing;
@@ -16,6 +14,7 @@ typedef struct gs
     u8 current_lives;
     bool isGamePaused;
 } Gamestate_t;
+
 
 static Gamestate_t *gamestate = NULL;
 
@@ -42,6 +41,7 @@ void ST_set_is_game_paused(bool isPaused)
 {
     gamestate->isGamePaused = isPaused;
 }
+
 
 void removeLife(void)
 {
@@ -212,10 +212,8 @@ void ST_update(void)
 void ST_init(void)
 {
     gamestate = NULL;
-    if (gamestate == NULL)
-    {
-        gamestate = MEM_alloc(sizeof(Gamestate_t));
-    }
+    gamestate = MEM_alloc(sizeof(Gamestate_t));
+
     if (gamestate != NULL)
     {
         resetGame();

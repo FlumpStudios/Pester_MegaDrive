@@ -266,17 +266,16 @@ void PLY_update(void)
 void PLY_init(void)
 {
     // Create the player entity
-    if (player == NULL)
-    {
-        player = (Player_t *)MEM_alloc(sizeof(Player_t));
+    player == NULL;
 
-        if (player != NULL)
-        {
-            resetPlayer();
-            // player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-            player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-            player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
-        }
+    player = (Player_t *)MEM_alloc(sizeof(Player_t));
+
+    if (player != NULL)
+    {
+        resetPlayer();
+        // player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+        player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+        player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
     }
 
     // subscribe update funciton to the game ticker
