@@ -7,7 +7,7 @@
 #include "background.h"
 #include "game_update_observable.h"
 
-#define STARTING_LEVEL 5
+#define STARTING_LEVEL 1
 #define STARTING_LIVES 2
 
 
