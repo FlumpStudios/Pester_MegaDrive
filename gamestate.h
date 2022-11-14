@@ -10,9 +10,9 @@
 #define STARTING_LEVEL 5
 #define STARTING_LIVES 2
 
+
 void ST_init(void);
 void destructState(void);
-
 void startGame(void);
 void restartGame(void);
 void endGame(void);

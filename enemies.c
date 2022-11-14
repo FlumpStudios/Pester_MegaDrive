@@ -10,8 +10,7 @@
 #define ASTROID_POOL_SIZE 6
 #define CIRCLE_BULLETS_POOL_SIZE 10
 #define ENEMY_HIT_FLASH_TIME 2
-#define ROCKET_BULLET_POOL_SIZE 5
-
+#define ROCKET_BULLET_POOL_SIZE 6
 #define GRABBER_ROCKET_SPAWN_DELAY 50
 #define BOUNCER_BULLET_SPAWN_DELAY 150
 #define FLOATER_BULLET_SPAWN_DELAY 75
@@ -404,11 +403,11 @@ static void updateFloater(void)
                 {
                     if (enemy->timeAlive % FLOATER_BULLET_SPAWN_DELAY == 0)
                     {
-                        if (enemy->variationId == 0 && enemy->rect.y < 100)
+                        if (enemy->variationId == VARIATION_FLOATER_WITH_FORKED_BULLETS && enemy->rect.y < 100)
                         {
                             ENY_spawncircleBullets_forkedpattern(enemy->rect.x + 8, enemy->rect.y + 3);
                         }
-                        else if (enemy->variationId == 1)
+                        else if (enemy->variationId == VARIATION_FLOATER_WITH_SIDE_BULLETS)
                         {
                             ENY_spawncircleBullets_sidepattern(enemy->rect.x + 8, enemy->rect.y + 3, 2);
                         }
@@ -453,9 +452,9 @@ static void updatePopcorn(void)
                 // Custom behavior for variations 2+
                 if (enemy->variationId >= 2)
                 {
-                    if (enemy->timeAlive % 2 == 0)
+                    if (enemy->timeAlive % VARIATION_POPCORN_CENTRE /*2*/ == 0)
                     {
-                        if (enemy->variationId == 2)
+                        if (enemy->variationId == VARIATION_POPCORN_CENTRE)
                         {
                             if (enemy->timeAlive % 80 < 40)
                             {
@@ -468,7 +467,7 @@ static void updatePopcorn(void)
                             enemy->rect.y += enemy->velocity.y;
                         }
 
-                        if (enemy->variationId == 3)
+                        if (enemy->variationId == VARIATION_SNAKE_CENTRE)
                         {
                             if (enemy->timeAlive % 20 < 10)
                             {
@@ -481,9 +480,13 @@ static void updatePopcorn(void)
                             enemy->rect.y += enemy->velocity.y;
                         }
 
-                        // For side entering snakes
-                        if (enemy->variationId == 4 || enemy->variationId == 5)
+                        if (enemy->variationId == VARIATION_SNAKE_LEFT || enemy->variationId == VARIATION_SNAKE_RIGHT)
                         {
+                            if (enemy->timeAlive % 100 == 0)
+                            {
+                                ENY_spawnRocketBullet(enemy->rect.x, enemy->rect.y + 5, 3);
+                            }
+
                             if (enemy->timeAlive % 20 < 10)
                             {
                                 enemy->rect.y += enemy->velocity.y;
@@ -492,7 +495,7 @@ static void updatePopcorn(void)
                             {
                                 enemy->rect.y -= enemy->velocity.y;
                             }
-                            
+
                             enemy->rect.x += enemy->velocity.x;
                         }
                     }

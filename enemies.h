@@ -5,6 +5,17 @@
 #include "enemy_core.h"
 #include "game_update_observable.h"
 
+// Variation defines
+#define VARIATION_POPCORN_RIGHT 0
+#define VARIATION_POPCORN_LEFT 1
+#define VARIATION_POPCORN_CENTRE 2
+#define VARIATION_SNAKE_CENTRE 3
+#define VARIATION_SNAKE_RIGHT 4
+#define VARIATION_SNAKE_LEFT 5
+
+#define VARIATION_FLOATER_WITH_FORKED_BULLETS 0
+#define VARIATION_FLOATER_WITH_SIDE_BULLETS 1
+
 // Initiate all enemies
 void ENY_init(void);
 

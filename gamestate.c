@@ -1,6 +1,7 @@
 #include "gamestate.h"
 #include "ui.h"
 
+
 typedef struct gs
 {
     bool is_game_playing;
@@ -14,7 +15,6 @@ typedef struct gs
     u8 current_lives;
     bool isGamePaused;
 } Gamestate_t;
-
 
 static Gamestate_t *gamestate = NULL;
 
