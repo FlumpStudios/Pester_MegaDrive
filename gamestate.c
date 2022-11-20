@@ -6,11 +6,9 @@ typedef struct gs
 {
     bool is_game_playing;
     u8 current_game_state;
-    u8 game_time_mod;
     u32 score;
     u32 high_score;
     u32 level_time;
-    u32 game_time;
     u8 current_level;
     u8 current_lives;
     bool isGamePaused;
@@ -24,8 +22,6 @@ void resetGame(void)
     gamestate->level_time = 0;
     gamestate->current_game_state = GAME_STATE_MENU;
     gamestate->is_game_playing = false;
-    gamestate->game_time = 0;
-    gamestate->game_time_mod = 1;
     gamestate->high_score = 0;
     gamestate->current_level = STARTING_LEVEL;
     gamestate->current_lives = STARTING_LIVES;
@@ -60,10 +56,7 @@ u8 getLivesCount(void)
     return gamestate->current_lives;
 }
 
-void resetGameTime(void)
-{
-    gamestate->game_time = 0;
-}
+
 
 void resetLevelTime(void)
 {
@@ -74,6 +67,7 @@ int getScore(void)
 {
     return gamestate->score;
 }
+
 
 u8 getCurrentLevel(void)
 {
@@ -95,10 +89,6 @@ u8 getGameState(void)
     return gamestate->current_game_state;
 }
 
-u8 getTimeMod(void)
-{
-    return gamestate->game_time_mod;
-}
 
 bool isGamePlaying(void)
 {
@@ -110,12 +100,8 @@ u32 getLevelTime(void)
     return gamestate->level_time;
 }
 
-u32 getGameTime(void)
-{
-    return gamestate->game_time;
-}
 
-void increaseScore(int score)
+void increaseScore(u32 score)
 {
     gamestate->score += score;
 }
@@ -130,10 +116,6 @@ void setGameState(u8 gameState)
     gamestate->current_game_state = gameState;
 }
 
-void setTimeMod(u8 timeMod)
-{
-    gamestate->game_time_mod = timeMod;
-}
 
 void setGamePlaying(bool isGamePlaying)
 {
@@ -144,15 +126,7 @@ void tickLevelTime(void)
 {
     if (!gamestate->isGamePaused)
     {
-        gamestate->level_time += gamestate->game_time_mod;
-    }
-}
-
-void tickGameTime(void)
-{
-    if (!gamestate->isGamePaused)
-    {
-        gamestate->game_time += gamestate->game_time_mod;
+        gamestate->level_time += 1;
     }
 }
 
@@ -178,14 +152,13 @@ void restartGame(void)
     setGamePlaying(true);
     resetPlayer();
     ENY_resetAllEnemies();
-    resetScore();
-    UI_updateScoreDisplay();
-    resetGameTime();
+    resetScore();   
     resetLevelTime();
     resetCurrentLevel();
     VDP_clearTextArea(0, 10, 40, 10);
-    UI_updateLivesText();
+    UI_init();
 }
+
 
 void startGame(void)
 {
@@ -193,11 +166,11 @@ void startGame(void)
     PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
     BCK_draw_starfield();
     setGameState(GAME_STATE_GAME);
-    UI_drawHud();
     PLY_init();
     VX_init();
     ENY_init();
-    UI_updateLivesText();
+    UI_init();
+
 }
 
 void ST_update(void)
@@ -205,7 +178,6 @@ void ST_update(void)
     if (isGamePlaying())
     {
         tickLevelTime();
-        tickGameTime();
     }
 }
 

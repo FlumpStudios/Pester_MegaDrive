@@ -169,26 +169,54 @@ void destructPlayer(void)
     MEM_free(player);
 }
 
-void moveLeft(void)
+void moveLeft(bool seconAxisActive)
 {
-    player->ship.velocity.x = -player->ship.speed;
+    if(seconAxisActive)
+    {
+        player->ship.velocity.x = -player->ship.speed / 1.5;
+    }
+    else
+    {
+        player->ship.velocity.x = -player->ship.speed;
+    }
     SPR_setAnim(player->ship.sprite, 1);
 }
 
-void moveRight(void)
+void moveRight(bool seconAxisActive)
 {
-    player->ship.velocity.x = player->ship.speed;
+    if (seconAxisActive)
+    {
+        player->ship.velocity.x = player->ship.speed / 1.5;
+    }
+    else
+    {
+        player->ship.velocity.x = player->ship.speed;
+    }
     SPR_setAnim(player->ship.sprite, 2);
 }
 
-void moveUp(void)
+void moveUp(bool seconAxisActive)
 {
-    player->ship.velocity.y = -player->ship.speed;
+    if (seconAxisActive)
+    {
+        player->ship.velocity.y = -player->ship.speed / 1.5;
+    }
+    else
+    {
+        player->ship.velocity.y = -player->ship.speed;
+    }
 }
 
-void moveDown(void)
+void moveDown(bool seconAxisActive)
 {
-    player->ship.velocity.y = player->ship.speed;
+    if (seconAxisActive)
+    {
+        player->ship.velocity.y = player->ship.speed / 1.5;
+    }
+    else
+    {
+        player->ship.velocity.y = player->ship.speed;
+    }
 }
 
 void haltX(void)

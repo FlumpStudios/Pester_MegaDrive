@@ -16,6 +16,12 @@ typedef struct
     u8 variationId;
 } ENY_Actor_t;
 
+typedef struct
+{
+    ENY_Actor_t;
+    Sprite *sprite2;	
+} ENY_Boss_Actor_t;
+
 void ENY_runSpawnSetup(ENY_Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed);
 void ENY_runBulletSpawnSetup(Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed);
 void ENY_reset(ENY_Actor_t *enyptr);

@@ -10,11 +10,11 @@
 void PLY_init(void);
 
 // Controls
-void fireShot(void);
-void moveLeft(void);
-void moveRight(void);
-void moveUp(void);
-void moveDown(void);
+void fireShot();
+void moveLeft(bool seconAxisActive);
+void moveRight(bool seconAxisActive);
+void moveUp(bool seconAxisActive);
+void moveDown(bool seconAxisActive);
 void haltX(void);
 void haltY(void);
 

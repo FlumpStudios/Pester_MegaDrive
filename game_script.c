@@ -9,7 +9,6 @@
 #define INTRO_LENGTH 300
 #define WARNING_MESSAGE_LENGTH 400
 
-
 static void endCurrentLevel(void)
 {
     increaseCurrentLevel();
@@ -38,7 +37,7 @@ static void runGameStartIntro(u16 level_time)
 
     if (level_time > 75 && level_time < 150)
     {
-        moveDown();
+        moveDown(false);
     }
 
     if (level_time == 150)
@@ -110,86 +109,86 @@ static void level_1(void)
 
     if (level_time == 320)
     {
-        ENY_spawnPopcorn(75, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(200, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(75, -40, 1, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(200, -40, 1, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 350)
     {
-        ENY_spawnPopcorn(75, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(200, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(75, -40, 1, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(200, -40, 1, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 380)
     {
-        ENY_spawnPopcorn(75, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(200, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(75, -40, 1, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(200, -40, 1, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 410)
     {
-        ENY_spawnPopcorn(75, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(200, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(75, -40, 1, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(200, -40, 1, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 540)
     {
-        ENY_spawnPopcorn(150, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 570)
     {
-        ENY_spawnPopcorn(125, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(175, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(125, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(175, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 600)
     {
-        ENY_spawnPopcorn(150, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 720)
     {
-        ENY_spawnPopcorn(150, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 2, 3, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 740)
     {
-        ENY_spawnPopcorn(175, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(125, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(175, -40, 2, 3, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(125, -40, 2, 3, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 760)
     {
-        ENY_spawnPopcorn(200, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(100, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(200, -40, 2, 3, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(100, -40, 2, 3, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 780)
     {
-        ENY_spawnPopcorn(225, -40, 1, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(75, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(225, -40, 2, 3, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(75, -40, 2, 3, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1000)
     {
-        ENY_spawnPopcorn(150, -40, -5, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(150, -40, 5, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, -5, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 5, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1030)
     {
-        ENY_spawnPopcorn(150, -40, -5, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(150, -40, 5, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, -5, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 5, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1060)
     {
-        ENY_spawnPopcorn(150, -40, -5, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(150, -40, 5, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, -5, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 5, 2, VARIATION_POPCORN_CENTRE);
     }
 
-    if (level_time == 1250)
+    if (level_time == 1350)
     {
         endCurrentLevel();
     }
@@ -222,24 +221,24 @@ static void level_2(void)
     }
     if (level_time == 550)
     {
-        ENY_spawnPopcorn(150, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 2, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 575)
     {
-        ENY_spawnPopcorn(150, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 2, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 600)
     {
-        ENY_spawnPopcorn(150, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 2, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 625)
     {
-        ENY_spawnPopcorn(150, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 2, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 650)
     {
-        ENY_spawnPopcorn(150, -40, 1, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 2, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 750)
@@ -265,29 +264,28 @@ static void level_2(void)
     }
     if (level_time == 1150)
     {
-        ENY_spawnPopcorn(70, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(230, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(70, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(230, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 1175)
     {
-        ENY_spawnPopcorn(80, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(220, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(80, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(220, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 1200)
     {
-        ENY_spawnPopcorn(90, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(210, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(90, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(210, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 1220)
     {
-        ENY_spawnPopcorn(100, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(200, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(100, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(200, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1450)
     {
         endCurrentLevel();
-        PAL_fadeOutPalette(PAL3, 50, true);
     }
 }
 
@@ -357,25 +355,25 @@ static void level_3(void)
 
     if (level_time == 1100)
     {
-        ENY_spawnPopcorn(150, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1125)
     {
-        ENY_spawnPopcorn(130, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(170, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(130, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(170, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1150)
     {
-        ENY_spawnPopcorn(110, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(190, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(110, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(190, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
     if (level_time == 1175)
     {
-        ENY_spawnPopcorn(90, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(210, -40, 0, 1, VARIATION_POPCORN_CENTRE);
-        ENY_spawnPopcorn(150, -40, 0, 1, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(90, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(210, -40, 0, 2, VARIATION_POPCORN_CENTRE);
+        ENY_spawnPopcorn(150, -40, 0, 2, VARIATION_POPCORN_CENTRE);
     }
 
     if (level_time == 1300)
@@ -617,21 +615,6 @@ static void level_4(void)
     // ENY_spawnBouncer(200, -50, 5, 1, 150);
 }
 
-static void level_6(void)
-{
-    u32 level_time = getLevelTime();
-    if (level_time < INTRO_LENGTH)
-    {
-        startNewLevel(level_time);
-    }
-    if (level_time>  INTRO_LENGTH && level_time < (WARNING_MESSAGE_LENGTH + INTRO_LENGTH))
-    {
-        showWarning(level_time);
-    }
-
-    // TODO: Add epic boss battle here!
-}
-
 static void level_5(void)
 {
     u32 level_time = getLevelTime();
@@ -700,7 +683,7 @@ static void level_5(void)
     if (level_time == 750)
     {
         ENY_spawnAstroid(130, -35, 0, 2);
-        ENY_spawnAstroid(55, -60, 0, 1);        
+        ENY_spawnAstroid(55, -60, 0, 1);
     }
 
     if (level_time == 700)
@@ -749,7 +732,7 @@ static void level_5(void)
     if (level_time == 1450)
     {
         ENY_spawnAstroid(60, -25, 0, 2);
-        ENY_spawnAstroid(180, -75, 0, 1);        
+        ENY_spawnAstroid(180, -75, 0, 1);
     }
 
     if (level_time == 1400)
@@ -795,7 +778,7 @@ static void level_5(void)
 
     if (level_time == 1950)
     {
-        ENY_spawnGrabber(-50, 30, 2, 0);        
+        ENY_spawnGrabber(-50, 30, 2, 0);
     }
 
     if (level_time == 2000)
@@ -805,7 +788,7 @@ static void level_5(void)
 
     if (level_time == 2050)
     {
-        ENY_spawnGrabber(-50, 30, 2, 0);        
+        ENY_spawnGrabber(-50, 30, 2, 0);
     }
 
     if (level_time == 1900)
@@ -845,6 +828,20 @@ static void level_5(void)
     // }
 }
 
+static void level_6(void)
+{
+    u32 level_time = getLevelTime();
+    if (level_time < INTRO_LENGTH)
+    {
+        startNewLevel(level_time);
+    }
+    if (level_time > INTRO_LENGTH && level_time < (WARNING_MESSAGE_LENGTH + INTRO_LENGTH))
+    {
+        showWarning(level_time);
+    }
+
+    // TODO: Add epic boss battle here!
+}
 void runscript(void)
 {
     switch (getCurrentLevel())

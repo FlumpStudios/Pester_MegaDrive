@@ -11,20 +11,18 @@
 #define STARTING_LIVES 2
 
 
+
 void ST_init(void);
 void destructState(void);
 void startGame(void);
 void restartGame(void);
 void endGame(void);
-void increaseScore(int score);
-void setTimeMod(u8 timeMod);
+void increaseScore(u32 score);
 void resetLevelTime(void);
 
 bool isGamePlaying(void);
 u8 getGameState(void);
-u8 getTimeMod(void);
 u32 getLevelTime(void);
-u32 getGameTime(void);
 int getScore(void);
 int getHighScore(void);
 

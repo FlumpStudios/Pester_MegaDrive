@@ -46,7 +46,7 @@ typedef struct
 typedef struct
 {
 	Rectangle_t rect;
-	Sprite *sprite;
+	Sprite *sprite;	
 } Entity_t;
 
 typedef struct

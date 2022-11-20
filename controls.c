@@ -62,28 +62,32 @@ void handleInput(u16 joy, u16 changed, u16 state)
 
 			if (state & BUTTON_RIGHT)
 			{
-				moveRight();
+				bool secondAxis = ((state & BUTTON_UP) || (state & BUTTON_DOWN));
+				moveRight(secondAxis);
 			}
 			else if (state & BUTTON_LEFT)
 			{
-				moveLeft();
+				bool secondAxis = ((state & BUTTON_UP) || (state & BUTTON_DOWN));
+				moveLeft(secondAxis);
 			}
-			else if ((changed & BUTTON_RIGHT) | (changed & BUTTON_LEFT))
+			else
 			{
 				haltX();
 			}
 
 			if (state & BUTTON_UP)
 			{
-				moveUp();
+				bool secondAxis = ((state & BUTTON_LEFT) || (state & BUTTON_RIGHT));
+				moveUp(secondAxis);
 			}
 
 			else if (state & BUTTON_DOWN)
 			{
-				moveDown();
+				bool secondAxis = ((state & BUTTON_LEFT) || (state & BUTTON_RIGHT));
+				moveDown(secondAxis);
 			}
 
-			else if ((changed & BUTTON_UP) | (changed & BUTTON_DOWN))
+			else
 			{
 				haltY();
 			}

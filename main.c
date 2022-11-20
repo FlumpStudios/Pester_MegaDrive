@@ -30,7 +30,7 @@ void init_main(void)
 	VDP_setPalette(PAL1, imgexplo.palette->data);
 	VDP_setPalette(PAL2, bird.palette->data);
 	VDP_setPalette(PAL3, palette_black);
-	VDP_setTextPlan(PLAN_B);
+	VDP_setTextPlan(PLAN_A);
 	SYS_enableInts();
 
 	// Initiate stuff
@@ -51,10 +51,7 @@ void init_main(void)
 	SPR_init(0, 0, 0);
 	BCK_init();
 	ST_init();
-	UI_init();
-	SCR_init();
-
-	UI_drawHud();
+	SCR_init();	
 }
 
 /* ---------------------------------------- */

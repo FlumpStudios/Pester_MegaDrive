@@ -73,6 +73,9 @@ void UI_updateHighScoreDisplay(void)
 
 void UI_init(void)
 {
+	UI_clearCentredText();
 	UI_updateScoreDisplay();
 	UI_updateHighScoreDisplay();
+	UI_updateLivesText();
+	UI_drawHud();
 }
