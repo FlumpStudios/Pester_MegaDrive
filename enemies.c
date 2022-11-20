@@ -116,7 +116,7 @@ void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u8 variation)
         popcorn_active_count++;
         ENY_runSpawnSetup(popcornEnemies[popcorn_current_pool_index], x, y, xSpeed, ySpeed);
         popcornEnemies[popcorn_current_pool_index]->variationId = variation;
-        SPR_setAnim(popcornEnemies[popcorn_current_pool_index]->sprite, variation);
+        SPR_setAnim(popcornEnemies[popcorn_current_pool_index]->spriteSlot1, variation);
 
         popcorn_current_pool_index++;
     }
@@ -135,7 +135,7 @@ void ENY_spawnFloater(s16 x, s16 y, s16 ySpeed, u8 variation)
         ENY_runSpawnSetup(floaterEnemies[floater_current_pool_index], x, y, 0, ySpeed);
         floaterEnemies[floater_current_pool_index]->variationId = variation;
 
-        SPR_setAnim(floaterEnemies[floater_current_pool_index]->sprite, variation);
+        SPR_setAnim(floaterEnemies[floater_current_pool_index]->spriteSlot1, variation);
 
         floater_current_pool_index++;
     }
@@ -209,37 +209,37 @@ void ENY_resetAllEnemies(void)
     for (u8 i = 0; i < BIRD_POOL_COUNT; i++)
     {
         ENY_reset(birdEnemies[i]);
-        SPR_setPosition(birdEnemies[i]->sprite, birdEnemies[i]->rect.x, birdEnemies[i]->rect.y);
+        SPR_setPosition(birdEnemies[i]->spriteSlot1, birdEnemies[i]->rect.x, birdEnemies[i]->rect.y);
     }
 
     for (u8 i = 0; i < GRABBER_POOL_SIZE; i++)
     {
         ENY_reset(grabberEnemies[i]);
-        SPR_setPosition(grabberEnemies[i]->sprite, grabberEnemies[i]->rect.x, grabberEnemies[i]->rect.y);
+        SPR_setPosition(grabberEnemies[i]->spriteSlot1, grabberEnemies[i]->rect.x, grabberEnemies[i]->rect.y);
     }
 
     for (u8 i = 0; i < ASTROID_POOL_SIZE; i++)
     {
         ENY_reset(astroidEnemies[i]);
-        SPR_setPosition(astroidEnemies[i]->sprite, astroidEnemies[i]->rect.x, astroidEnemies[i]->rect.y);
+        SPR_setPosition(astroidEnemies[i]->spriteSlot1, astroidEnemies[i]->rect.x, astroidEnemies[i]->rect.y);
     }
 
     for (u8 i = 0; i < BOUNCER_POOL_COUNT; i++)
     {
         ENY_reset(bouncerEnemies[i]);
-        SPR_setPosition(bouncerEnemies[i]->sprite, bouncerEnemies[i]->rect.x, bouncerEnemies[i]->rect.y);
+        SPR_setPosition(bouncerEnemies[i]->spriteSlot1, bouncerEnemies[i]->rect.x, bouncerEnemies[i]->rect.y);
     }
 
     for (u8 i = 0; i < FLOATER_POOL_COUNT; i++)
     {
         ENY_reset(floaterEnemies[i]);
-        SPR_setPosition(floaterEnemies[i]->sprite, floaterEnemies[i]->rect.x, floaterEnemies[i]->rect.y);
+        SPR_setPosition(floaterEnemies[i]->spriteSlot1, floaterEnemies[i]->rect.x, floaterEnemies[i]->rect.y);
     }
 
     for (u8 i = 0; i < POPCORN_POOL_COUNT; i++)
     {
         ENY_reset(popcornEnemies[i]);
-        SPR_setPosition(popcornEnemies[i]->sprite, popcornEnemies[i]->rect.x, popcornEnemies[i]->rect.y);
+        SPR_setPosition(popcornEnemies[i]->spriteSlot1, popcornEnemies[i]->rect.x, popcornEnemies[i]->rect.y);
     }
 
     bird_active_count = 0;
@@ -259,129 +259,117 @@ void ENY_resetAllEnemies(void)
 
 static ENY_Actor_t *createPopcorn(void)
 {
-    ENY_Actor_t *result = NULL;
-    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+    ENY_Actor_t *result = ENY_new_enemy_actor();
 
     result->initial_health = 1;
     result->rect.height = 16;
     result->rect.width = 16;
     result->worth = 5;
-    result->timeOfLastHit = 0;
-    result->lifeTime = 0;
+
+    result->spriteSlot1 = SPR_addSprite(&popcorn, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
     ENY_reset(result);
-    result->sprite = SPR_addSprite(&popcorn, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
     return result;
 }
 
 static ENY_Actor_t *createFloater(void)
 {
-    ENY_Actor_t *result = NULL;
-    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+    ENY_Actor_t *result = ENY_new_enemy_actor();
 
     result->initial_health = 2;
     result->rect.height = 16;
     result->rect.width = 32;
     result->worth = 25;
-    result->timeOfLastHit = 0;
-    result->lifeTime = 0;
+
+    result->spriteSlot1 = SPR_addSprite(&floater, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
     ENY_reset(result);
-    result->sprite = SPR_addSprite(&floater, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
 }
 
 static ENY_Actor_t *createBouncer(void)
 {
-    ENY_Actor_t *result = NULL;
-    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+    ENY_Actor_t *result = ENY_new_enemy_actor();
 
     result->initial_health = 4;
     result->rect.height = 16;
     result->rect.width = 32;
     result->worth = 50;
-    result->timeOfLastHit = 0;
-    result->lifeTime = 0;
+
+    result->spriteSlot1 = SPR_addSprite(&bouncer, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
     ENY_reset(result);
-    result->sprite = SPR_addSprite(&bouncer, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
 }
 
 static ENY_Actor_t *createBird(void)
 {
-    ENY_Actor_t *result = NULL;
-    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+    ENY_Actor_t *result = ENY_new_enemy_actor();
 
     result->initial_health = 3;
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 10;
-    result->timeOfLastHit = 0;
+
+    result->spriteSlot1 = SPR_addSprite(&bird, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
     ENY_reset(result);
-    result->sprite = SPR_addSprite(&bird, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     return result;
 }
 
 static ENY_Actor_t *createGrabber(void)
 {
-    ENY_Actor_t *result = NULL;
-    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+    ENY_Actor_t *result = ENY_new_enemy_actor();
 
     result->initial_health = 1;
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 5;
-    result->timeAlive = 0;
-    result->lifeTime = 0;
-    result->timeOfLastHit = 0;
-    ENY_reset(result);
 
-    result->sprite = SPR_addSprite(&grabber, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    result->spriteSlot1 = SPR_addSprite(&grabber, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset(result);
     return result;
 }
 
 static ENY_Actor_t *createAstroid(void)
 {
-    ENY_Actor_t *result = NULL;
-    result = (ENY_Actor_t *)MEM_alloc(sizeof(ENY_Actor_t));
+    ENY_Actor_t *result = ENY_new_enemy_actor();
 
     result->initial_health = 1;
     result->rect.height = 32;
     result->rect.width = 32;
     result->worth = 5;
-    result->timeOfLastHit = 0;
-    ENY_reset(result);
 
-    result->sprite = SPR_addSprite(&astroid, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    result->spriteSlot1 = SPR_addSprite(&astroid, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    ENY_reset(result);
+    
     return result;
 }
 
 static Actor_t *CreateCircleBullet(void)
 {
-    Actor_t *result = NULL;
-    result = (Actor_t *)MEM_alloc(sizeof(Actor_t));
-
+    Actor_t *result = CMN_new_actor();
+    
     result->rect.height = 16;
     result->rect.width = 16;
-    ENY_reset_bullet(result);
+    
+    result->spriteSlot1 = SPR_addSprite(&enemyBullet, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
-    result->sprite = SPR_addSprite(&enemyBullet, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    ENY_reset_bullet(result);
     return result;
 }
 
 static Actor_t *CreateRocketBullet(void)
 {
-    Actor_t *result = NULL;
-    result = (Actor_t *)MEM_alloc(sizeof(Actor_t));
+    Actor_t *result = CMN_new_actor();
 
     result->rect.height = 8;
     result->rect.width = 16;
-    ENY_reset_bullet(result);
 
-    result->sprite = SPR_addSprite(&enemyRocket, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    result->spriteSlot1 = SPR_addSprite(&enemyRocket, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset_bullet(result);
     return result;
 }
 
@@ -413,18 +401,18 @@ static void updateFloater(void)
                         }
                     }
                 }
-                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
                 }
-                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
-                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
                 {
-                    enemy->sprite->visibility = true;
+                    enemy->spriteSlot1->visibility = true;
                 }
 
                 if (enemy->rect.y > 250 || enemy->rect.x > 440 || enemy->rect.x < -128)
@@ -433,7 +421,7 @@ static void updateFloater(void)
                     ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+            SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
         };
     }
 }
@@ -506,18 +494,18 @@ static void updatePopcorn(void)
                     enemy->rect.y += enemy->velocity.y;
                 }
 
-                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
                 }
-                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
-                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
                 {
-                    enemy->sprite->visibility = true;
+                    enemy->spriteSlot1->visibility = true;
                 }
 
                 if (enemy->rect.y > 250 || enemy->rect.y < -100 || enemy->rect.x > 440 || enemy->rect.x < -128)
@@ -526,7 +514,7 @@ static void updatePopcorn(void)
                     ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+            SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
         };
     }
 }
@@ -568,18 +556,18 @@ static void updateBouncer(void)
                         ENY_spawncircleBullets_tripplepattern(enemy->rect.x + 8, enemy->rect.y + 3);
                     }
                 }
-                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
                 }
-                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
-                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
                 {
-                    enemy->sprite->visibility = true;
+                    enemy->spriteSlot1->visibility = true;
                 }
 
                 if (enemy->rect.y > 250 || enemy->rect.y < -100 || enemy->rect.x > 440 || enemy->rect.x < -128)
@@ -588,7 +576,7 @@ static void updateBouncer(void)
                     ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+            SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
         };
     }
 }
@@ -604,7 +592,7 @@ static void updateBird(void)
             {
                 if (enemy->rect.y > 0)
                 {
-                    if (enemy->rect.x > getPlayerRect().x)
+                    if (enemy->rect.x > PLY_getPlayerRect().x)
                     {
                         enemy->rect.x -= enemy->velocity.y;
                     }
@@ -613,19 +601,19 @@ static void updateBird(void)
                         enemy->rect.x += enemy->velocity.x;
                     }
                 }
-                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
                 }
-                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
                 enemy->rect.y += enemy->velocity.y;
-                if (enemy->timeOfLastHit > 0 && getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+                if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
                 {
-                    enemy->sprite->visibility = true;
+                    enemy->spriteSlot1->visibility = true;
                 }
 
                 if (enemy->rect.y > 250)
@@ -634,7 +622,7 @@ static void updateBird(void)
                     ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+            SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
         };
     }
 }
@@ -655,13 +643,13 @@ static void updateGrabber(void)
                     ENY_spawnRocketBullet(enemy->rect.x, enemy->rect.y + 5, 3);
                 }
 
-                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
                 }
-                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
                 enemy->rect.y += enemy->velocity.y;
@@ -673,7 +661,7 @@ static void updateGrabber(void)
                     ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(enemy->sprite, enemy->rect.x, enemy->rect.y);
+            SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
         };
     }
 }
@@ -689,13 +677,13 @@ static void updateAstroid(void)
             {
                 enemy->rect.y += enemy->velocity.y;
 
-                if (checkRectangleCollision(enemy->rect, getShotRect()))
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
                 }
-                else if (checkRectangleCollision(enemy->rect, getHitboxRect()))
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
                 enemy->rect.y += enemy->velocity.y;
@@ -707,7 +695,7 @@ static void updateAstroid(void)
                     ENY_reset(enemy);
                 }
             }
-            SPR_setPosition(enemy->sprite, astroidEnemies[i]->rect.x, astroidEnemies[i]->rect.y);
+            SPR_setPosition(enemy->spriteSlot1, astroidEnemies[i]->rect.x, astroidEnemies[i]->rect.y);
         };
     }
 }
@@ -721,9 +709,9 @@ static void updateCircleBullets(void)
             Actor_t *bullet = circleBullets[i];
             if (bullet->is_enabled)
             {
-                if (checkRectangleCollision(bullet->rect, getHitboxRect()))
+                if (CLS_checkRectangleCollision(bullet->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
                 bullet->rect.y += bullet->velocity.y;
@@ -735,7 +723,7 @@ static void updateCircleBullets(void)
                     ENY_reset_bullet(bullet);
                 }
             }
-            SPR_setPosition(bullet->sprite, bullet->rect.x, bullet->rect.y);
+            SPR_setPosition(bullet->spriteSlot1, bullet->rect.x, bullet->rect.y);
         }
     }
 }
@@ -749,9 +737,9 @@ static void updateRocketBullets(void)
             Actor_t *bullet = rocketBullets[i];
             if (bullet->is_enabled)
             {
-                if (checkRectangleCollision(bullet->rect, getHitboxRect()))
+                if (CLS_checkRectangleCollision(bullet->rect, PLY_getHitboxRect()))
                 {
-                    runPlayerHit();
+                    PLY_runPlayerHit();
                 }
 
                 bullet->rect.y += bullet->velocity.y;
@@ -762,7 +750,7 @@ static void updateRocketBullets(void)
                     ENY_reset_bullet(bullet);
                 }
             }
-            SPR_setPosition(bullet->sprite, bullet->rect.x, bullet->rect.y);
+            SPR_setPosition(bullet->spriteSlot1, bullet->rect.x, bullet->rect.y);
         }
     }
 }

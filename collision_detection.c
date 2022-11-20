@@ -1,6 +1,6 @@
 #include "collision_detection.h"
 
-bool checkRectangleCollision(Rectangle_t obj, Rectangle_t obj2)
+bool CLS_checkRectangleCollision(Rectangle_t obj, Rectangle_t obj2)
 {
 	// Check x intersects
 	if (obj.x < obj2.x + obj2.width && obj.x + obj.width > obj2.x)

@@ -3,5 +3,5 @@
 #include "common.h"
 
 void VX_init(void);
-void spawnExposion(Rectangle_t position);
+void VC_spawnExposion(Rectangle_t position);
 #endif

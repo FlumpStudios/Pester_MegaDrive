@@ -1,6 +1,7 @@
 #include "player.h"
 #include "game_update_observable.h"
 #include "gamestate.h"
+
 // player struct should have been an actor type, but I ballsed it up :(
 
 #define DEATH_TIMEOUT 100
@@ -15,9 +16,9 @@ typedef struct ply
 
 static Player_t *player = NULL;
 static Edges_t screen_limits = {0, 320, 0, 240};
-static are_bondary_checks_enabled = false;
-static is_player_in_death_state = false;
-static death_ticker = 0;
+static bool are_bondary_checks_enabled = false;
+static bool is_player_in_death_state = false;
+static u16 death_ticker = 0;
 
 void PLY_set_boundary_checks_enabled(bool enabled)
 {
@@ -29,13 +30,13 @@ static void reset_after_death(void)
     death_ticker = 0;
     is_player_in_death_state = false;
 
-    if (getLivesCount() > 0)
+    if (GST_getLivesCount() > 0)
     {
-        removeLife();
+        GST_removeLife();
         ENY_resetAllEnemies();
         ENY_resetAllBullets();
         CTR_set_locked_controls(false);
-        player->ship.sprite->visibility = true;
+        player->ship.spriteSlot1->visibility = true;
         player->ship.rect.height = 32;
         player->ship.rect.width = 32;
         player->ship.rect.x = 144;
@@ -43,11 +44,11 @@ static void reset_after_death(void)
     }
     else
     {
-        endGame();
+        GST_endGame();
     }
 }
 
-void resetPlayer()
+void PLY_resetPlayer()
 {
     death_ticker = 0;
     is_player_in_death_state = false;
@@ -75,18 +76,18 @@ void resetPlayer()
 
     player->ship.velocity.x = 0;
     player->ship.velocity.y = 0;
-    player->ship.sprite->visibility = true;
+    player->ship.spriteSlot1->visibility = true;
     are_bondary_checks_enabled = false;
 }
 
-void runPlayerHit()
+void PLY_runPlayerHit()
 {
     if (!is_player_in_death_state)
     {
         CTR_set_locked_controls(true);
         is_player_in_death_state = true;
-        spawnExposion(player->ship.rect);
-        player->ship.sprite->visibility = false;
+        VC_spawnExposion(player->ship.rect);
+        player->ship.spriteSlot1->visibility = false;
     }
 }
 
@@ -124,17 +125,17 @@ void updatePlayerPosition(void)
     player->hitbox_rect.x = player->ship.rect.x + 12;
     player->hitbox_rect.y = player->ship.rect.y + 16;
 
-    // Set sprite position in SGDK
-    SPR_setPosition(player->ship.sprite, player->ship.rect.x, player->ship.rect.y);
+    // Set spriteSlot1 position in SGDK
+    SPR_setPosition(player->ship.spriteSlot1, player->ship.rect.x, player->ship.rect.y);
 }
 
 void PLY_disableShot(void)
 {
     player->shot.is_enabled = false;
-    player->shot.sprite->visibility = false;
+    player->shot.spriteSlot1->visibility = false;
 }
 
-void resetShot(void)
+void PLY_resetShot(void)
 {
     player->shot.rect.y = -30;
     PLY_disableShot();
@@ -144,32 +145,32 @@ void moveShot(void)
 {
     player->shot.rect.x += player->shot.velocity.x;
     player->shot.rect.y += player->shot.velocity.y;
-    SPR_setPosition(player->shot.sprite, player->shot.rect.x, player->shot.rect.y);
+    SPR_setPosition(player->shot.spriteSlot1, player->shot.rect.x, player->shot.rect.y);
 }
 
-void fireShot(void)
+void PLY_fireShot(void)
 {
-    player->shot.sprite->visibility = true;
+    player->shot.spriteSlot1->visibility = true;
     player->shot.is_enabled = true;
     player->shot.rect.x = player->ship.rect.x + 12;
-    player->shot.rect.y = player->ship.rect.y;
+    player->shot.rect.y = player->ship.rect.y - 12;
 }
 
-bool isShotOutOfBounds(void)
+bool PLY_isShotOutOfBounds(void)
 {
     return player->shot.rect.y <= 0;
 }
 
-void destructPlayer(void)
+void PLY_destructPlayer(void)
 {
-    SPR_releaseSprite(player->ship.sprite);
-    SPR_releaseSprite(player->shot.sprite);
+    SPR_releaseSprite(player->ship.spriteSlot1);
+    SPR_releaseSprite(player->shot.spriteSlot1);
     SPR_releaseSprite(player->hit_box_spr);
 
     MEM_free(player);
 }
 
-void moveLeft(bool seconAxisActive)
+void PLY_moveLeft(bool seconAxisActive)
 {
     if(seconAxisActive)
     {
@@ -179,10 +180,10 @@ void moveLeft(bool seconAxisActive)
     {
         player->ship.velocity.x = -player->ship.speed;
     }
-    SPR_setAnim(player->ship.sprite, 1);
+    SPR_setAnim(player->ship.spriteSlot1, 1);
 }
 
-void moveRight(bool seconAxisActive)
+void PLY_moveRight(bool seconAxisActive)
 {
     if (seconAxisActive)
     {
@@ -192,10 +193,10 @@ void moveRight(bool seconAxisActive)
     {
         player->ship.velocity.x = player->ship.speed;
     }
-    SPR_setAnim(player->ship.sprite, 2);
+    SPR_setAnim(player->ship.spriteSlot1, 2);
 }
 
-void moveUp(bool seconAxisActive)
+void PLY_moveUp(bool seconAxisActive)
 {
     if (seconAxisActive)
     {
@@ -207,7 +208,7 @@ void moveUp(bool seconAxisActive)
     }
 }
 
-void moveDown(bool seconAxisActive)
+void PLY_moveDown(bool seconAxisActive)
 {
     if (seconAxisActive)
     {
@@ -219,38 +220,38 @@ void moveDown(bool seconAxisActive)
     }
 }
 
-void haltX(void)
+void PLY_haltX(void)
 {
     player->ship.velocity.x = 0;
-    SPR_setAnim(player->ship.sprite, 0);
+    SPR_setAnim(player->ship.spriteSlot1, 0);
 }
 
-void haltY(void)
+void PLY_haltY(void)
 {
     player->ship.velocity.y = 0;
 }
 
-void enableShotMovement(void)
+void PLY_enableShotMovement(void)
 {
     player->shot.velocity.y = -player->shot.speed;
 }
 
-void disableShotMovement(void)
+void PLY_disableShotMovement(void)
 {
     player->shot.velocity.y = 0;
 }
 
-Rectangle_t getPlayerRect(void)
+Rectangle_t PLY_getPlayerRect(void)
 {
     return player->ship.rect;
 }
 
-Rectangle_t getShotRect(void)
+Rectangle_t PLY_getShotRect(void)
 {
     return player->shot.rect;
 }
 
-Rectangle_t getHitboxRect(void)
+Rectangle_t PLY_getHitboxRect(void)
 {
     return player->hitbox_rect;
 }
@@ -274,38 +275,37 @@ void PLY_update(void)
     }
     else
     {
-        if (isGamePlaying())
+        if (GST_isGamePlaying())
         {
             updatePlayerPosition();
         }
     }
 
-    if (isShotOutOfBounds())
+    if (PLY_isShotOutOfBounds())
     {
-        disableShotMovement();
-        resetShot();
+        PLY_disableShotMovement();
+        PLY_resetShot();
     }
     else
     {
-        enableShotMovement();
+        PLY_enableShotMovement();
     }
 }
 
 void PLY_init(void)
 {
-    // Create the player entity
-    player == NULL;
-
-    player = (Player_t *)MEM_alloc(sizeof(Player_t));
+    player = MEM_alloc(sizeof(Player_t));
 
     if (player != NULL)
     {
-        resetPlayer();
+        PLY_resetPlayer();
         // player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-        player->ship.sprite = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-        player->shot.sprite = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        player->ship.spriteSlot1 = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+        player->ship.spriteSlot2 = NULL;
+
+        player->shot.spriteSlot1 = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        player->shot.spriteSlot2 = NULL;
     }
 
-    // subscribe update funciton to the game ticker
     addTickFunc(PLY_update, true);
 }

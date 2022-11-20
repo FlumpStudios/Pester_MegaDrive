@@ -11,8 +11,8 @@
 
 static void endCurrentLevel(void)
 {
-    increaseCurrentLevel();
-    resetLevelTime();
+    GST_increaseCurrentLevel();
+    GST_resetLevelTime();
 }
 
 static void displayNewLevelText(void)
@@ -20,7 +20,7 @@ static void displayNewLevelText(void)
     char levelTextBuffer[6 + MAX_LEVEL_DIDGETS] = "Wave ";
     char levelNumberBuffer[MAX_LEVEL_DIDGETS];
 
-    sprintf(levelNumberBuffer, "%d", getCurrentLevel());
+    sprintf(levelNumberBuffer, "%d", GST_getCurrentLevel());
     strcat(levelTextBuffer, levelNumberBuffer);
     UI_drawCentredText(levelTextBuffer);
 }
@@ -37,12 +37,12 @@ static void runGameStartIntro(u16 level_time)
 
     if (level_time > 75 && level_time < 150)
     {
-        moveDown(false);
+        PLY_moveDown(false);
     }
 
     if (level_time == 150)
     {
-        haltY();
+        PLY_haltY();
         CTR_set_locked_controls(false);
         PLY_set_boundary_checks_enabled(true);
         introHasRun = true;
@@ -86,7 +86,7 @@ static void showWarning(u16 levelTime)
 
 static void level_1(void)
 {
-    u32 level_time = getLevelTime();
+    u32 level_time = GST_getLevelTime();
     if (level_time < INTRO_LENGTH)
     {
         runGameStartIntro(level_time);
@@ -207,7 +207,7 @@ static void level_1(void)
 
 static void level_2(void)
 {
-    u32 level_time = getLevelTime();
+    u32 level_time = GST_getLevelTime();
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -291,7 +291,7 @@ static void level_2(void)
 
 static void level_3(void)
 {
-    u32 level_time = getLevelTime();
+    u32 level_time = GST_getLevelTime();
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -440,7 +440,7 @@ static void level_3(void)
 
 static void level_4(void)
 {
-    u32 level_time = getLevelTime();
+    u32 level_time = GST_getLevelTime();
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -617,7 +617,7 @@ static void level_4(void)
 
 static void level_5(void)
 {
-    u32 level_time = getLevelTime();
+    u32 level_time = GST_getLevelTime();
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -830,7 +830,7 @@ static void level_5(void)
 
 static void level_6(void)
 {
-    u32 level_time = getLevelTime();
+    u32 level_time = GST_getLevelTime();
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -844,7 +844,7 @@ static void level_6(void)
 }
 void runscript(void)
 {
-    switch (getCurrentLevel())
+    switch (GST_getCurrentLevel())
     {
     case 0:
     case 1:

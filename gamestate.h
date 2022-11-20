@@ -10,29 +10,27 @@
 #define STARTING_LEVEL 1
 #define STARTING_LIVES 2
 
+void GST_init(void);
+void GST_destructState(void);
+void GST_startGame(void);
+void GST_restartGame(void);
+void GST_endGame(void);
+void GST_increaseScore(u32 score);
+void GST_resetLevelTime(void);
 
+bool GST_isGamePlaying(void);
+u8 GST_getGameState(void);
+u32 GST_getLevelTime(void);
+int GST_getScore(void);
+int GST_getHighScore(void);
 
-void ST_init(void);
-void destructState(void);
-void startGame(void);
-void restartGame(void);
-void endGame(void);
-void increaseScore(u32 score);
-void resetLevelTime(void);
+void GST_addLife(void);
+void GST_removeLife(void);
+u8 GST_getLivesCount(void);
 
-bool isGamePlaying(void);
-u8 getGameState(void);
-u32 getLevelTime(void);
-int getScore(void);
-int getHighScore(void);
+u8 GST_getCurrentLevel(void);
+void GST_increaseCurrentLevel(void);
 
-void addLife(void);
-void removeLife(void);
-u8 getLivesCount(void);
-
-u8 getCurrentLevel(void);
-void increaseCurrentLevel(void);
-
-bool ST_is_game_paused(void);
-void ST_set_is_game_paused(bool isPaused);
+bool GST_is_game_paused(void);
+void GST_set_is_game_paused(bool isPaused);
 #endif

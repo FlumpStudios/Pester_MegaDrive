@@ -28,80 +28,80 @@ void resetGame(void)
     gamestate->isGamePaused = false;
 }
 
-bool ST_is_game_paused(void)
+bool GST_is_game_paused(void)
 {
     return gamestate->isGamePaused;
 }
 
-void ST_set_is_game_paused(bool isPaused)
+void GST_set_is_game_paused(bool isPaused)
 {
     gamestate->isGamePaused = isPaused;
 }
 
 
-void removeLife(void)
+void GST_removeLife(void)
 {
     gamestate->current_lives--;
     UI_updateLivesText();
 }
 
-void addLife(void)
+void GST_addLife(void)
 {
     gamestate->current_lives++;
     UI_updateLivesText();
 }
 
-u8 getLivesCount(void)
+u8 GST_getLivesCount(void)
 {
     return gamestate->current_lives;
 }
 
 
 
-void resetLevelTime(void)
+void GST_resetLevelTime(void)
 {
     gamestate->level_time = 0;
 }
 
-int getScore(void)
+int GST_getScore(void)
 {
     return gamestate->score;
 }
 
 
-u8 getCurrentLevel(void)
+u8 GST_getCurrentLevel(void)
 {
     return gamestate->current_level;
 }
 
-void increaseCurrentLevel(void)
+void GST_increaseCurrentLevel(void)
 {
     gamestate->current_level++;
 }
 
-int getHighScore(void)
+int GST_getHighScore(void)
 {
     return gamestate->high_score;
 }
 
-u8 getGameState(void)
+u8 GST_getGameState(void)
 {
     return gamestate->current_game_state;
 }
 
 
-bool isGamePlaying(void)
+bool GST_isGamePlaying(void)
 {
     return gamestate->is_game_playing;
 }
 
-u32 getLevelTime(void)
+u32 GST_getLevelTime(void)
 {
     return gamestate->level_time;
 }
 
 
-void increaseScore(u32 score)
+void GST_increaseScore(u32 score)
 {
     gamestate->score += score;
 }
@@ -130,7 +130,7 @@ void tickLevelTime(void)
     }
 }
 
-void endGame(void)
+void GST_endGame(void)
 {
     UI_drawCentredText(MSG_RESET);
     setGamePlaying(false);
@@ -146,21 +146,21 @@ void resetCurrentLevel(void)
     gamestate->current_level = STARTING_LEVEL;
 }
 
-void restartGame(void)
+void GST_restartGame(void)
 {
     gamestate->current_lives = STARTING_LIVES;
     setGamePlaying(true);
-    resetPlayer();
+    PLY_resetPlayer();
     ENY_resetAllEnemies();
     resetScore();   
-    resetLevelTime();
+    GST_resetLevelTime();
     resetCurrentLevel();
     VDP_clearTextArea(0, 10, 40, 10);
     UI_init();
 }
 
 
-void startGame(void)
+void GST_startGame(void)
 {
     UI_clearCentredText();
     PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
@@ -175,13 +175,13 @@ void startGame(void)
 
 void ST_update(void)
 {
-    if (isGamePlaying())
+    if (GST_isGamePlaying())
     {
         tickLevelTime();
     }
 }
 
-void ST_init(void)
+void GST_init(void)
 {
     gamestate = NULL;
     gamestate = MEM_alloc(sizeof(Gamestate_t));
@@ -194,7 +194,7 @@ void ST_init(void)
     addTickFunc(ST_update, false);
 }
 
-void destructState(void)
+void GST_destructState(void)
 {
     MEM_free(gamestate);
 }

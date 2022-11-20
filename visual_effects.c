@@ -8,7 +8,7 @@
 
 typedef struct
 {
-    Sprite *sprite;
+    Sprite *spriteSlot1;
     bool is_rendered;
     u8 frame_ticker;
 
@@ -24,19 +24,19 @@ VX_EnemyExplosion_t *CreateExplosion(u8 i)
     createdExplosion->frame_ticker = 0;
     if(i == 0)
     {
-        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL1, 0, FALSE, FALSE));
+        createdExplosion->spriteSlot1 = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL1, 0, FALSE, FALSE));
     }
     else if(i == 1)
     {
-        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+        createdExplosion->spriteSlot1 = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     }
     else if(i == 2)
     {
-        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL3, 0, FALSE, FALSE));
+        createdExplosion->spriteSlot1 = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL3, 0, FALSE, FALSE));
     }
     else 
     {
-        createdExplosion->sprite = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL1, 0, FALSE, FALSE));
+        createdExplosion->spriteSlot1 = SPR_addSprite(&imgexplo, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL1, 0, FALSE, FALSE));
     }
     return createdExplosion;
 }
@@ -49,7 +49,7 @@ void CreateExplosionPool(void)
     }
 }
 
-void spawnExposion(Rectangle_t position)
+void VC_spawnExposion(Rectangle_t position)
 {
     static int current_pooled_index = 0;
 
@@ -60,7 +60,7 @@ void spawnExposion(Rectangle_t position)
 
     explosion_pool[current_pooled_index]->is_rendered = true;
     
-    SPR_setPosition(explosion_pool[current_pooled_index]->sprite, position.x, position.y);
+    SPR_setPosition(explosion_pool[current_pooled_index]->spriteSlot1, position.x, position.y);
     current_pooled_index++;
 }
 
@@ -76,7 +76,7 @@ static void VX_update(void)
                 explosion_pool[i]->is_rendered = false;
                 explosion_pool[i]->frame_ticker = 0;
                 // NOTE: Sprite visibility was being weird, so just hiding off screen for now.
-                SPR_setPosition(explosion_pool[i]->sprite, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
+                SPR_setPosition(explosion_pool[i]->spriteSlot1, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
             }
         }
     }

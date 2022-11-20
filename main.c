@@ -15,8 +15,8 @@
 
 void destructGame(void)
 {
-	destructPlayer();
-	destructState();
+	PLY_destructPlayer();
+	GST_destructState();
 	ENY_destruct();
 }
 
@@ -25,7 +25,7 @@ void init_main(void)
 	// SDK setups
 	SYS_disableInts();
 	JOY_init();
-	JOY_setEventHandler(&handleInput);
+	JOY_setEventHandler(&CTR_handleInput);
 	VDP_setPalette(PAL0, palette_grey);
 	VDP_setPalette(PAL1, imgexplo.palette->data);
 	VDP_setPalette(PAL2, bird.palette->data);
@@ -50,7 +50,7 @@ void init_main(void)
 	// module setups
 	SPR_init(0, 0, 0);
 	BCK_init();
-	ST_init();
+	GST_init();
 	SCR_init();	
 }
 
@@ -68,7 +68,7 @@ int main()
 	while (1)
 	{
 		// TODO: Move into menu file
-		if (getGameState() == GAME_STATE_MENU)
+		if (GST_getGameState() == GAME_STATE_MENU)
 		{
 			intro_ticker++;
 			if (intro_ticker == 1)
@@ -85,7 +85,7 @@ int main()
 			}
 		}
 
-		if (!ST_is_game_paused())
+		if (!GST_is_game_paused())
 		{
 			runTickFunctions();
 		}

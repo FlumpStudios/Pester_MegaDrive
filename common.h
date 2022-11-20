@@ -46,7 +46,6 @@ typedef struct
 typedef struct
 {
 	Rectangle_t rect;
-	Sprite *sprite;	
 } Entity_t;
 
 typedef struct
@@ -55,10 +54,14 @@ typedef struct
 	s16 speed;
 	Vector2_t velocity;
 	bool is_enabled;    
+	Sprite *spriteSlot1;
+	Sprite *spriteSlot2;
 } Actor_t;
 
 // Common util functions
-u16 generateRandomNum(int upper, s32 seed);
-u16 generateRandomNumWithRange(int lower, int upper, s32 seed);
-void *MEM_realloc(u16 new_size, void *d);
+Actor_t* CMN_new_actor(void);
+
+u16 CMN_generateRandomNum(int upper, s32 seed);
+u16 CMN_generateRandomNumWithRange(int lower, int upper, s32 seed);
+void *CMN_mem_realloc(u16 new_size, void *d);
 #endif

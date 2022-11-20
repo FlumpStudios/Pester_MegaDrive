@@ -43,7 +43,7 @@ void UI_clear_warning(void)
 
 void UI_updateLivesText(void)
 {
-	u8 lives = getLivesCount();
+	u8 lives = GST_getLivesCount();
 	char buffer[2];
 	sprintf(buffer, "X%d", lives);
 	VDP_drawText(buffer, 4, 26);
@@ -58,14 +58,14 @@ void UI_drawHud(void)
 
 void UI_updateScoreDisplay(void)
 {
-	sprintf(score_str_bufer, "%d", getScore());
+	sprintf(score_str_bufer, "%d", GST_getScore());
 	VDP_clearText(1, 2, MAX_SCORE_LENGTH);
 	VDP_drawText(score_str_bufer, 1, 2);
 }
 
 void UI_updateHighScoreDisplay(void)
 {
-	u16 high = getHighScore();
+	u16 high = GST_getHighScore();
 	sprintf(high_str_buffer, "%d", high);
 	VDP_clearText(1, 483, MAX_SCORE_LENGTH);
 	VDP_drawText(high_str_buffer, 487 - strlen(high_str_buffer), 2);

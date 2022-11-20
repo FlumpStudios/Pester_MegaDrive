@@ -6,28 +6,28 @@ static bool are_controls_locked = true;
 
 void CTR_set_locked_controls(bool locked)
 {
-	haltX();
-	haltY();
+	PLY_haltX();
+	PLY_haltY();
 	are_controls_locked = locked;
 }
 
-void handleInput(u16 joy, u16 changed, u16 state)
+void CTR_handleInput(u16 joy, u16 changed, u16 state)
 {
 	if (joy == JOY_1)
 	{
-		bool isPaused = ST_is_game_paused();
-		if ((state & BUTTON_START) && getGameState() == GAME_STATE_GAME)
+		bool isPaused = GST_is_game_paused();
+		if ((state & BUTTON_START) && GST_getGameState() == GAME_STATE_GAME)
 		{
 			if (isPaused)
 			{
-				ST_set_is_game_paused(false);
+				GST_set_is_game_paused(false);
 				UI_clearCentredText();
-				haltY();
-				haltX();
+				PLY_haltY();
+				PLY_haltX();
 			}
 			else
 			{
-				ST_set_is_game_paused(true);
+				GST_set_is_game_paused(true);
 				UI_drawCentredText("Game paused");
 			}
 		}
@@ -36,60 +36,60 @@ void handleInput(u16 joy, u16 changed, u16 state)
 		{
 			if (state & BUTTON_START)
 			{
-				if (getGameState() == GAME_STATE_MENU)
+				if (GST_getGameState() == GAME_STATE_MENU)
 				{
-					startGame();
+					GST_startGame();
 				}
 
-				if (!isGamePlaying())
+				if (!GST_isGamePlaying())
 				{
-					restartGame();
+					GST_restartGame();
 				}
 			}
 
 			if (state & BUTTON_B)
 			{
-				if (getGameState() == GAME_STATE_MENU)
+				if (GST_getGameState() == GAME_STATE_MENU)
 				{
-					startGame();
+					GST_startGame();
 				}
 				
-				if (isGamePlaying() && isShotOutOfBounds())
+				if (GST_isGamePlaying() && PLY_isShotOutOfBounds())
 				{
-					fireShot();
+					PLY_fireShot();
 				}
 			}
 
 			if (state & BUTTON_RIGHT)
 			{
 				bool secondAxis = ((state & BUTTON_UP) || (state & BUTTON_DOWN));
-				moveRight(secondAxis);
+				PLY_moveRight(secondAxis);
 			}
 			else if (state & BUTTON_LEFT)
 			{
 				bool secondAxis = ((state & BUTTON_UP) || (state & BUTTON_DOWN));
-				moveLeft(secondAxis);
+				PLY_moveLeft(secondAxis);
 			}
 			else
 			{
-				haltX();
+				PLY_haltX();
 			}
 
 			if (state & BUTTON_UP)
 			{
 				bool secondAxis = ((state & BUTTON_LEFT) || (state & BUTTON_RIGHT));
-				moveUp(secondAxis);
+				PLY_moveUp(secondAxis);
 			}
 
 			else if (state & BUTTON_DOWN)
 			{
 				bool secondAxis = ((state & BUTTON_LEFT) || (state & BUTTON_RIGHT));
-				moveDown(secondAxis);
+				PLY_moveDown(secondAxis);
 			}
 
 			else
 			{
-				haltY();
+				PLY_haltY();
 			}
 		}
 	}

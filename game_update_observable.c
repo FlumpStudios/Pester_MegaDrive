@@ -25,7 +25,7 @@ void runTickFunctions(void)
 {    
     for (u16 i = 0; i < cur_index; i++)
     {
-        if(func_list[i].gameplay_exclusive && getGameState() != GAME_STATE_GAME)     
+        if(func_list[i].gameplay_exclusive && GST_getGameState() != GAME_STATE_GAME)     
         {
             continue;
         }
