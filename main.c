@@ -26,10 +26,20 @@ void init_main(void)
 	SYS_disableInts();
 	JOY_init();
 	JOY_setEventHandler(&CTR_handleInput);
+	
+	// Text
 	VDP_setPalette(PAL0, palette_grey);
+	
+	// VFX and Boss switching
 	VDP_setPalette(PAL1, imgexplo.palette->data);
+	
+	// Enemies
 	VDP_setPalette(PAL2, bird.palette->data);
+	
+	// Background
 	VDP_setPalette(PAL3, palette_black);
+	
+	
 	VDP_setTextPlan(PLAN_A);
 	SYS_enableInts();
 

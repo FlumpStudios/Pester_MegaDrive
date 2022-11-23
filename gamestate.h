@@ -7,7 +7,7 @@
 #include "background.h"
 #include "game_update_observable.h"
 
-#define STARTING_LEVEL 1
+#define STARTING_LEVEL 6
 #define STARTING_LIVES 2
 
 void GST_init(void);

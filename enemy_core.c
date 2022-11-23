@@ -85,7 +85,6 @@ void ENY_reset(ENY_Actor_t *enyptr)
     enyptr->timeOfLastHit = 0;
     enyptr->velocity.x = 0;
     enyptr->velocity.y = 0;
-    
 
     enyptr->spriteSlot1->visibility = false;
     if (enyptr->spriteSlot2 != NULL)
@@ -108,7 +107,6 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
 
     if (PLY_is_player_shot_enabled())
     {
-
         eny->spriteSlot1->visibility = false;
 
         if (eny->spriteSlot2 != NULL)
@@ -130,11 +128,19 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
 void ENY_destroyEnemy(ENY_Actor_t *enyptr)
 {
     SPR_releaseSprite(enyptr->spriteSlot1);
+    if (enyptr->spriteSlot1 != NULL)
+    {
+        SPR_releaseSprite(enyptr->spriteSlot2);
+    }
     MEM_free(enyptr);
 }
 
 void ENY_destroyBullet(Actor_t *enyptr)
 {
     SPR_releaseSprite(enyptr->spriteSlot1);
+    if (enyptr->spriteSlot1 != NULL)
+    {
+        SPR_releaseSprite(enyptr->spriteSlot2);
+    }
     MEM_free(enyptr);
 }

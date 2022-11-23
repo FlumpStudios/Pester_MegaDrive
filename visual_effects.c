@@ -64,6 +64,12 @@ void VC_spawnExposion(Rectangle_t position)
     current_pooled_index++;
 }
 
+void VC_spawnExposionAtPosition(u8 x, u8 y)
+{
+    Rectangle_t pos = {x,y,0,0};
+    VC_spawnExposion(pos);
+}
+
 static void VX_update(void)
 {
     for (u8 i = 0; i < EXPLOSION_POOL_COUNT; i++)

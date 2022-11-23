@@ -1,7 +1,7 @@
 #include "player.h"
 #include "game_update_observable.h"
 #include "gamestate.h"
-
+#include "common.h"
 // player struct should have been an actor type, but I ballsed it up :(
 
 #define DEATH_TIMEOUT 100
@@ -15,7 +15,6 @@ typedef struct ply
 } Player_t;
 
 static Player_t *player = NULL;
-static Edges_t screen_limits = {0, 320, 0, 240};
 static bool are_bondary_checks_enabled = false;
 static bool is_player_in_death_state = false;
 static u16 death_ticker = 0;
@@ -93,6 +92,9 @@ void PLY_runPlayerHit()
 
 void updatePlayerPosition(void)
 {
+
+    Edges_t screenLimits = CMN_get_screen_limits();
+
     // Set positions
     player->ship.rect.x += player->ship.velocity.x;
     player->ship.rect.y += player->ship.velocity.y;
@@ -100,24 +102,24 @@ void updatePlayerPosition(void)
     // Boundary checks
     if (are_bondary_checks_enabled)
     {
-        if (player->ship.rect.x < screen_limits.left)
+        if (player->ship.rect.x < screenLimits.left)
         {
-            player->ship.rect.x = screen_limits.left;
+            player->ship.rect.x = screenLimits.left;
         }
 
-        if (player->ship.rect.x + player->ship.rect.width > screen_limits.right)
+        if (player->ship.rect.x + player->ship.rect.width > screenLimits.right)
         {
-            player->ship.rect.x = screen_limits.right - player->ship.rect.width;
+            player->ship.rect.x = screenLimits.right - player->ship.rect.width;
         }
 
-        if (player->ship.rect.y < screen_limits.top)
+        if (player->ship.rect.y < screenLimits.top)
         {
-            player->ship.rect.y = screen_limits.top;
+            player->ship.rect.y = screenLimits.top;
         }
 
-        if (player->ship.rect.y + 50 > screen_limits.bottom)
+        if (player->ship.rect.y + 50 > screenLimits.bottom)
         {
-            player->ship.rect.y = screen_limits.bottom - 50;
+            player->ship.rect.y = screenLimits.bottom - 50;
         }
     }
 

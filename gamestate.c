@@ -1,7 +1,6 @@
 #include "gamestate.h"
 #include "ui.h"
 
-
 typedef struct gs
 {
     bool is_game_playing;

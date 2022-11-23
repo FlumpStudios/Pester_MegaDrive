@@ -4,6 +4,7 @@
 #include "gamestate.h"
 #include "controls.h"
 #include "player.h"
+#include "common.h"
 
 #define MAX_LEVEL_DIDGETS 3
 #define INTRO_LENGTH 300
@@ -838,6 +839,15 @@ static void level_6(void)
     if (level_time > INTRO_LENGTH && level_time < (WARNING_MESSAGE_LENGTH + INTRO_LENGTH))
     {
         showWarning(level_time);
+    }
+
+    if (level_time == 200)
+    {
+        VDP_setPalette(PAL1, boss1Left.palette->data);
+    }
+    if (level_time == 500)
+    {
+        ENY_spawn_boss_1();
     }
 
     // TODO: Add epic boss battle here!

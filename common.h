@@ -43,6 +43,9 @@ typedef struct
 	s16 left, right, top, bottom;
 } Edges_t;
 
+
+Edges_t CMN_get_screen_limits(void);
+
 typedef struct
 {
 	Rectangle_t rect;

@@ -4,4 +4,5 @@
 
 void VX_init(void);
 void VC_spawnExposion(Rectangle_t position);
+void VC_spawnExposionAtPosition(u8 x, u8 y);
 #endif

@@ -4,6 +4,7 @@
 #include "visual_effects.h"
 #include "enemy_core.h"
 #include "game_update_observable.h"
+#include "common.h"
 
 // Variation defines
 #define VARIATION_POPCORN_RIGHT 0
@@ -34,6 +35,9 @@ void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime);
 void ENY_spawnFloater(s16 x, s16 y,s16 ySpeed, u8 variation);
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed);
 void ENY_spawnPopcorn(s16 x, s16 y, s16 xSpeed,s16 ySpeed, u8 variation);
+
+// Spawn boss
+void ENY_spawn_boss_1();
 
 // Bullet patterns
 void ENY_spawncircleBullets_forkedpattern(s16 x, s16 y);

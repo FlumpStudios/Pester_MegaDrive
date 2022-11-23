@@ -1,5 +1,6 @@
 #include "common.h"
 
+
 static void initialiseActor(Actor_t *e)
 {
 	e->rect.x = 0;
@@ -15,6 +16,12 @@ static void initialiseActor(Actor_t *e)
 	e->is_enabled = false;
 	e->spriteSlot1 = NULL;
 	e->spriteSlot2 = NULL;
+}
+
+Edges_t CMN_get_screen_limits(void)
+{
+	Edges_t response = {0, 320, 0, 240};
+	return response;
 }
 
 Actor_t* CMN_new_actor(void)

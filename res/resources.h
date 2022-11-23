@@ -1,7 +1,6 @@
 #ifndef _RES_RESOURCES_H_
 #define _RES_RESOURCES_H_
 
-extern const SpriteDefinition boss1Right;
 extern const SpriteDefinition boss1Left;
 extern const SpriteDefinition lifeSprite;
 extern const SpriteDefinition popcorn;

@@ -8,14 +8,14 @@
 #define BIRD_POOL_COUNT 5
 #define GRABBER_POOL_SIZE 6
 #define ASTROID_POOL_SIZE 6
-#define CIRCLE_BULLETS_POOL_SIZE 10
-#define ENEMY_HIT_FLASH_TIME 2
+#define CIRCLE_BULLETS_POOL_SIZE 12
+#define ENEMY_HIT_FLASH_TIME 3
 #define ROCKET_BULLET_POOL_SIZE 6
 #define GRABBER_ROCKET_SPAWN_DELAY 50
 #define BOUNCER_BULLET_SPAWN_DELAY 150
 #define FLOATER_BULLET_SPAWN_DELAY 75
 
-// fields
+// Enemy
 static ENY_Actor_t *birdEnemies[BIRD_POOL_COUNT];
 static ENY_Actor_t *grabberEnemies[GRABBER_POOL_SIZE];
 static ENY_Actor_t *astroidEnemies[ASTROID_POOL_SIZE];
@@ -23,26 +23,32 @@ static ENY_Actor_t *bouncerEnemies[BOUNCER_POOL_COUNT];
 static ENY_Actor_t *floaterEnemies[FLOATER_POOL_COUNT];
 static ENY_Actor_t *popcornEnemies[POPCORN_POOL_COUNT];
 
+// Bosses
+static ENY_Actor_t *boss_1;
+
+// Bullets
 static Actor_t *circleBullets[CIRCLE_BULLETS_POOL_SIZE];
 static Actor_t *rocketBullets[ROCKET_BULLET_POOL_SIZE];
 
-static int bird_active_count = 0;
-static int grabber_active_count = 0;
-static int astroid_active_count = 0;
-static int circle_bullet_active_count = 0;
-static int rocket_bullet_active_count = 0;
-static int bouncer_active_count = 0;
-static int floater_active_count = 0;
-static int popcorn_active_count = 0;
+static u8 bird_active_count = 0;
+static u8 grabber_active_count = 0;
+static u8 astroid_active_count = 0;
+static u8 circle_bullet_active_count = 0;
+static u8 rocket_bullet_active_count = 0;
+static u8 bouncer_active_count = 0;
+static u8 floater_active_count = 0;
+static u8 popcorn_active_count = 0;
 
-static int bird_current_pool_index = 0;
-static int grabber_current_pool_index = 0;
-static int astroid_current_pool_index = 0;
-static int circle_bullet_current_pool_index = 0;
-static int rocket_bullet_current_pool_index = 0;
-static int bouncer_current_pool_index = 0;
-static int floater_current_pool_index = 0;
-static int popcorn_current_pool_index = 0;
+static u8 bird_current_pool_index = 0;
+static u8 grabber_current_pool_index = 0;
+static u8 astroid_current_pool_index = 0;
+static u8 circle_bullet_current_pool_index = 0;
+static u8 rocket_bullet_current_pool_index = 0;
+static u8 bouncer_current_pool_index = 0;
+static u8 floater_current_pool_index = 0;
+static u8 popcorn_current_pool_index = 0;
+
+static bool boss1Active = false;
 
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed)
 {
@@ -91,6 +97,12 @@ void ENY_spawncircleBullets_sidepattern(s16 x, s16 y, s8 speed)
 {
     ENY_spawncircleBullet(x, y, speed * -1, 0);
     ENY_spawncircleBullet(x, y, speed, 0);
+}
+
+void ENY_spawn_boss_1()
+{
+    boss1Active = true;
+    ENY_runSpawnSetup(boss_1, 125, -32, 0, 0);
 }
 
 void ENY_spawnBouncer(s16 x, s16 y, s16 xSpeed, s16 ySpeed, u16 lifeTime)
@@ -242,6 +254,9 @@ void ENY_resetAllEnemies(void)
         SPR_setPosition(popcornEnemies[i]->spriteSlot1, popcornEnemies[i]->rect.x, popcornEnemies[i]->rect.y);
     }
 
+    SPR_setPosition(boss_1->spriteSlot1, boss_1->rect.x, boss_1->rect.y);
+    SPR_setPosition(boss_1->spriteSlot2, boss_1->rect.x + 32, boss_1->rect.y);
+
     bird_active_count = 0;
     grabber_active_count = 0;
     astroid_active_count = 0;
@@ -255,6 +270,22 @@ void ENY_resetAllEnemies(void)
     bouncer_current_pool_index = 0;
     floater_current_pool_index = 0;
     popcorn_current_pool_index = 0;
+}
+
+static ENY_Actor_t *createBoss1(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 110;
+    result->rect.height = 32;
+    result->rect.width = 64;
+    result->worth = 500;
+
+    result->spriteSlot1 = SPR_addSprite(&boss1Left, result->rect.x, result->rect.y, TILE_ATTR(PAL1, 0, FALSE, FALSE));
+    result->spriteSlot2 = SPR_addSprite(&boss1Left, result->rect.x + 32, result->rect.y, TILE_ATTR(PAL1, 0, FALSE, TRUE));
+
+    ENY_reset(result);
+    return result;
 }
 
 static ENY_Actor_t *createPopcorn(void)
@@ -343,17 +374,17 @@ static ENY_Actor_t *createAstroid(void)
 
     result->spriteSlot1 = SPR_addSprite(&astroid, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
     ENY_reset(result);
-    
+
     return result;
 }
 
 static Actor_t *CreateCircleBullet(void)
 {
     Actor_t *result = CMN_new_actor();
-    
+
     result->rect.height = 16;
     result->rect.width = 16;
-    
+
     result->spriteSlot1 = SPR_addSprite(&enemyBullet, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
     ENY_reset_bullet(result);
@@ -365,12 +396,186 @@ static Actor_t *CreateRocketBullet(void)
     Actor_t *result = CMN_new_actor();
 
     result->rect.height = 8;
-    result->rect.width = 16;
+    result->rect.width = 8;
 
     result->spriteSlot1 = SPR_addSprite(&enemyRocket, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 
     ENY_reset_bullet(result);
     return result;
+}
+
+static void updateBoss1(void)
+{
+    if (boss1Active)
+    {
+        ENY_Actor_t *enemy = boss_1;
+
+        enemy->timeAlive++;
+
+        // intro
+        if (enemy->timeAlive % 2 == 0)
+        {
+            if (enemy->timeAlive < 200)
+            {
+                enemy->rect.y += 1;
+            }
+            else if (enemy->timeAlive > 200)
+            {
+                static bool bounced = false;
+                static bool bouncedTop = false;
+                enemy->velocity.x = 1;
+                enemy->velocity.y = 1;
+
+                if (enemy->current_health > 100)
+                {
+                    enemy->velocity.x = 1;
+                    if (enemy->timeAlive % 100 == 0)
+                    {
+                        ENY_spawncircleBullets_squarepattern(enemy->rect.x + 24, enemy->rect.y + 16);
+                    }
+                }
+                if (enemy->current_health > 75)
+                {
+                    enemy->velocity.x = 2;
+                    if (enemy->timeAlive % 100 == 0 && enemy->timeAlive % 200 != 0)
+                    {
+                        ENY_spawncircleBullets_squarepattern(enemy->rect.x + 24, enemy->rect.y + 16);
+                    }
+                    if (enemy->timeAlive % 200 == 0)
+                    {
+                        ENY_spawncircleBullets_forkedpattern(enemy->rect.x + 24, enemy->rect.y + 20);
+                    }
+                }
+                else if (enemy->current_health > 50)
+                {
+                    if (enemy->timeAlive % 100 == 0)
+                    {
+                        ENY_spawncircleBullets_tripplepattern(enemy->rect.x + 24, enemy->rect.y + 20);
+                    }
+                    enemy->velocity.x = 4;
+                }
+                else if (enemy->current_health > 25)
+                {
+                    if (enemy->timeAlive % 20 == 0)
+                    {
+                        ENY_spawnRocketBullet(enemy->rect.x + 24, enemy->rect.y + 20, 2);
+                    }
+
+                    enemy->velocity.x = 6;
+                }
+                else if (enemy->current_health > 1)
+                {
+                    if (enemy->timeAlive % 50 == 0)
+                    {
+                        ENY_spawnRocketBullet(enemy->rect.x + 24, enemy->rect.y + 20, 2);
+                    }
+
+                    if (enemy->timeAlive % 110 == 0)
+                    {
+                        ENY_spawncircleBullets_forkedpattern(enemy->rect.x + 24, enemy->rect.y + 20);
+                    }
+
+                    enemy->velocity.x = 8;
+                }
+                else
+                {
+                    enemy->velocity.x = 0;
+                    enemy->velocity.y = 0;
+                }
+
+                Edges_t screenLimits = CMN_get_screen_limits();
+
+                if (enemy->timeAlive % 40 == 0)
+                {
+                    bouncedTop = !bouncedTop;
+                }
+                if (bounced)
+                {
+                    enemy->rect.x += enemy->velocity.x;
+                }
+                else
+                {
+                    enemy->rect.x -= enemy->velocity.x;
+                }
+
+                if (bouncedTop)
+                {
+                    enemy->rect.y += enemy->velocity.y;
+                }
+                else
+                {
+                    enemy->rect.y -= enemy->velocity.y;
+                }
+
+                if (enemy->rect.x < screenLimits.left)
+                {
+                    bounced = true;
+                }
+                else if (enemy->rect.x + 64 > screenLimits.right)
+                {
+                    bounced = false;
+                }
+            }
+        }
+
+        static u8 deathTime = 0;
+        // Catch before no health so we can handle the death anim here...and don't allow collision when entering
+        if (enemy->current_health > 1)
+        {
+            if (enemy->timeAlive > 200)
+            {
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
+                {
+                    ENY_handleHitByShot(enemy);
+                }
+                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                {
+                    PLY_runPlayerHit();
+                }
+            }
+        }
+        else
+        {
+            deathTime++;
+
+            if (deathTime == 1)
+            {
+                VC_spawnExposionAtPosition(enemy->rect.x + 25, enemy->rect.y + 16);
+            }
+
+            if (deathTime == 5)
+            {
+                VC_spawnExposionAtPosition(enemy->rect.x + 53, enemy->rect.y + 2);
+            }
+            if (deathTime == 10)
+            {
+                VC_spawnExposionAtPosition(enemy->rect.x + 10, enemy->rect.y + 20);
+            }
+            if (deathTime == 15)
+            {
+                VC_spawnExposionAtPosition(enemy->rect.x + 58, enemy->rect.y + 26);
+            }
+            if (deathTime == 20)
+            {
+                VC_spawnExposionAtPosition(enemy->rect.x + 3, enemy->rect.y + 5);
+            }
+            if (deathTime == 25)
+            {
+                VC_spawnExposionAtPosition(enemy->rect.x + 29, enemy->rect.y + 36);
+                ENY_kill(enemy);
+                boss1Active = false;
+            }
+        }
+
+        if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+        {
+            enemy->spriteSlot1->visibility = true;
+            enemy->spriteSlot2->visibility = true;
+        }
+
+        SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
+        SPR_setPosition(enemy->spriteSlot2, enemy->rect.x + 32, enemy->rect.y);
+    }
 }
 
 static void updateFloater(void)
@@ -765,10 +970,13 @@ void update(void)
     updateBouncer();
     updateFloater();
     updatePopcorn();
+    updateBoss1();
 }
 
 void ENY_init(void)
 {
+    boss_1 = createBoss1();
+
     for (u8 i = 0; i < BOUNCER_POOL_COUNT; i++)
     {
         bouncerEnemies[i] = createBouncer();
@@ -815,6 +1023,7 @@ void ENY_init(void)
 void ENY_destruct(void)
 {
     // Destory all enemies here
+    ENY_destroyEnemy(boss_1);
 
     for (u8 i = 0; i < BOUNCER_POOL_COUNT; i++)
     {
