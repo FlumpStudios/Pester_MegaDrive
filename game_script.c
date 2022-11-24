@@ -10,7 +10,7 @@
 #define INTRO_LENGTH 300
 #define WARNING_MESSAGE_LENGTH 400
 
-static void endCurrentLevel(void)
+void SCR_end_current_level(void)
 {
     GST_increaseCurrentLevel();
     GST_resetLevelTime();
@@ -191,7 +191,7 @@ static void level_1(void)
 
     if (level_time == 1350)
     {
-        endCurrentLevel();
+        SCR_end_current_level();
     }
 
     // if (level_time == 500)
@@ -286,7 +286,7 @@ static void level_2(void)
 
     if (level_time == 1450)
     {
-        endCurrentLevel();
+        SCR_end_current_level();
     }
 }
 
@@ -435,7 +435,7 @@ static void level_3(void)
 
     if (level_time == 1650)
     {
-        endCurrentLevel();
+        SCR_end_current_level();
     }
 }
 
@@ -610,7 +610,7 @@ static void level_4(void)
 
     if (level_time == 1990)
     {
-        endCurrentLevel();
+        SCR_end_current_level();
     }
     // ENY_spawnBouncer(80, -50, 5, 1, 150);
     // ENY_spawnBouncer(200, -50, 5, 1, 150);
@@ -802,7 +802,7 @@ static void level_5(void)
 
     if (level_time == 2250)
     {
-        endCurrentLevel();
+        SCR_end_current_level();
     }
 
     // Side snake
@@ -849,9 +849,29 @@ static void level_6(void)
     {
         ENY_spawn_boss_1();
     }
-
-    // TODO: Add epic boss battle here!
 }
+
+static void level_7(void)
+{
+    u32 level_time = GST_getLevelTime();
+  
+    if (level_time < INTRO_LENGTH)
+    {
+        startNewLevel(level_time);
+    }
+
+    if(level_time == 50)
+    {
+        PAL_fadeOutPalette(PAL3, 150, true);        
+    }
+
+    if(level_time == 300)
+    {              
+        BCK_draw_moon();
+        PAL_fadeInPalette(PAL3, moon.palette->data, 150, true);
+    }    
+}
+
 void runscript(void)
 {
     switch (GST_getCurrentLevel())
@@ -874,6 +894,9 @@ void runscript(void)
         break;
     case 6:
         level_6();
+        break;
+    case 7:
+        level_7();
         break;
     }
 }

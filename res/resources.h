@@ -1,6 +1,7 @@
 #ifndef _RES_RESOURCES_H_
 #define _RES_RESOURCES_H_
 
+extern const u8 track1[326400];
 extern const SpriteDefinition boss1Left;
 extern const SpriteDefinition lifeSprite;
 extern const SpriteDefinition popcorn;

@@ -95,7 +95,7 @@ void ENY_reset(ENY_Actor_t *enyptr)
 
 void ENY_kill(ENY_Actor_t *eny)
 {
-    VC_spawnExposion(eny->rect);
+    VX_spawnExposion(eny->rect);
     GST_increaseScore(eny->worth);
     UI_updateScoreDisplay();
     eny->rect.y = DEACTIVATED_POSITION;
@@ -133,6 +133,7 @@ void ENY_destroyEnemy(ENY_Actor_t *enyptr)
         SPR_releaseSprite(enyptr->spriteSlot2);
     }
     MEM_free(enyptr);
+    enyptr = NULL;
 }
 
 void ENY_destroyBullet(Actor_t *enyptr)

@@ -13,6 +13,7 @@ typedef struct gs
     bool isGamePaused;
 } Gamestate_t;
 
+
 static Gamestate_t *gamestate = NULL;
 
 void resetGame(void)
@@ -54,8 +55,6 @@ u8 GST_getLivesCount(void)
 {
     return gamestate->current_lives;
 }
-
-
 
 void GST_resetLevelTime(void)
 {

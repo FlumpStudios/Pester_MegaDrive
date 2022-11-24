@@ -85,7 +85,7 @@ void PLY_runPlayerHit()
     {
         CTR_set_locked_controls(true);
         is_player_in_death_state = true;
-        VC_spawnExposion(player->ship.rect);
+        VX_spawnExposion(player->ship.rect);
         player->ship.spriteSlot1->visibility = false;
     }
 }

@@ -3,6 +3,7 @@
 #include "common.h"
 
 void VX_init(void);
-void VC_spawnExposion(Rectangle_t position);
-void VC_spawnExposionAtPosition(u8 x, u8 y);
+void VX_spawnExposion(Rectangle_t position);
+void VX_spawnExposionAtPosition(u8 x, u8 y);
+void VX_spawnLargeExplosion(u8 x, u8 y, u32 time, u8 interval);
 #endif

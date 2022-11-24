@@ -11,7 +11,7 @@
 #include "game_script.h"
 #include "ui.h"
 
-#define SKIP_INTRO TRUE
+#define SKIP_INTRO FALSE
 
 void destructGame(void)
 {
@@ -26,21 +26,21 @@ void init_main(void)
 	SYS_disableInts();
 	JOY_init();
 	JOY_setEventHandler(&CTR_handleInput);
-	
+
 	// Text
 	VDP_setPalette(PAL0, palette_grey);
-	
+
 	// VFX and Boss switching
 	VDP_setPalette(PAL1, imgexplo.palette->data);
-	
+
 	// Enemies
 	VDP_setPalette(PAL2, bird.palette->data);
-	
+
 	// Background
 	VDP_setPalette(PAL3, palette_black);
-	
-	
+
 	VDP_setTextPlan(PLAN_A);
+
 	SYS_enableInts();
 
 	// Initiate stuff
@@ -53,6 +53,8 @@ void init_main(void)
 		waitMs(200);
 	}
 
+	XGM_setLoopNumber(-1);
+	XGM_startPlay(track1);
 	BCK_draw_title_screen();
 	PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
 	CTR_set_locked_controls(false);
@@ -61,7 +63,7 @@ void init_main(void)
 	SPR_init(0, 0, 0);
 	BCK_init();
 	GST_init();
-	SCR_init();	
+	SCR_init();
 }
 
 /* ---------------------------------------- */

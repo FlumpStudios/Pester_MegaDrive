@@ -1,16 +1,20 @@
 #include "enemies.h"
+#include "game_script.h"
 
 // defines
 #define FLOATER_POOL_COUNT 6
-#define POPCORN_POOL_COUNT 10
+#define POPCORN_POOL_COUNT 8
 
 #define BOUNCER_POOL_COUNT 2
-#define BIRD_POOL_COUNT 5
+#define BIRD_POOL_COUNT 3
 #define GRABBER_POOL_SIZE 6
 #define ASTROID_POOL_SIZE 6
-#define CIRCLE_BULLETS_POOL_SIZE 12
+
+#define CIRCLE_BULLETS_POOL_SIZE 10
+
 #define ENEMY_HIT_FLASH_TIME 3
 #define ROCKET_BULLET_POOL_SIZE 6
+
 #define GRABBER_ROCKET_SPAWN_DELAY 50
 #define BOUNCER_BULLET_SPAWN_DELAY 150
 #define FLOATER_BULLET_SPAWN_DELAY 75
@@ -48,7 +52,137 @@ static u8 bouncer_current_pool_index = 0;
 static u8 floater_current_pool_index = 0;
 static u8 popcorn_current_pool_index = 0;
 
-static bool boss1Active = false;
+static ENY_Actor_t *createBoss1(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 100;
+    result->rect.height = 32;
+    result->rect.width = 64;
+    result->worth = 500;
+
+    result->spriteSlot1 = SPR_addSprite(&boss1Left, result->rect.x, result->rect.y, TILE_ATTR(PAL1, 0, FALSE, FALSE));
+    result->spriteSlot2 = SPR_addSprite(&boss1Left, result->rect.x + 32, result->rect.y, TILE_ATTR(PAL1, 0, FALSE, TRUE));
+
+    ENY_reset(result);
+    return result;
+}
+
+static ENY_Actor_t *createPopcorn(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 1;
+    result->rect.height = 16;
+    result->rect.width = 16;
+    result->worth = 5;
+
+    result->spriteSlot1 = SPR_addSprite(&popcorn, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset(result);
+    return result;
+}
+
+static ENY_Actor_t *createFloater(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 2;
+    result->rect.height = 16;
+    result->rect.width = 32;
+    result->worth = 25;
+
+    result->spriteSlot1 = SPR_addSprite(&floater, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset(result);
+    return result;
+}
+
+static ENY_Actor_t *createBouncer(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 4;
+    result->rect.height = 16;
+    result->rect.width = 32;
+    result->worth = 50;
+
+    result->spriteSlot1 = SPR_addSprite(&bouncer, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset(result);
+    return result;
+}
+
+static ENY_Actor_t *createBird(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 3;
+    result->rect.height = 32;
+    result->rect.width = 32;
+    result->worth = 10;
+
+    result->spriteSlot1 = SPR_addSprite(&bird, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset(result);
+    return result;
+}
+
+static ENY_Actor_t *createGrabber(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 1;
+    result->rect.height = 32;
+    result->rect.width = 32;
+    result->worth = 5;
+
+    result->spriteSlot1 = SPR_addSprite(&grabber, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset(result);
+    return result;
+}
+
+static ENY_Actor_t *createAstroid(void)
+{
+    ENY_Actor_t *result = ENY_new_enemy_actor();
+
+    result->initial_health = 1;
+    result->rect.height = 32;
+    result->rect.width = 32;
+    result->worth = 5;
+
+    result->spriteSlot1 = SPR_addSprite(&astroid, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+    ENY_reset(result);
+
+    return result;
+}
+
+static Actor_t *CreateCircleBullet(void)
+{
+    Actor_t *result = CMN_new_actor();
+
+    result->rect.height = 16;
+    result->rect.width = 16;
+
+    result->spriteSlot1 = SPR_addSprite(&enemyBullet, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset_bullet(result);
+    return result;
+}
+
+static Actor_t *CreateRocketBullet(void)
+{
+    Actor_t *result = CMN_new_actor();
+
+    result->rect.height = 8;
+    result->rect.width = 8;
+
+    result->spriteSlot1 = SPR_addSprite(&enemyRocket, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+
+    ENY_reset_bullet(result);
+    return result;
+}
 
 void ENY_spawnRocketBullet(s16 x, s16 y, s16 ySpeed)
 {
@@ -101,7 +235,7 @@ void ENY_spawncircleBullets_sidepattern(s16 x, s16 y, s8 speed)
 
 void ENY_spawn_boss_1()
 {
-    boss1Active = true;
+    boss_1 = createBoss1();
     ENY_runSpawnSetup(boss_1, 125, -32, 0, 0);
 }
 
@@ -272,141 +406,9 @@ void ENY_resetAllEnemies(void)
     popcorn_current_pool_index = 0;
 }
 
-static ENY_Actor_t *createBoss1(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 110;
-    result->rect.height = 32;
-    result->rect.width = 64;
-    result->worth = 500;
-
-    result->spriteSlot1 = SPR_addSprite(&boss1Left, result->rect.x, result->rect.y, TILE_ATTR(PAL1, 0, FALSE, FALSE));
-    result->spriteSlot2 = SPR_addSprite(&boss1Left, result->rect.x + 32, result->rect.y, TILE_ATTR(PAL1, 0, FALSE, TRUE));
-
-    ENY_reset(result);
-    return result;
-}
-
-static ENY_Actor_t *createPopcorn(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 1;
-    result->rect.height = 16;
-    result->rect.width = 16;
-    result->worth = 5;
-
-    result->spriteSlot1 = SPR_addSprite(&popcorn, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset(result);
-    return result;
-}
-
-static ENY_Actor_t *createFloater(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 2;
-    result->rect.height = 16;
-    result->rect.width = 32;
-    result->worth = 25;
-
-    result->spriteSlot1 = SPR_addSprite(&floater, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset(result);
-    return result;
-}
-
-static ENY_Actor_t *createBouncer(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 4;
-    result->rect.height = 16;
-    result->rect.width = 32;
-    result->worth = 50;
-
-    result->spriteSlot1 = SPR_addSprite(&bouncer, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset(result);
-    return result;
-}
-
-static ENY_Actor_t *createBird(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 3;
-    result->rect.height = 32;
-    result->rect.width = 32;
-    result->worth = 10;
-
-    result->spriteSlot1 = SPR_addSprite(&bird, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset(result);
-    return result;
-}
-
-static ENY_Actor_t *createGrabber(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 1;
-    result->rect.height = 32;
-    result->rect.width = 32;
-    result->worth = 5;
-
-    result->spriteSlot1 = SPR_addSprite(&grabber, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset(result);
-    return result;
-}
-
-static ENY_Actor_t *createAstroid(void)
-{
-    ENY_Actor_t *result = ENY_new_enemy_actor();
-
-    result->initial_health = 1;
-    result->rect.height = 32;
-    result->rect.width = 32;
-    result->worth = 5;
-
-    result->spriteSlot1 = SPR_addSprite(&astroid, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-    ENY_reset(result);
-
-    return result;
-}
-
-static Actor_t *CreateCircleBullet(void)
-{
-    Actor_t *result = CMN_new_actor();
-
-    result->rect.height = 16;
-    result->rect.width = 16;
-
-    result->spriteSlot1 = SPR_addSprite(&enemyBullet, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset_bullet(result);
-    return result;
-}
-
-static Actor_t *CreateRocketBullet(void)
-{
-    Actor_t *result = CMN_new_actor();
-
-    result->rect.height = 8;
-    result->rect.width = 8;
-
-    result->spriteSlot1 = SPR_addSprite(&enemyRocket, result->rect.x, result->rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
-
-    ENY_reset_bullet(result);
-    return result;
-}
-
 static void updateBoss1(void)
 {
-    if (boss1Active)
+    if (boss_1 != NULL)
     {
         ENY_Actor_t *enemy = boss_1;
 
@@ -538,32 +540,21 @@ static void updateBoss1(void)
         {
             deathTime++;
 
-            if (deathTime == 1)
+            if (deathTime < 26)
             {
-                VC_spawnExposionAtPosition(enemy->rect.x + 25, enemy->rect.y + 16);
+                VX_spawnLargeExplosion(enemy->rect.x, enemy->rect.y, deathTime, 5);
             }
 
-            if (deathTime == 5)
-            {
-                VC_spawnExposionAtPosition(enemy->rect.x + 53, enemy->rect.y + 2);
-            }
-            if (deathTime == 10)
-            {
-                VC_spawnExposionAtPosition(enemy->rect.x + 10, enemy->rect.y + 20);
-            }
-            if (deathTime == 15)
-            {
-                VC_spawnExposionAtPosition(enemy->rect.x + 58, enemy->rect.y + 26);
-            }
-            if (deathTime == 20)
-            {
-                VC_spawnExposionAtPosition(enemy->rect.x + 3, enemy->rect.y + 5);
-            }
             if (deathTime == 25)
             {
-                VC_spawnExposionAtPosition(enemy->rect.x + 29, enemy->rect.y + 36);
                 ENY_kill(enemy);
-                boss1Active = false;
+            }
+
+            // Little buffer before starting next level
+            if (deathTime > 100)
+            {
+                SCR_end_current_level();
+                ENY_destroyEnemy(boss_1);                
             }
         }
 
@@ -975,7 +966,9 @@ void update(void)
 
 void ENY_init(void)
 {
-    boss_1 = createBoss1();
+    // Don't allocate the bosses until they are needed.
+
+    boss_1 = NULL;
 
     for (u8 i = 0; i < BOUNCER_POOL_COUNT; i++)
     {

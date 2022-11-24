@@ -38,7 +38,7 @@ void BCK_draw_starfield(void)
     VDP_drawImageEx(PLAN_B, &starfield, TILE_ATTR_FULL(PAL3, 0, 1, 0, 1), 32, 16, 0, CPU);
 }
 
-void BCK_draw_darkSky(void)
+void BCK_draw_moon(void)
 {
     scrollSpeed = 1;
     frameskip = 2;
