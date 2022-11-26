@@ -116,12 +116,17 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
 
         eny->timeOfLastHit = GST_getLevelTime();
 
-        PLY_resetShot();
         eny->current_health--;
         if (eny->current_health <= 0)
         {
             ENY_kill(eny);
         }
+        else
+        {
+            Rectangle_t playerLocation = PLY_getShotRect();
+            VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);
+        }
+        PLY_resetShot();
     }
 }
 
@@ -144,4 +149,5 @@ void ENY_destroyBullet(Actor_t *enyptr)
         SPR_releaseSprite(enyptr->spriteSlot2);
     }
     MEM_free(enyptr);
+    enyptr = NULL;
 }

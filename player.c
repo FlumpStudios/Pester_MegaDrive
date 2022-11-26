@@ -138,9 +138,9 @@ void PLY_disableShot(void)
 }
 
 void PLY_resetShot(void)
-{
+{   
     player->shot.rect.y = -30;
-    PLY_disableShot();
+    PLY_disableShot();    
 }
 
 void moveShot(void)

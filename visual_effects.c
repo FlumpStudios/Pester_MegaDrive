@@ -5,6 +5,7 @@
 
 // THE NUMBER OF FRAMES THE EXPLOSIONS WILL STAY ON SCREEN FOR
 #define EXPLOSION_SCREEN_TIME 10
+#define BULLET_HIT_SCREEN_TIME 2
 
 typedef struct
 {
@@ -12,14 +13,15 @@ typedef struct
     bool is_rendered;
     u8 frame_ticker;
 
-} VX_EnemyExplosion_t;
+} VX_effect_t;
 
-VX_EnemyExplosion_t *explosion_pool[EXPLOSION_POOL_COUNT];
+VX_effect_t *explosion_pool[EXPLOSION_POOL_COUNT];
+VX_effect_t *bulletHitEffect;
 
-VX_EnemyExplosion_t *CreateExplosion(u8 i)
+VX_effect_t *CreateExplosion(u8 i)
 {
-    VX_EnemyExplosion_t *createdExplosion = NULL;
-    createdExplosion = MEM_alloc(sizeof(VX_EnemyExplosion_t));
+    VX_effect_t *createdExplosion = NULL;
+    createdExplosion = MEM_alloc(sizeof(VX_effect_t));
     createdExplosion->is_rendered = false;
     createdExplosion->frame_ticker = 0;
     if (i == 0)
@@ -41,12 +43,19 @@ VX_EnemyExplosion_t *CreateExplosion(u8 i)
     return createdExplosion;
 }
 
-void CreateExplosionPool(void)
+void createExplosionPool(void)
 {
     for (u8 i = 0; i < EXPLOSION_POOL_COUNT; i++)
     {
         explosion_pool[i] = CreateExplosion(i);
     }
+}
+
+void VX_spawn_bullet_hit_effect(u8 x, u8 y)
+{
+    SPR_setPosition(bulletHitEffect->spriteSlot1, x, y);
+    bulletHitEffect->is_rendered = true;
+    bulletHitEffect->frame_ticker = 0;    
 }
 
 void VX_spawnExposion(Rectangle_t position)
@@ -72,6 +81,17 @@ void VX_spawnExposionAtPosition(u8 x, u8 y)
 
 static void VX_update(void)
 {
+    if(bulletHitEffect->is_rendered)
+    {
+        bulletHitEffect->frame_ticker ++;
+        if(bulletHitEffect->frame_ticker > BULLET_HIT_SCREEN_TIME)
+        {
+            bulletHitEffect->is_rendered = false;
+            SPR_setPosition(bulletHitEffect->spriteSlot1, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
+        }
+    }
+    
+
     for (u8 i = 0; i < EXPLOSION_POOL_COUNT; i++)
     {
         if (explosion_pool[i]->is_rendered)
@@ -99,8 +119,16 @@ void VX_spawnLargeExplosion(u8 x, u8 y, u32 time, u8 interval)
     }
 }
 
+void createBulletHit(void)
+{
+    bulletHitEffect = MEM_alloc(sizeof(VX_effect_t));
+    bulletHitEffect->frame_ticker = 0;
+    bulletHitEffect->spriteSlot1 = SPR_addSprite(&bulletHit, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));        
+}
+
 void VX_init(void)
 {
-    CreateExplosionPool();
+    createExplosionPool();
+    createBulletHit();    
     addTickFunc(VX_update, true);
 }

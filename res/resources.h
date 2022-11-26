@@ -3,6 +3,7 @@
 
 extern const u8 track1[326400];
 extern const SpriteDefinition boss1Left;
+extern const SpriteDefinition bulletHit;
 extern const SpriteDefinition lifeSprite;
 extern const SpriteDefinition popcorn;
 extern const SpriteDefinition astroid;
