@@ -1,4 +1,5 @@
 #include "enemy_core.h"
+#include "audio.h"
 
 void ENY_runBulletSpawnSetup(Actor_t *a, s16 x, s16 y, s16 xSpeed, s16 ySpeed)
 {
@@ -95,16 +96,18 @@ void ENY_reset(ENY_Actor_t *enyptr)
 
 void ENY_kill(ENY_Actor_t *eny)
 {
+    GST_increaseChain(1);
+    AUD_play_explosion();
     VX_spawnExposion(eny->rect);
     GST_increaseScore(eny->worth);
-    UI_updateScoreDisplay();
+    UI_updateChainDisplay();
+    UI_updateScoreDisplay();    
     eny->rect.y = DEACTIVATED_POSITION;
 }
 
 void ENY_handleHitByShot(ENY_Actor_t *eny)
 {
     // Flash on hit
-
     if (PLY_is_player_shot_enabled())
     {
         eny->spriteSlot1->visibility = false;
@@ -124,7 +127,7 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
         else
         {
             Rectangle_t playerLocation = PLY_getShotRect();
-            VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);
+            VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);            
         }
         PLY_resetShot();
     }

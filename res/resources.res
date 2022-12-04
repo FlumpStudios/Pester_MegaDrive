@@ -20,5 +20,23 @@ SPRITE enemyBullet "sprites/enemyBullet.png" 2 2 FAST 2
 SPRITE enemyRocket "sprites/enemyRocket.png" 1 1 FAST  0
 SPRITE bouncer "sprites/bouncer.png" 4 2 FAST 4
 SPRITE floater "sprites/floater.png" 4 2 FAST 4
-XGM track1 "music/bonus.vgm" -1
+XGM track1 "music/bonus.xgm" -1
+XGM menuMusic "music/MenuMusic.xgm" -1
+WAV sfx_player_fire "sfx/Shoot_00.wav" 5
+WAV sfx_explosion "sfx/Explosion_01.wav" 5
+WAV sfX_hit "sfx/Hit_02.wav" 5
+WAV sfX_start "sfx/Collect_Point_01.wav" 5
+WAV sfX_player_death "sfx/Hero_Death_00.wav" 5
+WAV sfX_wave_complete "sfx/Jingle_Achievement_00.wav" 5
+WAV sfX_game_over "sfx/Jingle_Lose_00.wav" 5
+WAV sfx_alarm "sfx/alarm.wav" 5
+WAV sfx_loseChain "sfx/LoseChain.wav" 5
+
+
+
+
+
+
+
+
 

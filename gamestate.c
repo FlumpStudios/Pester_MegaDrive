@@ -1,5 +1,6 @@
 #include "gamestate.h"
 #include "ui.h"
+#include "audio.h"
 
 typedef struct gs
 {
@@ -8,6 +9,7 @@ typedef struct gs
     u32 score;
     u32 high_score;
     u32 level_time;
+    u32 chain;    
     u8 current_level;
     u8 current_lives;
     bool isGamePaused;
@@ -18,6 +20,7 @@ static Gamestate_t *gamestate = NULL;
 
 void resetGame(void)
 {
+    gamestate->chain = 0;
     gamestate->score = 0;
     gamestate->level_time = 0;
     gamestate->current_game_state = GAME_STATE_MENU;
@@ -82,6 +85,25 @@ int GST_getHighScore(void)
     return gamestate->high_score;
 }
 
+u32 GST_getChain(void)
+{
+    return gamestate->chain;
+}
+
+void GST_increaseChain(u32 chain)
+{
+    gamestate->chain += chain; 
+}
+
+void GST_resetChain(void)
+{   
+    if(gamestate->chain > 0)
+    {
+        AUD_play_lost_chain();
+    }
+    gamestate->chain = 0;
+}
+
 u8 GST_getGameState(void)
 {
     return gamestate->current_game_state;
@@ -101,7 +123,7 @@ u32 GST_getLevelTime(void)
 
 void GST_increaseScore(u32 score)
 {
-    gamestate->score += score;
+    gamestate->score += (score + (gamestate->chain * 10));
 }
 
 void resetScore(void)
@@ -160,6 +182,8 @@ void GST_restartGame(void)
 
 void GST_startGame(void)
 {
+    AUD_play_start();
+    AUD_play_level1_music();					
     UI_clearCentredText();
     PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
     BCK_draw_starfield();

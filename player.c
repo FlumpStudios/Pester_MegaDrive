@@ -2,6 +2,7 @@
 #include "game_update_observable.h"
 #include "gamestate.h"
 #include "common.h"
+#include "audio.h"
 // player struct should have been an actor type, but I ballsed it up :(
 
 #define DEATH_TIMEOUT 100
@@ -18,6 +19,7 @@ static Player_t *player = NULL;
 static bool are_bondary_checks_enabled = false;
 static bool is_player_in_death_state = false;
 static u16 death_ticker = 0;
+static bool hasPlayedGameOverSound = false;
 
 void PLY_set_boundary_checks_enabled(bool enabled)
 {
@@ -26,6 +28,7 @@ void PLY_set_boundary_checks_enabled(bool enabled)
 
 static void reset_after_death(void)
 {
+    hasPlayedGameOverSound = false;
     death_ticker = 0;
     is_player_in_death_state = false;
 
@@ -43,6 +46,11 @@ static void reset_after_death(void)
     }
     else
     {
+        if (!hasPlayedGameOverSound)
+        {
+            AUD_play_game_over();
+            hasPlayedGameOverSound = true;
+        }
         GST_endGame();
     }
 }
@@ -83,6 +91,7 @@ void PLY_runPlayerHit()
 {
     if (!is_player_in_death_state)
     {
+        AUD_play_player_death();
         CTR_set_locked_controls(true);
         is_player_in_death_state = true;
         VX_spawnExposion(player->ship.rect);
@@ -92,7 +101,6 @@ void PLY_runPlayerHit()
 
 void updatePlayerPosition(void)
 {
-
     Edges_t screenLimits = CMN_get_screen_limits();
 
     // Set positions
@@ -138,9 +146,10 @@ void PLY_disableShot(void)
 }
 
 void PLY_resetShot(void)
-{   
+{
+    UI_updateChainDisplay();
     player->shot.rect.y = -30;
-    PLY_disableShot();    
+    PLY_disableShot();
 }
 
 void moveShot(void)
@@ -156,6 +165,7 @@ void PLY_fireShot(void)
     player->shot.is_enabled = true;
     player->shot.rect.x = player->ship.rect.x + 12;
     player->shot.rect.y = player->ship.rect.y - 12;
+    AUD_play_player_shot();
 }
 
 bool PLY_isShotOutOfBounds(void)
@@ -168,13 +178,13 @@ void PLY_destructPlayer(void)
     SPR_releaseSprite(player->ship.spriteSlot1);
     SPR_releaseSprite(player->shot.spriteSlot1);
     SPR_releaseSprite(player->hit_box_spr);
-
     MEM_free(player);
+    player = NULL;
 }
 
 void PLY_moveLeft(bool seconAxisActive)
 {
-    if(seconAxisActive)
+    if (seconAxisActive)
     {
         player->ship.velocity.x = -player->ship.speed / 1.5;
     }
@@ -285,6 +295,11 @@ void PLY_update(void)
 
     if (PLY_isShotOutOfBounds())
     {
+        if (player->shot.rect.y > -8)
+        {
+            GST_resetChain();            
+        }
+
         PLY_disableShotMovement();
         PLY_resetShot();
     }

@@ -13,6 +13,7 @@
 // Static text
 #define LABEL_SCORE "SCORE"
 #define LABEL_HIGH "HIGH"
+#define CHAIN_HIGH "CHAIN"
 
 #define MSG_START "Press START to Begin!"
 #define MSG_RESET "Game over! Press START to Play Again."

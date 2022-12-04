@@ -1,5 +1,6 @@
 #include "enemies.h"
 #include "game_script.h"
+#include "audio.h"
 
 // defines
 #define FLOATER_POOL_COUNT 6
@@ -529,6 +530,7 @@ static void updateBoss1(void)
                 if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
                 {
                     ENY_handleHitByShot(enemy);
+                    AUD_play_hit();
                 }
                 else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
@@ -554,18 +556,20 @@ static void updateBoss1(void)
             if (deathTime > 100)
             {
                 SCR_end_current_level();
-                ENY_destroyEnemy(boss_1);                
+                ENY_destroyEnemy(boss_1);
             }
         }
 
-        if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+        if (enemy != NULL)
         {
-            enemy->spriteSlot1->visibility = true;
-            enemy->spriteSlot2->visibility = true;
+            if (enemy->timeOfLastHit > 0 && GST_getLevelTime() > (enemy->timeOfLastHit + ENEMY_HIT_FLASH_TIME))
+            {
+                enemy->spriteSlot1->visibility = true;
+                enemy->spriteSlot2->visibility = true;
+            }
+            SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
+            SPR_setPosition(enemy->spriteSlot2, enemy->rect.x + 32, enemy->rect.y);
         }
-
-        SPR_setPosition(enemy->spriteSlot1, enemy->rect.x, enemy->rect.y);
-        SPR_setPosition(enemy->spriteSlot2, enemy->rect.x + 32, enemy->rect.y);
     }
 }
 

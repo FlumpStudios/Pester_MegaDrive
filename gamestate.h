@@ -10,6 +10,10 @@
 #define STARTING_LEVEL 1
 #define STARTING_LIVES 2
 
+u32 GST_getChain(void);
+void GST_increaseChain(u32 chain);
+void GST_resetChain(void);
+
 void GST_init(void);
 void GST_destructState(void);
 void GST_startGame(void);

@@ -1,5 +1,6 @@
 #include "controls.h"
 #include "gamestate.h"
+#include "audio.h"
 #include "player.h"
 
 static bool are_controls_locked = true;
@@ -38,6 +39,7 @@ void CTR_handleInput(u16 joy, u16 changed, u16 state)
 			{
 				if (GST_getGameState() == GAME_STATE_MENU)
 				{
+					
 					GST_startGame();
 				}
 

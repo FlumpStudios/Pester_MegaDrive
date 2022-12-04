@@ -10,8 +10,8 @@
 #include "background.h"
 #include "game_script.h"
 #include "ui.h"
-
-#define SKIP_INTRO FALSE
+#include "audio.h"
+#define SKIP_INTRO TRUE
 
 void destructGame(void)
 {
@@ -24,7 +24,7 @@ void init_main(void)
 {
 	// SDK setups
 	SYS_disableInts();
-	JOY_init();
+	JOY_init();	
 	JOY_setEventHandler(&CTR_handleInput);
 
 	// Text
@@ -52,14 +52,13 @@ void init_main(void)
 		PAL_fadeOutPalette(PAL3, 100, false);
 		waitMs(200);
 	}
-
-	XGM_setLoopNumber(-1);
-	XGM_startPlay(track1);
+	AUD_play_menu_music();
 	BCK_draw_title_screen();
 	PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
 	CTR_set_locked_controls(false);
 
 	// module setups
+	AUD_init();
 	SPR_init(0, 0, 0);
 	BCK_init();
 	GST_init();

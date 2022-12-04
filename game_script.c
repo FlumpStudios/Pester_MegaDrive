@@ -5,6 +5,7 @@
 #include "controls.h"
 #include "player.h"
 #include "common.h"
+#include "audio.h"
 
 #define MAX_LEVEL_DIDGETS 3
 #define INTRO_LENGTH 300
@@ -12,6 +13,7 @@
 
 void SCR_end_current_level(void)
 {
+    AUD_play_wave_complete();
     GST_increaseCurrentLevel();
     GST_resetLevelTime();
 }
@@ -77,7 +79,8 @@ static void showWarning(u16 levelTime)
 {
     if (levelTime % 50 == 0)
     {
-        UI_display_warning();
+        AUD_play_alarm();
+        UI_display_warning();        
     }
     else if (levelTime % 25 == 0)
     {

@@ -2,7 +2,9 @@
 #include "gamestate.h"
 
 #define MAX_SCORE_LENGTH 5
+#define MAX_CHAIN_LENGTH 5
 
+static char chain_str_bufer[MAX_CHAIN_LENGTH] = "0";
 static char score_str_bufer[MAX_SCORE_LENGTH] = "0";
 static char high_str_buffer[MAX_SCORE_LENGTH] = "0";
 
@@ -51,6 +53,7 @@ void UI_updateLivesText(void)
 
 void UI_drawHud(void)
 {
+	VDP_drawText(CHAIN_HIGH, 1, 4);	
 	VDP_drawText(LABEL_SCORE, 1, 1);
 	VDP_drawText(LABEL_HIGH, 483, 1);
 	SPR_addSprite(&lifeSprite, 10, 203, TILE_ATTR(PAL2, 0, FALSE, FALSE));
@@ -61,6 +64,13 @@ void UI_updateScoreDisplay(void)
 	sprintf(score_str_bufer, "%d", GST_getScore());
 	VDP_clearText(1, 2, MAX_SCORE_LENGTH);
 	VDP_drawText(score_str_bufer, 1, 2);
+}
+
+void UI_updateChainDisplay(void)
+{
+	sprintf(chain_str_bufer, "%d", GST_getChain());
+	VDP_clearText(1, 5, MAX_CHAIN_LENGTH);
+	VDP_drawText(chain_str_bufer, 1, 5);
 }
 
 void UI_updateHighScoreDisplay(void)
