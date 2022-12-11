@@ -17,7 +17,7 @@ void destructGame(void)
 {
 	PLY_destructPlayer();
 	GST_destructState();
-	ENY_destruct();
+	ENY_destruct_enemies();
 }
 
 void init_main(void)

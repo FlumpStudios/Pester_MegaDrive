@@ -51,7 +51,7 @@ void createExplosionPool(void)
     }
 }
 
-void VX_spawn_bullet_hit_effect(u8 x, u8 y)
+void VX_spawn_bullet_hit_effect(s16 x, s16 y)
 {
     SPR_setPosition(bulletHitEffect->spriteSlot1, x, y);
     bulletHitEffect->is_rendered = true;
@@ -73,7 +73,7 @@ void VX_spawnExposion(Rectangle_t position)
     current_pooled_index++;
 }
 
-void VX_spawnExposionAtPosition(u8 x, u8 y)
+void VX_spawnExposionAtPosition(s16 x, s16 y)
 {
     Rectangle_t pos = {x, y, 0, 0};
     VX_spawnExposion(pos);
@@ -108,7 +108,9 @@ static void VX_update(void)
     }
 }
 
-void VX_spawnLargeExplosion(u8 x, u8 y, u32 time, u8 interval)
+
+
+void VX_spawnLargeExplosion(s16 x, s16 y, u32 time, u8 interval)
 {
     for (u8 i = 1; i < EXPLOSION_POOL_COUNT; i++)
     {

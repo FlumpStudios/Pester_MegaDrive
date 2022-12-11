@@ -10,14 +10,18 @@
 #define MAX_LEVEL_DIDGETS 3
 #define INTRO_LENGTH 300
 #define WARNING_MESSAGE_LENGTH 400
+#define FIRST_FRAME 1
 
 void SCR_end_current_level(void)
 {
+    ENY_destruct_enemies();
+    ENY_destruct_bullets();
     AUD_play_wave_complete();
     GST_increaseCurrentLevel();
     GST_resetLevelTime();
 }
 
+// TODO: Move to UI
 static void displayNewLevelText(void)
 {
     char levelTextBuffer[6 + MAX_LEVEL_DIDGETS] = "Wave ";
@@ -80,7 +84,7 @@ static void showWarning(u16 levelTime)
     if (levelTime % 50 == 0)
     {
         AUD_play_alarm();
-        UI_display_warning();        
+        UI_display_warning();
     }
     else if (levelTime % 25 == 0)
     {
@@ -91,6 +95,12 @@ static void showWarning(u16 levelTime)
 static void level_1(void)
 {
     u32 level_time = GST_getLevelTime();
+
+    if (level_time == FIRST_FRAME)
+    {
+        ENY_createPopcornPool(8);
+    }
+
     if (level_time < INTRO_LENGTH)
     {
         runGameStartIntro(level_time);
@@ -201,17 +211,19 @@ static void level_1(void)
     // {
     //     ENY_spawnBird(150, -25, 1, 2);
     // }
-
-    // if (level_time == 700)
-    // {
-    //     endCurrentLevel();
-    //     PAL_fadeOutPalette(PAL3, 50, true);
-    // }
 }
 
 static void level_2(void)
 {
     u32 level_time = GST_getLevelTime();
+
+    if (level_time == FIRST_FRAME)
+    {
+        ENY_createFloaterPool(6);
+        ENY_createPopcornPool(8);
+        ENY_createCircleBulletPool(8);
+    }
+
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -296,6 +308,15 @@ static void level_2(void)
 static void level_3(void)
 {
     u32 level_time = GST_getLevelTime();
+
+    if (level_time == FIRST_FRAME)
+    {
+        ENY_createAstroidPool(6);
+        ENY_createFloaterPool(6);
+        ENY_createPopcornPool(8);
+        ENY_createCircleBulletPool(8);
+    }
+
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -445,6 +466,16 @@ static void level_3(void)
 static void level_4(void)
 {
     u32 level_time = GST_getLevelTime();
+
+    if (level_time == FIRST_FRAME)
+    {
+        ENY_createGrabberPool(6);
+        ENY_createFloaterPool(6);
+        ENY_createPopcornPool(10);
+        ENY_createCircleBulletPool(8);
+        ENY_createRocketBulletPool(6);
+    }
+
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -493,7 +524,7 @@ static void level_4(void)
         ENY_spawnPopcorn(180, -40, 1, 2, VARIATION_SNAKE_CENTRE);
     }
 
-    if (level_time == 496)
+    if (level_time == 494)
     {
         ENY_spawnPopcorn(90, -40, 1, 2, VARIATION_SNAKE_CENTRE);
     }
@@ -622,6 +653,14 @@ static void level_4(void)
 static void level_5(void)
 {
     u32 level_time = GST_getLevelTime();
+    if (level_time == FIRST_FRAME)
+    {
+        ENY_createGrabberPool(6);
+        ENY_createFloaterPool(6);
+        ENY_createCircleBulletPool(10);
+        ENY_createRocketBulletPool(6);
+        ENY_createAstroidPool(6);
+    }
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -835,6 +874,12 @@ static void level_5(void)
 static void level_6(void)
 {
     u32 level_time = GST_getLevelTime();
+    if (level_time == FIRST_FRAME)
+    {
+        ENY_createRocketBulletPool(8);
+        ENY_createCircleBulletPool(12);
+    }
+
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
@@ -857,22 +902,22 @@ static void level_6(void)
 static void level_7(void)
 {
     u32 level_time = GST_getLevelTime();
-  
+
     if (level_time < INTRO_LENGTH)
     {
         startNewLevel(level_time);
     }
 
-    if(level_time == 50)
+    if (level_time == 50)
     {
-        PAL_fadeOutPalette(PAL3, 150, true);        
+        PAL_fadeOutPalette(PAL3, 150, true);
     }
 
-    if(level_time == 300)
-    {              
+    if (level_time == 300)
+    {
         BCK_draw_moon();
         PAL_fadeInPalette(PAL3, moon.palette->data, 150, true);
-    }    
+    }
 }
 
 void runscript(void)

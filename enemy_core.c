@@ -101,7 +101,7 @@ void ENY_kill(ENY_Actor_t *eny)
     VX_spawnExposion(eny->rect);
     GST_increaseScore(eny->worth);
     UI_updateChainDisplay();
-    UI_updateScoreDisplay();    
+    UI_updateScoreDisplay();
     eny->rect.y = DEACTIVATED_POSITION;
 }
 
@@ -127,7 +127,7 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
         else
         {
             Rectangle_t playerLocation = PLY_getShotRect();
-            VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);            
+            VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);
         }
         PLY_resetShot();
     }
@@ -135,22 +135,28 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
 
 void ENY_destroyEnemy(ENY_Actor_t *enyptr)
 {
-    SPR_releaseSprite(enyptr->spriteSlot1);
-    if (enyptr->spriteSlot1 != NULL)
+    if (enyptr != NULL)
     {
-        SPR_releaseSprite(enyptr->spriteSlot2);
+        SPR_releaseSprite(enyptr->spriteSlot1);
+        if (enyptr->spriteSlot1 != NULL)
+        {
+            SPR_releaseSprite(enyptr->spriteSlot2);
+        }
+        MEM_free(enyptr);
+        enyptr = NULL;
     }
-    MEM_free(enyptr);
-    enyptr = NULL;
 }
 
 void ENY_destroyBullet(Actor_t *enyptr)
 {
-    SPR_releaseSprite(enyptr->spriteSlot1);
-    if (enyptr->spriteSlot1 != NULL)
+    if (enyptr != NULL)
     {
-        SPR_releaseSprite(enyptr->spriteSlot2);
+        SPR_releaseSprite(enyptr->spriteSlot1);
+        if (enyptr->spriteSlot1 != NULL)
+        {
+            SPR_releaseSprite(enyptr->spriteSlot2);
+        }
+        MEM_free(enyptr);
+        enyptr = NULL;
     }
-    MEM_free(enyptr);
-    enyptr = NULL;
 }

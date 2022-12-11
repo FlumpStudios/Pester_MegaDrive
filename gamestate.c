@@ -15,7 +15,6 @@ typedef struct gs
     bool isGamePaused;
 } Gamestate_t;
 
-
 static Gamestate_t *gamestate = NULL;
 
 void resetGame(void)

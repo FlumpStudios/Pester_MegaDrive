@@ -25,7 +25,19 @@ void ENY_resetAllEnemies(void);
 void ENY_resetAllBullets(void);
 
 // destruct all enemies
-void ENY_destruct(void);
+void ENY_destruct_enemies(void);
+
+// Create enemy pools
+void ENY_createBouncerPool(u8 count);
+void ENY_createBirdPool(u8 count);
+void ENY_createGrabberPool(u8 count);
+void ENY_createAstroidPool(u8 count);
+void ENY_createCircleBulletPool(u8 count);
+void ENY_createCircleBulletPool(u8 count);
+void ENY_createRocketBulletPool(u8 count);
+void ENY_createFloaterPool(u8 count);
+void ENY_createPopcornPool(u8 count);
+void ENY_destruct_bullets(void);
 
 // Spawn enemies
 void ENY_spawnGrabber(s16 x, s16 y, s16 xSpeed, s16 ySpeed);
