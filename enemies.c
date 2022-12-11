@@ -551,10 +551,9 @@ static void updateBoss1(void)
             }
 
             // Little buffer before starting next level
-            if (deathTime > 100)
+            if (deathTime == 100)
             {
-                SCR_end_current_level();
-                ENY_destroyEnemy(boss_1);
+                SCR_end_current_level();                  
             }
         }
 
@@ -1103,15 +1102,27 @@ void ENY_init(void)
 void ENY_destruct_enemies(void)
 {
     ENY_destroyEnemy(boss_1);
+    boss_1 = NULL;
 
     for (u8 i = 0; i < MAX_POOL_SIZE; i++)
     {
         ENY_destroyEnemy(bouncerEnemies[i]);
+        bouncerEnemies[i] = NULL;
+
         ENY_destroyEnemy(birdEnemies[i]);
+        birdEnemies[i] = NULL;
+
         ENY_destroyEnemy(grabberEnemies[i]);
+        grabberEnemies[i] = NULL;
+
         ENY_destroyEnemy(astroidEnemies[i]);
+        astroidEnemies[i] = NULL;
+
         ENY_destroyEnemy(floaterEnemies[i]);
+        floaterEnemies[i] = NULL;
+
         ENY_destroyEnemy(popcornEnemies[i]);
+        popcornEnemies[i] = NULL;
     }
     
     bird_active_count = 0;

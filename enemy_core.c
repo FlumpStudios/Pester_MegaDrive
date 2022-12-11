@@ -133,17 +133,17 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
     }
 }
 
+
 void ENY_destroyEnemy(ENY_Actor_t *enyptr)
 {
     if (enyptr != NULL)
     {
         SPR_releaseSprite(enyptr->spriteSlot1);
-        if (enyptr->spriteSlot1 != NULL)
+        if (enyptr->spriteSlot2 != NULL)
         {
             SPR_releaseSprite(enyptr->spriteSlot2);
         }
-        MEM_free(enyptr);
-        enyptr = NULL;
+        MEM_free(enyptr);        
     }
 }
 
@@ -152,11 +152,10 @@ void ENY_destroyBullet(Actor_t *enyptr)
     if (enyptr != NULL)
     {
         SPR_releaseSprite(enyptr->spriteSlot1);
-        if (enyptr->spriteSlot1 != NULL)
+        if (enyptr->spriteSlot2 != NULL)
         {
             SPR_releaseSprite(enyptr->spriteSlot2);
         }
         MEM_free(enyptr);
-        enyptr = NULL;
     }
 }
