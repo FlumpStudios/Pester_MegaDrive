@@ -7,12 +7,9 @@ static void initialiseActor(Actor_t *e)
 	e->rect.y = 0;
 	e->rect.height = 0;
 	e->rect.width = 0;
-
-	e->speed = 0;
-	
+	e->speed = 0;	
 	e->velocity.x = 0;
 	e->velocity.y = 0;
-
 	e->is_enabled = false;
 	e->spriteSlot1 = NULL;
 	e->spriteSlot2 = NULL;
@@ -36,7 +33,7 @@ u16 CMN_generateRandomNum(int upper, s32 seed)
 	setRandomSeed(seed);
 	return random() % upper;
 }
-// TODO: This is basically but potentially expensive, switch out when possible
+// TODO: This is basic and potentially expensive, switch out when possible
 u16 CMN_generateRandomNumWithRange(int lower, int upper, s32 seed)
 {
 	if (lower == upper)

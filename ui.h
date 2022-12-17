@@ -12,4 +12,5 @@ void UI_updateLivesText(void);
 void UI_updateChainDisplay(void);
 void UI_display_warning();
 void UI_clear_warning(void);
+void UI_destruct(void);
 #endif

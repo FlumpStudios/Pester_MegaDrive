@@ -553,7 +553,7 @@ static void updateBoss1(void)
             // Little buffer before starting next level
             if (deathTime == 100)
             {
-                SCR_end_current_level();                  
+                SCR_end_current_level();
             }
         }
 
@@ -1096,7 +1096,13 @@ void ENY_init(void)
     }
 
     boss_1 = NULL;
-    addTickFunc(update, TRUE);
+
+    static bool tickFunctionAdded = false;
+    if (!tickFunctionAdded)
+    {
+        addTickFunc(update, TRUE);
+        tickFunctionAdded = true;
+    }
 }
 
 void ENY_destruct_enemies(void)
@@ -1124,7 +1130,7 @@ void ENY_destruct_enemies(void)
         ENY_destroyEnemy(popcornEnemies[i]);
         popcornEnemies[i] = NULL;
     }
-    
+
     bird_active_count = 0;
     grabber_active_count = 0;
     astroid_active_count = 0;
@@ -1134,7 +1140,7 @@ void ENY_destruct_enemies(void)
 
     bird_current_pool_index = 0;
     grabber_current_pool_index = 0;
-    astroid_current_pool_index = 0;    
+    astroid_current_pool_index = 0;
     bouncer_current_pool_index = 0;
     floater_current_pool_index = 0;
     popcorn_current_pool_index = 0;

@@ -17,7 +17,7 @@ void CTR_handleInput(u16 joy, u16 changed, u16 state)
 	if (joy == JOY_1)
 	{
 		bool isPaused = GST_is_game_paused();
-		if ((state & BUTTON_START) && GST_getGameState() == GAME_STATE_GAME)
+		if ((state & BUTTON_START) && GST_getGameState() == GAME_STATE_GAME && GST_isGamePlaying())
 		{
 			if (isPaused)
 			{
@@ -37,15 +37,11 @@ void CTR_handleInput(u16 joy, u16 changed, u16 state)
 		{
 			if (state & BUTTON_START)
 			{
+
+
 				if (GST_getGameState() == GAME_STATE_MENU)
 				{
-					
 					GST_startGame();
-				}
-
-				if (!GST_isGamePlaying())
-				{
-					GST_restartGame();
 				}
 			}
 
@@ -55,7 +51,7 @@ void CTR_handleInput(u16 joy, u16 changed, u16 state)
 				{
 					GST_startGame();
 				}
-				
+
 				if (GST_isGamePlaying() && PLY_isShotOutOfBounds())
 				{
 					PLY_fireShot();
@@ -92,6 +88,15 @@ void CTR_handleInput(u16 joy, u16 changed, u16 state)
 			else
 			{
 				PLY_haltY();
+			}
+		}
+
+		if (state & BUTTON_START)
+		{
+			if (GST_getGameState() == GAME_STATE_GAME && !GST_isGamePlaying())
+			{
+				GST_freeGameResources();
+				GST_setUpMainMenu();
 			}
 		}
 	}

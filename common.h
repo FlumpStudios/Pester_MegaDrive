@@ -16,7 +16,8 @@
 #define CHAIN_HIGH "CHAIN"
 
 #define MSG_START "Press START to Begin!"
-#define MSG_RESET "Game over! Press START to Play Again."
+
+#define MSG_RESET "Game over! You scored"
 
 // Game state
 #define GAME_STATE_INTRO 0

@@ -9,7 +9,7 @@ typedef struct gs
     u32 score;
     u32 high_score;
     u32 level_time;
-    u32 chain;    
+    u32 chain;
     u8 current_level;
     u8 current_lives;
     bool isGamePaused;
@@ -17,7 +17,7 @@ typedef struct gs
 
 static Gamestate_t *gamestate = NULL;
 
-void resetGame(void)
+void initiateGameState(void)
 {
     gamestate->chain = 0;
     gamestate->score = 0;
@@ -39,7 +39,6 @@ void GST_set_is_game_paused(bool isPaused)
 {
     gamestate->isGamePaused = isPaused;
 }
-
 
 void GST_removeLife(void)
 {
@@ -63,11 +62,10 @@ void GST_resetLevelTime(void)
     gamestate->level_time = 0;
 }
 
-int GST_getScore(void)
+u32 GST_getScore(void)
 {
     return gamestate->score;
 }
-
 
 u8 GST_getCurrentLevel(void)
 {
@@ -79,7 +77,7 @@ void GST_increaseCurrentLevel(void)
     gamestate->current_level++;
 }
 
-int GST_getHighScore(void)
+u32 GST_getHighScore(void)
 {
     return gamestate->high_score;
 }
@@ -91,12 +89,12 @@ u32 GST_getChain(void)
 
 void GST_increaseChain(u32 chain)
 {
-    gamestate->chain += chain; 
+    gamestate->chain += chain;
 }
 
 void GST_resetChain(void)
-{   
-    if(gamestate->chain > 0)
+{
+    if (gamestate->chain > 0)
     {
         AUD_play_lost_chain();
     }
@@ -108,7 +106,6 @@ u8 GST_getGameState(void)
     return gamestate->current_game_state;
 }
 
-
 bool GST_isGamePlaying(void)
 {
     return gamestate->is_game_playing;
@@ -118,7 +115,6 @@ u32 GST_getLevelTime(void)
 {
     return gamestate->level_time;
 }
-
 
 void GST_increaseScore(u32 score)
 {
@@ -135,7 +131,6 @@ void setGameState(u8 gameState)
     gamestate->current_game_state = gameState;
 }
 
-
 void setGamePlaying(bool isGamePlaying)
 {
     gamestate->is_game_playing = isGamePlaying;
@@ -151,7 +146,11 @@ void tickLevelTime(void)
 
 void GST_endGame(void)
 {
-    UI_drawCentredText(MSG_RESET);
+    char scoreTextBuffer[30]; 
+
+    sprintf(scoreTextBuffer, "%s %lu", MSG_RESET, gamestate->score);
+
+    UI_drawCentredText(scoreTextBuffer);
     setGamePlaying(false);
     if (gamestate->score > gamestate->high_score)
     {
@@ -168,30 +167,65 @@ void resetCurrentLevel(void)
 void GST_restartGame(void)
 {
     gamestate->current_lives = STARTING_LIVES;
+    setGameState(GAME_STATE_GAME);
     setGamePlaying(true);
     PLY_resetPlayer();
     ENY_resetAllEnemies();
-    resetScore();   
+    resetScore();
     GST_resetLevelTime();
     resetCurrentLevel();
     VDP_clearTextArea(0, 10, 40, 10);
+    BCK_draw_starfield();
+    AUD_play_level1_music();
+    PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
+    UI_clearCentredText();
     UI_init();
 }
-
 
 void GST_startGame(void)
 {
     AUD_play_start();
-    AUD_play_level1_music();					
-    UI_clearCentredText();
-    PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
-    BCK_draw_starfield();
-    setGameState(GAME_STATE_GAME);
     PLY_init();
-    VX_init();
     ENY_init();
-    UI_init();
+    GST_restartGame();
+}
 
+
+
+// TODO: Move to a better place, doesn't really fit in game state
+void GST_resetPalletes(void)
+{
+    // Text
+    VDP_setPalette(PAL0, palette_grey);
+
+    // VFX and Boss switching
+    VDP_setPalette(PAL1, imgexplo.palette->data);
+
+    // Enemies
+    VDP_setPalette(PAL2, bird.palette->data);
+
+    // Background
+    VDP_setPalette(PAL3, palette_black);
+
+	VDP_setTextPlan(PLAN_A);
+}
+
+void GST_setUpMainMenu(void)
+{
+    AUD_play_menu_music();
+    setGameState(GAME_STATE_MENU);
+    GST_resetPalletes();
+    BCK_draw_title_screen();
+    PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
+    CTR_set_locked_controls(false);
+}
+
+void GST_freeGameResources(void)
+{
+    ENY_destruct_enemies();
+    ENY_destruct_bullets();
+    PLY_destructPlayer();
+    UI_destruct();    
 }
 
 void ST_update(void)
@@ -209,13 +243,19 @@ void GST_init(void)
 
     if (gamestate != NULL)
     {
-        resetGame();
+        initiateGameState();
     }
 
-    addTickFunc(ST_update, false);
+    static bool tickAdded = false;
+    if(!tickAdded)
+    {
+        addTickFunc(ST_update, false);
+        tickAdded = true;
+    }
 }
 
 void GST_destructState(void)
 {
     MEM_free(gamestate);
+    gamestate = NULL;
 }

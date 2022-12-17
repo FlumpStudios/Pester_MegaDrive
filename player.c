@@ -30,8 +30,9 @@ static void reset_after_death(void)
 {
     hasPlayedGameOverSound = false;
     death_ticker = 0;
-    is_player_in_death_state = false;
-
+    is_player_in_death_state = false;    
+    GST_resetChain();
+    
     if (GST_getLivesCount() > 0)
     {
         GST_removeLife();
@@ -175,11 +176,14 @@ bool PLY_isShotOutOfBounds(void)
 
 void PLY_destructPlayer(void)
 {
-    SPR_releaseSprite(player->ship.spriteSlot1);
-    SPR_releaseSprite(player->shot.spriteSlot1);
-    SPR_releaseSprite(player->hit_box_spr);
-    MEM_free(player);
-    player = NULL;
+    if (player != NULL)
+    {
+        SPR_releaseSprite(player->ship.spriteSlot1);
+        SPR_releaseSprite(player->shot.spriteSlot1);
+        SPR_releaseSprite(player->hit_box_spr);
+        MEM_free(player);
+        player = NULL;
+    }
 }
 
 void PLY_moveLeft(bool seconAxisActive)
@@ -297,7 +301,7 @@ void PLY_update(void)
     {
         if (player->shot.rect.y > -8)
         {
-            GST_resetChain();            
+            GST_resetChain();
         }
 
         PLY_disableShotMovement();
@@ -324,5 +328,10 @@ void PLY_init(void)
         player->shot.spriteSlot2 = NULL;
     }
 
-    addTickFunc(PLY_update, true);
+    static bool tickFunctionAdded = false;
+    if (!tickFunctionAdded)
+    {
+        addTickFunc(PLY_update, true);
+        tickFunctionAdded = true;
+    }
 }

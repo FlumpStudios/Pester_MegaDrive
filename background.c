@@ -11,7 +11,7 @@ static u8 bg_scroll_speed = 255;
 void BCK_update(void)
 {
     frame++;
-    if (frame > frameskip)
+    if (frame > frameskip && scrollSpeed > 0)
     {
         frame = 0;
         bg_scroll_speed -= scrollSpeed;
@@ -21,7 +21,7 @@ void BCK_update(void)
             bg_scroll_speed = 255;
         }
 
-        VDP_setVerticalScroll(PLAN_B, bg_scroll_speed);
+       VDP_setVerticalScroll(PLAN_B, bg_scroll_speed);
     }
 }
 
@@ -55,6 +55,7 @@ void BCK_draw_title_screen(void)
 {
     scrollSpeed = 0;
     VDP_clearPlan(PLAN_B, 0);
+    VDP_setVerticalScroll(PLAN_B, 0);
     VDP_drawImageEx(PLAN_B, &introImage, TILE_ATTR_FULL(PAL3, 0, 0, 0, 1), 0, 0, 0, CPU);
 }
 
@@ -67,5 +68,10 @@ void BCK_draw_intro_screen(void)
 
 void BCK_init(void)
 {
-    addTickFunc(BCK_update, true);
+    static bool tickAdded = false;
+    if (!tickAdded)
+    {
+        addTickFunc(BCK_update, true);
+        tickAdded = true;
+    }
 }

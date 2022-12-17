@@ -7,16 +7,18 @@
 #include "background.h"
 #include "game_update_observable.h"
 
-#define STARTING_LEVEL 6
+#define STARTING_LEVEL 1
 #define STARTING_LIVES 2
 
 u32 GST_getChain(void);
+void GST_resetPalletes(void);
 void GST_increaseChain(u32 chain);
 void GST_resetChain(void);
-
 void GST_init(void);
 void GST_destructState(void);
 void GST_startGame(void);
+void GST_setUpMainMenu(void);
+void GST_freeGameResources(void);
 void GST_restartGame(void);
 void GST_endGame(void);
 void GST_increaseScore(u32 score);
@@ -25,8 +27,8 @@ void GST_resetLevelTime(void);
 bool GST_isGamePlaying(void);
 u8 GST_getGameState(void);
 u32 GST_getLevelTime(void);
-int GST_getScore(void);
-int GST_getHighScore(void);
+u32 GST_getScore(void);
+u32 GST_getHighScore(void);
 
 void GST_addLife(void);
 void GST_removeLife(void);
