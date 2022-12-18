@@ -13,6 +13,7 @@ extern const u8 sfX_game_over[51712];
 extern const u8 sfx_alarm[14592];
 extern const u8 sfx_loseChain[3840];
 extern const SpriteDefinition boss1Left;
+extern const SpriteDefinition hitBox;
 extern const SpriteDefinition bulletHit;
 extern const SpriteDefinition lifeSprite;
 extern const SpriteDefinition popcorn;

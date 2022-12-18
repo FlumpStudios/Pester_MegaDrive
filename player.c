@@ -40,6 +40,7 @@ static void reset_after_death(void)
         ENY_resetAllBullets();
         CTR_set_locked_controls(false);
         player->ship.spriteSlot1->visibility = true;
+        player->hit_box_spr->visibility = true;
         player->ship.rect.height = 32;
         player->ship.rect.width = 32;
         player->ship.rect.x = 144;
@@ -97,6 +98,7 @@ void PLY_runPlayerHit()
         is_player_in_death_state = true;
         VX_spawnExposion(player->ship.rect);
         player->ship.spriteSlot1->visibility = false;
+        player->hit_box_spr->visibility = false;
     }
 }
 
@@ -134,10 +136,11 @@ void updatePlayerPosition(void)
 
     // Position the hitbox
     player->hitbox_rect.x = player->ship.rect.x + 12;
-    player->hitbox_rect.y = player->ship.rect.y + 16;
+    player->hitbox_rect.y = player->ship.rect.y + 12;
 
     // Set spriteSlot1 position in SGDK
     SPR_setPosition(player->ship.spriteSlot1, player->ship.rect.x, player->ship.rect.y);
+    SPR_setPosition(player->hit_box_spr, player->hitbox_rect.x, player->hitbox_rect.y);
 }
 
 void PLY_disableShot(void)
@@ -320,7 +323,7 @@ void PLY_init(void)
     if (player != NULL)
     {
         PLY_resetPlayer();
-        // player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+        player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
         player->ship.spriteSlot1 = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
         player->ship.spriteSlot2 = NULL;
 

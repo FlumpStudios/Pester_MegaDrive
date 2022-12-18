@@ -6,7 +6,7 @@ IMAGE flump  "tiles/flump.png" 0
 IMAGE introImage  "tiles/IntroImage.png" 0
 
 SPRITE boss1Left "sprites/Boss1Left.png" 4 4 FAST 5
-
+SPRITE hitBox "sprites/hitBox.png" 1 1 FAST 10
 SPRITE bulletHit "sprites/bulletHit.png" 1 1 FAST 0
 SPRITE lifeSprite "sprites/lifeSprite.png" 2 2 FAST 0
 SPRITE popcorn "sprites/popcorn.png" 2 2 FAST 4
