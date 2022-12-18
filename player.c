@@ -209,19 +209,6 @@ void moveSataliteShots(void)
     SPR_setPosition(player->satellite_shot2.spriteSlot1, player->satellite_shot2.rect.x, player->satellite_shot2.rect.y);
 }
 
-void PLY_fireSataliteShots(void)
-{
-    player->satellite_shot1.spriteSlot1->visibility = true;
-    player->satellite_shot1.is_enabled = true;
-    player->satellite_shot1.rect.x = player->ship.rect.x - 16;
-    player->satellite_shot1.rect.y = player->ship.rect.y - 12;
-
-    player->satellite_shot2.spriteSlot1->visibility = true;
-    player->satellite_shot2.is_enabled = true;
-    player->satellite_shot2.rect.x = player->ship.rect.x + 41;
-    player->satellite_shot2.rect.y = player->ship.rect.y - 12;
-}
-
 void PLY_fireShot(void)
 {
     player->shot.spriteSlot1->visibility = true;
@@ -234,12 +221,12 @@ void PLY_fireShot(void)
 
         player->satellite_shot1.spriteSlot1->visibility = true;
         player->satellite_shot1.is_enabled = true;
-        player->satellite_shot1.rect.x = player->ship.rect.x - 16;
-        player->satellite_shot1.rect.y = player->ship.rect.y - 12;
+        player->satellite_shot1.rect.x = player->ship.rect.x - 20;
+        player->satellite_shot1.rect.y = player->ship.rect.y + 9;
         player->satellite_shot2.spriteSlot1->visibility = true;
         player->satellite_shot2.is_enabled = true;
-        player->satellite_shot2.rect.x = player->ship.rect.x + 41;
-        player->satellite_shot2.rect.y = player->ship.rect.y - 12;
+        player->satellite_shot2.rect.x = player->ship.rect.x + 45;
+        player->satellite_shot2.rect.y = player->ship.rect.y + 9;
     }
 
     AUD_play_player_shot();
@@ -247,7 +234,7 @@ void PLY_fireShot(void)
 
 bool PLY_areSataliteShotsOutOfBounds(void)
 {
-    return player->satellite_shot1.rect.y <= 0;
+    return player->satellite_shot1.rect.y <= 4;
 }
 
 bool PLY_isShotOutOfBounds(void)
@@ -440,7 +427,7 @@ void PLY_update(void)
     if (PLY_isShotOutOfBounds())
     {
         if (player->shot.rect.y > -8)
-        {
+        {            
             GST_resetChain();
         }
 

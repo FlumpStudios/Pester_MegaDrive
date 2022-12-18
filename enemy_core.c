@@ -105,22 +105,25 @@ void ENY_kill(ENY_Actor_t *eny)
     eny->rect.y = DEACTIVATED_POSITION;
 }
 
-void ENY_checkShotCollision(ENY_Actor_t* enemy)
+void ENY_checkShotCollision(ENY_Actor_t *enemy)
 {
     if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
     {
-        ENY_handleHitByShot(enemy);
-        AUD_play_hit();
-        PLY_resetShot();
+        if (PLY_is_player_shot_enabled())
+        {
+            ENY_handleHitByShot(enemy);
+            AUD_play_hit();
+            PLY_resetShot();
+        }
     }
     // TODO: Handle deactivating shots properly. At the moment, the shots are just moved off screen
-    if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(1)))    
+    if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(1)))
     {
         PLY_disableSatelliteShot(1);
         ENY_handleHitByShot(enemy);
         AUD_play_hit();
-    }    
-    if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(2)))    
+    }
+    if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(2)))
     {
         ENY_handleHitByShot(enemy);
         AUD_play_hit();
@@ -130,28 +133,25 @@ void ENY_checkShotCollision(ENY_Actor_t* enemy)
 
 void ENY_handleHitByShot(ENY_Actor_t *eny)
 {
-    // Flash on hit
-    if (PLY_is_player_shot_enabled())
+
+    eny->spriteSlot1->visibility = false;
+
+    if (eny->spriteSlot2 != NULL)
     {
-        eny->spriteSlot1->visibility = false;
+        eny->spriteSlot2->visibility = false;
+    }
 
-        if (eny->spriteSlot2 != NULL)
-        {
-            eny->spriteSlot2->visibility = false;
-        }
+    eny->timeOfLastHit = GST_getLevelTime();
 
-        eny->timeOfLastHit = GST_getLevelTime();
-
-        eny->current_health--;
-        if (eny->current_health <= 0)
-        {
-            ENY_kill(eny);
-        }
-        else
-        {
-            Rectangle_t playerLocation = PLY_getShotRect();
-            VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);
-        }
+    eny->current_health--;
+    if (eny->current_health <= 0)
+    {
+        ENY_kill(eny);
+    }
+    else
+    {
+        Rectangle_t playerLocation = PLY_getShotRect();
+        VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);
     }
 }
 
