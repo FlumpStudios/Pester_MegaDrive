@@ -525,12 +525,9 @@ static void updateBoss1(void)
         {
             if (enemy->timeAlive > 200)
             {
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                    AUD_play_hit();
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                ENY_checkShotCollision(enemy);
+                
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }
@@ -598,11 +595,10 @@ static void updateFloater(void)
                         }
                     }
                 }
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                
+                ENY_checkShotCollision(enemy);
+
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }
@@ -690,12 +686,8 @@ static void updatePopcorn(void)
                     enemy->rect.x += enemy->velocity.x;
                     enemy->rect.y += enemy->velocity.y;
                 }
-
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                ENY_checkShotCollision(enemy);
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }
@@ -753,11 +745,8 @@ static void updateBouncer(void)
                         ENY_spawncircleBullets_tripplepattern(enemy->rect.x + 8, enemy->rect.y + 3);
                     }
                 }
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                ENY_checkShotCollision(enemy);
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }
@@ -798,11 +787,8 @@ static void updateBird(void)
                         enemy->rect.x += enemy->velocity.x;
                     }
                 }
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                ENY_checkShotCollision(enemy);
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }
@@ -840,11 +826,9 @@ static void updateGrabber(void)
                     ENY_spawnRocketBullet(enemy->rect.x, enemy->rect.y + 5, 3);
                 }
 
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                
+                ENY_checkShotCollision(enemy);
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }
@@ -874,11 +858,8 @@ static void updateAstroid(void)
             {
                 enemy->rect.y += enemy->velocity.y;
 
-                if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
-                {
-                    ENY_handleHitByShot(enemy);
-                }
-                else if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
+                ENY_checkShotCollision(enemy);
+                if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
                     PLY_runPlayerHit();
                 }

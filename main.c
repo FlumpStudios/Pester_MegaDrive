@@ -11,8 +11,7 @@
 #include "game_script.h"
 #include "ui.h"
 #include "audio.h"
-#define SKIP_INTRO FALSE
-
+#define SKIP_INTRO TRUE
 
 void destructGame(void)
 {

@@ -229,23 +229,17 @@ void PLY_fireShot(void)
     player->shot.rect.x = player->ship.rect.x + 12;
     player->shot.rect.y = player->ship.rect.y - 12;
 
-    if (satellites_enabled)
+    if (satellites_enabled && PLY_areSataliteShotsOutOfBounds())
     {
-        if (!player->satellite_shot1.is_enabled)
-        {
-            player->satellite_shot1.spriteSlot1->visibility = true;
-            player->satellite_shot1.is_enabled = true;
-            player->satellite_shot1.rect.x = player->ship.rect.x - 16;
-            player->satellite_shot1.rect.y = player->ship.rect.y - 12;
-        }
 
-        if (!player->satellite_shot2.is_enabled)
-        {
-            player->satellite_shot2.spriteSlot1->visibility = true;
-            player->satellite_shot2.is_enabled = true;
-            player->satellite_shot2.rect.x = player->ship.rect.x + 41;
-            player->satellite_shot2.rect.y = player->ship.rect.y - 12;
-        }
+        player->satellite_shot1.spriteSlot1->visibility = true;
+        player->satellite_shot1.is_enabled = true;
+        player->satellite_shot1.rect.x = player->ship.rect.x - 16;
+        player->satellite_shot1.rect.y = player->ship.rect.y - 12;
+        player->satellite_shot2.spriteSlot1->visibility = true;
+        player->satellite_shot2.is_enabled = true;
+        player->satellite_shot2.rect.x = player->ship.rect.x + 41;
+        player->satellite_shot2.rect.y = player->ship.rect.y - 12;
     }
 
     AUD_play_player_shot();
@@ -348,11 +342,15 @@ void PLY_enableSatelliteShot(void)
     player->satellite_shot1.velocity.y = -player->satellite_shot1.speed;
     player->satellite_shot2.velocity.y = -player->satellite_shot2.speed;
 
+    player->satellite_shot1.velocity.x = -1;
+    player->satellite_shot2.velocity.x = 1;
+
+
     player->satellite_shot1.is_enabled = true;
     player->satellite_shot2.is_enabled = true;
 
     player->satellite_shot1.spriteSlot1->visibility = true;
-    player->satellite_shot2.spriteSlot2->visibility = true;
+    player->satellite_shot2.spriteSlot1->visibility = true;
 }
 
 void PLY_disableShotMovement(void)
@@ -360,16 +358,21 @@ void PLY_disableShotMovement(void)
     player->shot.velocity.y = 0;
 }
 
-void PLY_disableSatelliteShot(void)
+void PLY_disableSatelliteShot(u8 number)
 {
-    player->satellite_shot1.velocity.y = 0;
-    player->satellite_shot2.velocity.y = 0;
+    if (number == 1 || number == 0)
+    {
+        player->satellite_shot1.is_enabled = false;
+        player->satellite_shot1.spriteSlot1->visibility = false;
+        player->satellite_shot1.rect.x = -150;
+    }
 
-    player->satellite_shot1.is_enabled = false;
-    player->satellite_shot2.is_enabled = false;
-
-    player->satellite_shot1.spriteSlot1->visibility = false;
-    player->satellite_shot2.spriteSlot1->visibility = false;
+    if (number == 2 || number == 0)
+    {
+        player->satellite_shot2.is_enabled = false;
+        player->satellite_shot2.spriteSlot1->visibility = false;
+        player->satellite_shot2.rect.x = -150;
+    }
 }
 
 Rectangle_t PLY_getPlayerRect(void)
@@ -380,6 +383,18 @@ Rectangle_t PLY_getPlayerRect(void)
 Rectangle_t PLY_getShotRect(void)
 {
     return player->shot.rect;
+}
+
+Rectangle_t PLY_getSatelliteShot(u8 number)
+{
+    if (number == 1)
+    {
+        return player->satellite_shot1.rect;
+    }
+    else
+    {
+        return player->satellite_shot2.rect;
+    }
 }
 
 Rectangle_t PLY_getHitboxRect(void)
@@ -415,7 +430,7 @@ void PLY_update(void)
 
     if (PLY_areSataliteShotsOutOfBounds())
     {
-        PLY_disableSatelliteShot();
+        PLY_disableSatelliteShot(0);
     }
     else
     {

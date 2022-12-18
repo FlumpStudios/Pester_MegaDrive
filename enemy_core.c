@@ -105,6 +105,29 @@ void ENY_kill(ENY_Actor_t *eny)
     eny->rect.y = DEACTIVATED_POSITION;
 }
 
+void ENY_checkShotCollision(ENY_Actor_t* enemy)
+{
+    if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
+    {
+        ENY_handleHitByShot(enemy);
+        AUD_play_hit();
+        PLY_resetShot();
+    }
+    // TODO: Handle deactivating shots properly. At the moment, the shots are just moved off screen
+    if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(1)))    
+    {
+        PLY_disableSatelliteShot(1);
+        ENY_handleHitByShot(enemy);
+        AUD_play_hit();
+    }    
+    if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(2)))    
+    {
+        ENY_handleHitByShot(enemy);
+        AUD_play_hit();
+        PLY_disableSatelliteShot(2);
+    }
+}
+
 void ENY_handleHitByShot(ENY_Actor_t *eny)
 {
     // Flash on hit
@@ -129,10 +152,8 @@ void ENY_handleHitByShot(ENY_Actor_t *eny)
             Rectangle_t playerLocation = PLY_getShotRect();
             VX_spawn_bullet_hit_effect(playerLocation.x, playerLocation.y);
         }
-        PLY_resetShot();
     }
 }
-
 
 void ENY_destroyEnemy(ENY_Actor_t *enyptr)
 {
@@ -143,7 +164,7 @@ void ENY_destroyEnemy(ENY_Actor_t *enyptr)
         {
             SPR_releaseSprite(enyptr->spriteSlot2);
         }
-        MEM_free(enyptr);        
+        MEM_free(enyptr);
     }
 }
 
