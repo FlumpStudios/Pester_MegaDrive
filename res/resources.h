@@ -27,6 +27,8 @@ extern const SpriteDefinition enemyBullet;
 extern const SpriteDefinition enemyRocket;
 extern const SpriteDefinition bouncer;
 extern const SpriteDefinition floater;
+extern const SpriteDefinition satellite;
+extern const SpriteDefinition satelliteShot;
 extern const Image starfield;
 extern const Image moon;
 extern const Image flump;

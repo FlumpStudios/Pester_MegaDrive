@@ -20,6 +20,9 @@ SPRITE enemyBullet "sprites/enemyBullet.png" 2 2 FAST 2
 SPRITE enemyRocket "sprites/enemyRocket.png" 1 2 FAST 2
 SPRITE bouncer "sprites/bouncer.png" 4 2 FAST 4
 SPRITE floater "sprites/floater.png" 4 2 FAST 4
+SPRITE satellite "sprites/satellite.png" 2 2 FAST 0
+SPRITE satelliteShot "sprites/satelliteShot.png" 1 1 FAST
+
 XGM track1 "music/bonus.xgm" -1
 XGM menuMusic "music/MenuMusic.xgm" -1
 WAV sfx_player_fire "sfx/Shoot_00.wav" 5

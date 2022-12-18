@@ -11,8 +11,12 @@ typedef struct ply
 {
     Actor_t ship;
     Actor_t shot;
+    Actor_t satellite_shot1;
+    Actor_t satellite_shot2;
     Rectangle_t hitbox_rect;
     Sprite *hit_box_spr;
+    Sprite *left_satellite;
+    Sprite *right_satellite;
 } Player_t;
 
 static Player_t *player = NULL;
@@ -20,6 +24,7 @@ static bool are_bondary_checks_enabled = false;
 static bool is_player_in_death_state = false;
 static u16 death_ticker = 0;
 static bool hasPlayedGameOverSound = false;
+static bool satellites_enabled = true;
 
 void PLY_set_boundary_checks_enabled(bool enabled)
 {
@@ -30,9 +35,9 @@ static void reset_after_death(void)
 {
     hasPlayedGameOverSound = false;
     death_ticker = 0;
-    is_player_in_death_state = false;    
+    is_player_in_death_state = false;
     GST_resetChain();
-    
+
     if (GST_getLivesCount() > 0)
     {
         GST_removeLife();
@@ -41,6 +46,13 @@ static void reset_after_death(void)
         CTR_set_locked_controls(false);
         player->ship.spriteSlot1->visibility = true;
         player->hit_box_spr->visibility = true;
+
+        if (satellites_enabled)
+        {
+            player->left_satellite->visibility = true;
+            player->right_satellite->visibility = true;
+        }
+
         player->ship.rect.height = 32;
         player->ship.rect.width = 32;
         player->ship.rect.x = 144;
@@ -65,6 +77,9 @@ void PLY_resetPlayer()
     player->ship.speed = 3;
     player->shot.speed = 6;
 
+    player->satellite_shot1.speed = 6;
+    player->satellite_shot2.speed = 6;
+
     player->ship.rect.height = 32;
     player->ship.rect.width = 32;
     player->ship.rect.x = 144;
@@ -83,6 +98,20 @@ void PLY_resetPlayer()
     player->shot.velocity.x = 0;
     player->shot.velocity.y = 0;
 
+    player->satellite_shot1.rect.x = -DEACTIVATED_POSITION;
+    player->satellite_shot1.rect.y = -DEACTIVATED_POSITION;
+    player->satellite_shot1.rect.width = 8;
+    player->satellite_shot1.rect.height = 8;
+    player->satellite_shot1.velocity.x = 0;
+    player->satellite_shot1.velocity.y = 0;
+
+    player->satellite_shot2.rect.x = -DEACTIVATED_POSITION;
+    player->satellite_shot2.rect.y = -DEACTIVATED_POSITION;
+    player->satellite_shot2.rect.width = 8;
+    player->satellite_shot2.rect.height = 8;
+    player->satellite_shot2.velocity.x = 0;
+    player->satellite_shot2.velocity.y = 0;
+
     player->ship.velocity.x = 0;
     player->ship.velocity.y = 0;
     player->ship.spriteSlot1->visibility = true;
@@ -93,12 +122,15 @@ void PLY_runPlayerHit()
 {
     if (!is_player_in_death_state)
     {
+        player->left_satellite->visibility = false;
+        player->right_satellite->visibility = false;
+        player->ship.spriteSlot1->visibility = false;
+        player->hit_box_spr->visibility = false;
+
         AUD_play_player_death();
         CTR_set_locked_controls(true);
         is_player_in_death_state = true;
         VX_spawnExposion(player->ship.rect);
-        player->ship.spriteSlot1->visibility = false;
-        player->hit_box_spr->visibility = false;
     }
 }
 
@@ -141,6 +173,8 @@ void updatePlayerPosition(void)
     // Set spriteSlot1 position in SGDK
     SPR_setPosition(player->ship.spriteSlot1, player->ship.rect.x, player->ship.rect.y);
     SPR_setPosition(player->hit_box_spr, player->hitbox_rect.x, player->hitbox_rect.y);
+    SPR_setPosition(player->left_satellite, player->ship.rect.x - 25, player->ship.rect.y + 12);
+    SPR_setPosition(player->right_satellite, player->ship.rect.x + 41, player->ship.rect.y + 12);
 }
 
 void PLY_disableShot(void)
@@ -163,13 +197,63 @@ void moveShot(void)
     SPR_setPosition(player->shot.spriteSlot1, player->shot.rect.x, player->shot.rect.y);
 }
 
+void moveSataliteShots(void)
+{
+    player->satellite_shot1.rect.x += player->satellite_shot1.velocity.x;
+    player->satellite_shot1.rect.y += player->satellite_shot1.velocity.y;
+
+    player->satellite_shot2.rect.x += player->satellite_shot2.velocity.x;
+    player->satellite_shot2.rect.y += player->satellite_shot2.velocity.y;
+
+    SPR_setPosition(player->satellite_shot1.spriteSlot1, player->satellite_shot1.rect.x, player->satellite_shot1.rect.y);
+    SPR_setPosition(player->satellite_shot2.spriteSlot1, player->satellite_shot2.rect.x, player->satellite_shot2.rect.y);
+}
+
+void PLY_fireSataliteShots(void)
+{
+    player->satellite_shot1.spriteSlot1->visibility = true;
+    player->satellite_shot1.is_enabled = true;
+    player->satellite_shot1.rect.x = player->ship.rect.x - 16;
+    player->satellite_shot1.rect.y = player->ship.rect.y - 12;
+
+    player->satellite_shot2.spriteSlot1->visibility = true;
+    player->satellite_shot2.is_enabled = true;
+    player->satellite_shot2.rect.x = player->ship.rect.x + 41;
+    player->satellite_shot2.rect.y = player->ship.rect.y - 12;
+}
+
 void PLY_fireShot(void)
 {
     player->shot.spriteSlot1->visibility = true;
     player->shot.is_enabled = true;
     player->shot.rect.x = player->ship.rect.x + 12;
     player->shot.rect.y = player->ship.rect.y - 12;
+
+    if (satellites_enabled)
+    {
+        if (!player->satellite_shot1.is_enabled)
+        {
+            player->satellite_shot1.spriteSlot1->visibility = true;
+            player->satellite_shot1.is_enabled = true;
+            player->satellite_shot1.rect.x = player->ship.rect.x - 16;
+            player->satellite_shot1.rect.y = player->ship.rect.y - 12;
+        }
+
+        if (!player->satellite_shot2.is_enabled)
+        {
+            player->satellite_shot2.spriteSlot1->visibility = true;
+            player->satellite_shot2.is_enabled = true;
+            player->satellite_shot2.rect.x = player->ship.rect.x + 41;
+            player->satellite_shot2.rect.y = player->ship.rect.y - 12;
+        }
+    }
+
     AUD_play_player_shot();
+}
+
+bool PLY_areSataliteShotsOutOfBounds(void)
+{
+    return player->satellite_shot1.rect.y <= 0;
 }
 
 bool PLY_isShotOutOfBounds(void)
@@ -184,6 +268,10 @@ void PLY_destructPlayer(void)
         SPR_releaseSprite(player->ship.spriteSlot1);
         SPR_releaseSprite(player->shot.spriteSlot1);
         SPR_releaseSprite(player->hit_box_spr);
+        SPR_releaseSprite(player->left_satellite);
+        SPR_releaseSprite(player->right_satellite);
+        SPR_releaseSprite(player->satellite_shot1.spriteSlot1);
+        SPR_releaseSprite(player->satellite_shot2.spriteSlot1);
         MEM_free(player);
         player = NULL;
     }
@@ -255,9 +343,33 @@ void PLY_enableShotMovement(void)
     player->shot.velocity.y = -player->shot.speed;
 }
 
+void PLY_enableSatelliteShot(void)
+{
+    player->satellite_shot1.velocity.y = -player->satellite_shot1.speed;
+    player->satellite_shot2.velocity.y = -player->satellite_shot2.speed;
+
+    player->satellite_shot1.is_enabled = true;
+    player->satellite_shot2.is_enabled = true;
+
+    player->satellite_shot1.spriteSlot1->visibility = true;
+    player->satellite_shot2.spriteSlot2->visibility = true;
+}
+
 void PLY_disableShotMovement(void)
 {
     player->shot.velocity.y = 0;
+}
+
+void PLY_disableSatelliteShot(void)
+{
+    player->satellite_shot1.velocity.y = 0;
+    player->satellite_shot2.velocity.y = 0;
+
+    player->satellite_shot1.is_enabled = false;
+    player->satellite_shot2.is_enabled = false;
+
+    player->satellite_shot1.spriteSlot1->visibility = false;
+    player->satellite_shot2.spriteSlot1->visibility = false;
 }
 
 Rectangle_t PLY_getPlayerRect(void)
@@ -283,6 +395,7 @@ bool PLY_is_player_shot_enabled(void)
 void PLY_update(void)
 {
     moveShot();
+    moveSataliteShots();
 
     if (is_player_in_death_state)
     {
@@ -298,6 +411,15 @@ void PLY_update(void)
         {
             updatePlayerPosition();
         }
+    }
+
+    if (PLY_areSataliteShotsOutOfBounds())
+    {
+        PLY_disableSatelliteShot();
+    }
+    else
+    {
+        PLY_enableSatelliteShot();
     }
 
     if (PLY_isShotOutOfBounds())
@@ -326,9 +448,13 @@ void PLY_init(void)
         player->hit_box_spr = SPR_addSprite(&hitBox, player->hitbox_rect.x, player->hitbox_rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
         player->ship.spriteSlot1 = SPR_addSprite(&paddle, player->ship.rect.x, player->ship.rect.y, TILE_ATTR(PAL2, 0, FALSE, FALSE));
         player->ship.spriteSlot2 = NULL;
-
         player->shot.spriteSlot1 = SPR_addSprite(&imgball, player->shot.rect.x, player->shot.rect.y, TILE_ATTR(PAL2, 2, FALSE, FALSE));
         player->shot.spriteSlot2 = NULL;
+        player->left_satellite = SPR_addSprite(&satellite, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        player->right_satellite = SPR_addSprite(&satellite, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+
+        player->satellite_shot1.spriteSlot1 = SPR_addSprite(&satelliteShot, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 2, FALSE, FALSE));
+        player->satellite_shot2.spriteSlot1 = SPR_addSprite(&satelliteShot, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 2, FALSE, FALSE));
     }
 
     static bool tickFunctionAdded = false;

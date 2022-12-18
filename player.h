@@ -29,6 +29,9 @@ void PLY_disableShotMovement(void);
 bool PLY_isShotOutOfBounds(void);
 bool PLY_is_player_shot_enabled(void);
 void PLY_disableShot(void);
+void PLY_disableSatelliteShot(void);
+void PLY_enableSatelliteShot(void);
+bool PLY_areSataliteShotsOutOfBounds(void);
 
 // Getters
 Rectangle_t PLY_getPlayerRect(void);
