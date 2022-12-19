@@ -20,11 +20,11 @@ typedef struct ply
 } Player_t;
 
 static Player_t *player = NULL;
-static bool are_bondary_checks_enabled = false;
-static bool is_player_in_death_state = false;
-static u16 death_ticker = 0;
-static bool hasPlayedGameOverSound = false;
-static bool satellites_enabled = true;
+static bool are_bondary_checks_enabled;
+static bool is_player_in_death_state;
+static u16 death_ticker;
+static bool hasPlayedGameOverSound;
+static bool satellites_enabled;
 
 void PLY_set_boundary_checks_enabled(bool enabled)
 {
@@ -32,14 +32,13 @@ void PLY_set_boundary_checks_enabled(bool enabled)
 }
 
 static void reset_after_death(void)
-{
-    hasPlayedGameOverSound = false;
+{    
     death_ticker = 0;
-    is_player_in_death_state = false;
-    GST_resetChain();
 
     if (GST_getLivesCount() > 0)
     {
+        is_player_in_death_state = false;
+        GST_resetChain();
         GST_removeLife();
         ENY_resetAllEnemies();
         ENY_resetAllBullets();
@@ -62,6 +61,7 @@ static void reset_after_death(void)
     {
         if (!hasPlayedGameOverSound)
         {
+            AUD_stop_music();
             AUD_play_game_over();
             hasPlayedGameOverSound = true;
         }
@@ -129,8 +129,8 @@ void PLY_runPlayerHit()
 
         AUD_play_player_death();
         CTR_set_locked_controls(true);
-        is_player_in_death_state = true;
         VX_spawnExposion(player->ship.rect);
+        is_player_in_death_state = true;
     }
 }
 
@@ -332,7 +332,6 @@ void PLY_enableSatelliteShot(void)
     player->satellite_shot1.velocity.x = -1;
     player->satellite_shot2.velocity.x = 1;
 
-
     player->satellite_shot1.is_enabled = true;
     player->satellite_shot2.is_enabled = true;
 
@@ -427,7 +426,13 @@ void PLY_update(void)
     if (PLY_isShotOutOfBounds())
     {
         if (player->shot.rect.y > -8)
-        {            
+        {
+
+            if (GST_getChain() >= 10)
+            {
+                AUD_play_lost_chain();
+            }
+
             GST_resetChain();
         }
 
@@ -465,4 +470,11 @@ void PLY_init(void)
         addTickFunc(PLY_update, true);
         tickFunctionAdded = true;
     }
+
+    // init statics
+    are_bondary_checks_enabled = false;
+    is_player_in_death_state = false;
+    death_ticker = 0;
+    hasPlayedGameOverSound = false;
+    satellites_enabled = true;    
 }

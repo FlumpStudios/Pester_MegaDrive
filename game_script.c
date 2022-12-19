@@ -951,5 +951,10 @@ void runscript(void)
 
 void SCR_init(void)
 {
-    addTickFunc(runscript, true);
+    static bool tickAdded = false;
+    if (!tickAdded)
+    {
+        addTickFunc(runscript, true);
+        tickAdded = true;
+    }
 }

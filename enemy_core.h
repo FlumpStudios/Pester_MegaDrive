@@ -25,6 +25,6 @@ void ENY_kill(ENY_Actor_t *eny);
 void ENY_handleHitByShot(ENY_Actor_t *eny);
 void ENY_destroyEnemy(ENY_Actor_t *enyptr);
 void ENY_destroyBullet(Actor_t *enyptr);
-void ENY_checkShotCollision(ENY_Actor_t* enemy);
+bool ENY_checkShotCollision(ENY_Actor_t* enemy);
 
 #endif

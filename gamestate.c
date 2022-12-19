@@ -94,10 +94,6 @@ void GST_increaseChain(u32 chain)
 
 void GST_resetChain(void)
 {
-    if (gamestate->chain > 0)
-    {
-        AUD_play_lost_chain();
-    }
     gamestate->chain = 0;
 }
 
@@ -167,6 +163,7 @@ void resetCurrentLevel(void)
 void GST_restartGame(void)
 {
     gamestate->current_lives = STARTING_LIVES;
+    gamestate->chain = 0;
     setGameState(GAME_STATE_GAME);
     setGamePlaying(true);
     PLY_resetPlayer();

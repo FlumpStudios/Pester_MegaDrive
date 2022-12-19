@@ -10,29 +10,14 @@
 #define BOUNCER_BULLET_SPAWN_DELAY 150
 #define FLOATER_BULLET_SPAWN_DELAY 75
 
-u8 floater_pool_count = 0;
-u8 popcorn_pool_count = 0;
-u8 bouncer_pool_count = 0;
-u8 bird_pool_count = 0;
-u8 grabber_pool_count = 0;
-u8 astroid_pool_count = 0;
-u8 circle_bullet_pool_count = 0;
-u8 rocket_bullet_pool_size = 0;
-
-// Enemy
-static ENY_Actor_t *birdEnemies[MAX_POOL_SIZE];
-static ENY_Actor_t *grabberEnemies[MAX_POOL_SIZE];
-static ENY_Actor_t *astroidEnemies[MAX_POOL_SIZE];
-static ENY_Actor_t *bouncerEnemies[MAX_POOL_SIZE];
-static ENY_Actor_t *floaterEnemies[MAX_POOL_SIZE];
-static ENY_Actor_t *popcornEnemies[MAX_POOL_SIZE];
-
-// Bosses
-static ENY_Actor_t *boss_1;
-
-// Bullets
-static Actor_t *circleBullets[MAX_POOL_SIZE];
-static Actor_t *rocketBullets[MAX_POOL_SIZE];
+static u8 floater_pool_count = 0;
+static u8 popcorn_pool_count = 0;
+static u8 bouncer_pool_count = 0;
+static u8 bird_pool_count = 0;
+static u8 grabber_pool_count = 0;
+static u8 astroid_pool_count = 0;
+static u8 circle_bullet_pool_count = 0;
+static u8 rocket_bullet_pool_size = 0;
 
 static u8 bird_active_count = 0;
 static u8 grabber_active_count = 0;
@@ -51,6 +36,23 @@ static u8 rocket_bullet_current_pool_index = 0;
 static u8 bouncer_current_pool_index = 0;
 static u8 floater_current_pool_index = 0;
 static u8 popcorn_current_pool_index = 0;
+
+
+// Enemy
+static ENY_Actor_t *birdEnemies[MAX_POOL_SIZE];
+static ENY_Actor_t *grabberEnemies[MAX_POOL_SIZE];
+static ENY_Actor_t *astroidEnemies[MAX_POOL_SIZE];
+static ENY_Actor_t *bouncerEnemies[MAX_POOL_SIZE];
+static ENY_Actor_t *floaterEnemies[MAX_POOL_SIZE];
+static ENY_Actor_t *popcornEnemies[MAX_POOL_SIZE];
+
+// Bosses
+static ENY_Actor_t *boss_1;
+
+// Bullets
+static Actor_t *circleBullets[MAX_POOL_SIZE];
+static Actor_t *rocketBullets[MAX_POOL_SIZE];
+
 
 static ENY_Actor_t *createBoss1(void)
 {
@@ -525,7 +527,10 @@ static void updateBoss1(void)
         {
             if (enemy->timeAlive > 200)
             {
-                ENY_checkShotCollision(enemy);
+                if (ENY_checkShotCollision(enemy))
+                {
+                    AUD_play_hit();
+                }
                 
                 if (CLS_checkRectangleCollision(enemy->rect, PLY_getHitboxRect()))
                 {
@@ -1060,6 +1065,36 @@ void ENY_createPopcornPool(u8 count)
     {
         popcornEnemies[i] = createPopcorn();
     }
+}
+
+void reset_statics(void)
+{
+    floater_pool_count = 0;
+    popcorn_pool_count = 0;
+    bouncer_pool_count = 0;
+    bird_pool_count = 0;
+    grabber_pool_count = 0;
+    astroid_pool_count = 0;
+    circle_bullet_pool_count = 0;
+    rocket_bullet_pool_size = 0;
+
+    bird_active_count = 0;
+    grabber_active_count = 0;
+    astroid_active_count = 0;
+    circle_bullet_active_count = 0;
+    rocket_bullet_active_count = 0;
+    bouncer_active_count = 0;
+    floater_active_count = 0;
+    popcorn_active_count = 0;
+
+    bird_current_pool_index = 0;
+    grabber_current_pool_index = 0;
+    astroid_current_pool_index = 0;
+    circle_bullet_current_pool_index = 0;
+    rocket_bullet_current_pool_index = 0;
+    bouncer_current_pool_index = 0;
+    floater_current_pool_index = 0;
+    popcorn_current_pool_index = 0;
 }
 
 void ENY_init(void)

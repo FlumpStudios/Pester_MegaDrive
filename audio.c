@@ -38,8 +38,8 @@ void AUD_play_hit(void)
     XGM_startPlayPCM(SFX_HIT,1,SOUND_PCM_CH3);
 }
 
-void AUD_play_start(void)
-{
+void AUD_play_start(void){
+    
     XGM_startPlayPCM(SFX_START,1,SOUND_PCM_CH2);
 }
 
@@ -68,9 +68,14 @@ void AUD_play_lost_chain(void)
     XGM_startPlayPCM(SFX_LOST_CHAIN,5,SOUND_PCM_CH3);
 }
 
+void AUD_stop_music(void)
+{
+    XGM_stopPlay();
+}
+
 void AUD_play_menu_music(void)
 {
-	XGM_setLoopNumber(-1);
+    XGM_setLoopNumber(-1);
 	XGM_startPlay(menuMusic);
 }
 

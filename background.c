@@ -3,9 +3,7 @@
 
 static u8 frameskip = 2;
 static u8 frame = 0;
-
 static u8 scrollSpeed = 1;
-
 static u8 bg_scroll_speed = 255;
 
 void BCK_update(void)

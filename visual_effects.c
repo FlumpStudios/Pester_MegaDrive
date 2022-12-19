@@ -55,7 +55,7 @@ void VX_spawn_bullet_hit_effect(s16 x, s16 y)
 {
     SPR_setPosition(bulletHitEffect->spriteSlot1, x, y);
     bulletHitEffect->is_rendered = true;
-    bulletHitEffect->frame_ticker = 0;    
+    bulletHitEffect->frame_ticker = 0;
 }
 
 void VX_spawnExposion(Rectangle_t position)
@@ -81,16 +81,15 @@ void VX_spawnExposionAtPosition(s16 x, s16 y)
 
 static void VX_update(void)
 {
-    if(bulletHitEffect->is_rendered)
+    if (bulletHitEffect->is_rendered)
     {
-        bulletHitEffect->frame_ticker ++;
-        if(bulletHitEffect->frame_ticker > BULLET_HIT_SCREEN_TIME)
+        bulletHitEffect->frame_ticker++;
+        if (bulletHitEffect->frame_ticker > BULLET_HIT_SCREEN_TIME)
         {
             bulletHitEffect->is_rendered = false;
             SPR_setPosition(bulletHitEffect->spriteSlot1, DEACTIVATED_POSITION, DEACTIVATED_POSITION);
         }
     }
-    
 
     for (u8 i = 0; i < EXPLOSION_POOL_COUNT; i++)
     {
@@ -108,8 +107,6 @@ static void VX_update(void)
     }
 }
 
-
-
 void VX_spawnLargeExplosion(s16 x, s16 y, u32 time, u8 interval)
 {
     for (u8 i = 1; i < EXPLOSION_POOL_COUNT; i++)
@@ -125,12 +122,17 @@ void createBulletHit(void)
 {
     bulletHitEffect = MEM_alloc(sizeof(VX_effect_t));
     bulletHitEffect->frame_ticker = 0;
-    bulletHitEffect->spriteSlot1 = SPR_addSprite(&bulletHit, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));        
+    bulletHitEffect->spriteSlot1 = SPR_addSprite(&bulletHit, DEACTIVATED_POSITION, DEACTIVATED_POSITION, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 }
 
 void VX_init(void)
 {
     createExplosionPool();
-    createBulletHit();    
-    addTickFunc(VX_update, true);
+    createBulletHit();
+
+    static bool tickAdded = false;
+    if (!tickAdded)
+    {
+        addTickFunc(VX_update, true);
+    }
 }

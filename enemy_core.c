@@ -105,30 +105,33 @@ void ENY_kill(ENY_Actor_t *eny)
     eny->rect.y = DEACTIVATED_POSITION;
 }
 
-void ENY_checkShotCollision(ENY_Actor_t *enemy)
+bool ENY_checkShotCollision(ENY_Actor_t *enemy)
 {
     if (CLS_checkRectangleCollision(enemy->rect, PLY_getShotRect()))
     {
         if (PLY_is_player_shot_enabled())
         {
             ENY_handleHitByShot(enemy);
-            AUD_play_hit();
             PLY_resetShot();
+            return true;
         }
     }
-    // TODO: Handle deactivating shots properly. At the moment, the shots are just moved off screen
+    
     if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(1)))
     {
         PLY_disableSatelliteShot(1);
-        ENY_handleHitByShot(enemy);
-        AUD_play_hit();
+        ENY_handleHitByShot(enemy);        
+        return true;
     }
+    
     if (CLS_checkRectangleCollision(enemy->rect, PLY_getSatelliteShot(2)))
     {
         ENY_handleHitByShot(enemy);
-        AUD_play_hit();
         PLY_disableSatelliteShot(2);
+        return true;
     }
+
+    return false;
 }
 
 void ENY_handleHitByShot(ENY_Actor_t *eny)

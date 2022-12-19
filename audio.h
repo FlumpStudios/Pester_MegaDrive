@@ -13,4 +13,5 @@ void AUD_play_alarm(void);
 void AUD_play_menu_music(void);
 void AUD_play_level1_music(void);
 void AUD_play_lost_chain(void);
+void AUD_stop_music(void);
 #endif
