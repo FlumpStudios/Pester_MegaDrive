@@ -9,7 +9,7 @@ static u8 bg_scroll_speed = 255;
 void BCK_update(void)
 {
     frame++;
-    if (frame > frameskip && scrollSpeed > 0)
+    if (frame > frameskip)
     {
         frame = 0;
         bg_scroll_speed -= scrollSpeed;
