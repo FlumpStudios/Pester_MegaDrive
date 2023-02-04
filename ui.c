@@ -15,7 +15,17 @@ void UI_clearCentredText(void)
 	VDP_clearText(0, 15, 300);
 }
 
-void UI_drawCentredText(char s[])
+void UI_DRAW_TITLE_AS_TEXT(void)
+{
+	VDP_drawText("PESTER 2", 16, 8);
+}
+
+void UI_CLEAR_TITLE_AS_TEXT(void)
+{
+	VDP_clearText(0, 8, 30);
+}
+
+	void UI_drawCentredText(char s[])
 {
 	UI_clearCentredText();
 	VDP_drawText(s, 20 - strlen(s) / 2, 15);
@@ -50,30 +60,29 @@ void UI_updateLivesText(void)
 	u8 lives = GST_getLivesCount();
 	char buffer[2];
 	sprintf(buffer, "X%u", lives);
-	VDP_drawText(buffer, 4, 26);
+	VDP_drawText(buffer, 6, 26);
 }
 
 void UI_drawHud(void)
-{
-	 
-	VDP_drawText(CHAIN_HIGH, 1, 4);	
-	VDP_drawText(LABEL_SCORE, 1, 1);
-	VDP_drawText(LABEL_HIGH, 483, 1);
-	life_sprite = SPR_addSprite(&lifeSprite, 10, 203, TILE_ATTR(PAL2, 0, FALSE, FALSE));
+{	 
+	VDP_drawText(CHAIN_HIGH, 3, 4);	
+	VDP_drawText(LABEL_SCORE, 3, 1);
+	VDP_drawText(LABEL_HIGH, 481, 1);
+	life_sprite = SPR_addSprite(&lifeSprite, 24, 203, TILE_ATTR(PAL2, 0, FALSE, FALSE));
 }
 
 void UI_updateScoreDisplay(void)
 {
 	sprintf(score_str_bufer, "%lu", GST_getScore());
 	VDP_clearText(1, 2, MAX_SCORE_LENGTH);
-	VDP_drawText(score_str_bufer, 1, 2);
+	VDP_drawText(score_str_bufer, 3, 2);
 }
 
 void UI_updateChainDisplay(void)
 {
 	sprintf(chain_str_bufer, "%lu", GST_getChain());
-	VDP_clearText(1, 5, MAX_CHAIN_LENGTH);
-	VDP_drawText(chain_str_bufer, 1, 5);
+	VDP_clearText(3, 5, MAX_CHAIN_LENGTH);
+	VDP_drawText(chain_str_bufer, 3, 5);
 }
 
 void UI_updateHighScoreDisplay(void)
@@ -81,7 +90,7 @@ void UI_updateHighScoreDisplay(void)
 	u32 high = GST_getHighScore();
 	sprintf(high_str_buffer, "%lu", high);
 	VDP_clearText(1, 483, MAX_SCORE_LENGTH);
-	VDP_drawText(high_str_buffer, 487 - strlen(high_str_buffer), 2);
+	VDP_drawText(high_str_buffer, 485 - strlen(high_str_buffer), 2);
 }
 
 void UI_init(void)

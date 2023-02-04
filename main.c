@@ -40,6 +40,8 @@ void init_main(void)
 	
 	GST_setUpMainMenu();
 
+	// VDP_setScreenWidth256();
+
 	// module setups
 	AUD_init();
 	SPR_init(0, 0, 0);

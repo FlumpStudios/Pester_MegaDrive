@@ -32,7 +32,7 @@ void PLY_set_boundary_checks_enabled(bool enabled)
 }
 
 static void reset_after_death(void)
-{    
+{
     death_ticker = 0;
 
     if (GST_getLivesCount() > 0)
@@ -50,6 +50,11 @@ static void reset_after_death(void)
         {
             player->left_satellite->visibility = true;
             player->right_satellite->visibility = true;
+        }
+        else
+        {
+            player->left_satellite->visibility = false;
+            player->right_satellite->visibility = false;
         }
 
         player->ship.rect.height = 32;
@@ -116,6 +121,17 @@ void PLY_resetPlayer()
     player->ship.velocity.y = 0;
     player->ship.spriteSlot1->visibility = true;
     are_bondary_checks_enabled = false;
+
+    if(satellites_enabled)
+    {
+        player->left_satellite->visibility = true;
+        player->right_satellite->visibility = true;
+    }
+    else
+    {
+        player->left_satellite->visibility = false;
+        player->right_satellite->visibility = false;
+    }
 }
 
 void PLY_runPlayerHit()
@@ -396,7 +412,10 @@ bool PLY_is_player_shot_enabled(void)
 void PLY_update(void)
 {
     moveShot();
-    moveSataliteShots();
+    if (satellites_enabled)
+    {
+        moveSataliteShots();
+    }
 
     if (is_player_in_death_state)
     {
@@ -476,5 +495,5 @@ void PLY_init(void)
     is_player_in_death_state = false;
     death_ticker = 0;
     hasPlayedGameOverSound = false;
-    satellites_enabled = true;    
+    satellites_enabled = false;
 }

@@ -54,7 +54,7 @@ void BCK_draw_title_screen(void)
     scrollSpeed = 0;
     VDP_clearPlan(PLAN_B, 0);
     VDP_setVerticalScroll(PLAN_B, 0);
-    VDP_drawImageEx(PLAN_B, &introImage, TILE_ATTR_FULL(PAL3, 0, 0, 0, 1), 0, 0, 0, CPU);
+    VDP_drawImageEx(PLAN_B, &introImage, TILE_ATTR_FULL(PAL3, 0, 0, 0, 1), 0, 0, 0, DMA);
 }
 
 void BCK_draw_intro_screen(void)

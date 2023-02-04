@@ -2,6 +2,7 @@
 #include "ui.h"
 #include "audio.h"
 
+#define DRAW_TITLE FALSE
 typedef struct gs
 {
     bool is_game_playing;
@@ -176,6 +177,7 @@ void GST_restartGame(void)
     AUD_play_level1_music();
     PAL_fadeInPalette(PAL3, introImage.palette->data, 150, true);
     UI_clearCentredText();
+    UI_CLEAR_TITLE_AS_TEXT(); 
     UI_init();
 }
 
@@ -212,8 +214,15 @@ void GST_setUpMainMenu(void)
     AUD_play_menu_music();
     setGameState(GAME_STATE_MENU);
     GST_resetPalletes();
-    BCK_draw_title_screen();
-    PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
+    if(DRAW_TITLE == TRUE)
+    {
+        BCK_draw_title_screen();
+        PAL_fadeInPalette(PAL3, introImage.palette->data, 100, false);
+    }
+    else
+    {
+        UI_DRAW_TITLE_AS_TEXT();
+    }
     CTR_set_locked_controls(false);
 }
 
@@ -222,7 +231,7 @@ void GST_freeGameResources(void)
     ENY_destruct_enemies();
     ENY_destruct_bullets();
     PLY_destructPlayer();
-    UI_destruct();    
+    UI_destruct();
 }
 
 void ST_update(void)
